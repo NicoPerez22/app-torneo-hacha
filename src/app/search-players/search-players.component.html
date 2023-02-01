@@ -1,0 +1,42 @@
+<div class="container">
+    <div class="search-bar">
+        <input 
+            class="search-bar-style" 
+            placeholder="Buscar jugador"
+            #searchPlayer
+            (keyup)="searchPlayerKeyUp(searchPlayer.value)"
+        >
+    </div>
+
+    <div class="">
+
+    </div>
+
+    <div class="card-custom card-style" *ngFor="let pl of resultPlayer">
+        <div class="items">
+            <div class="col-md-1">
+                <img class="img-profile" src="../../assets/images/Nicp.png" width="50" height="50">
+            </div>
+            
+            <div class="col-md-2">
+                Usuario: <strong>{{pl.userName}}</strong>
+            </div>
+
+            <div class="col-md-2">
+                Nombre: <strong>{{pl.displayName}}</strong>
+            </div>
+    
+            <div class="col-md-2">
+                Equipo: <strong>{{pl.team}}</strong>
+            </div>
+
+            <div class="col-md-2">
+                Nacionalidad: <strong>{{pl.nacionalidad}}</strong>
+            </div>
+
+            <div class="col-md-3">
+                Estado:<span class="state-confirmation"><strong>Pendiente Confirmacion</strong></span>
+            </div>
+        </div>
+    </div>
+</div>

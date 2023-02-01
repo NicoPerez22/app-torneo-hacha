@@ -1,0 +1,48 @@
+<div class="fondo">
+    <div class="input-align">
+        <div class="login-card">
+            <div class="login-card-header">
+                <h1>Registro</h1>
+                <div>Porfavor, registrate para utilizar la plataforma</div>
+            </div>
+            <form [formGroup]="formRegisterUser" class="login-card-form">
+                <div class="form-item">
+                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-envelope"></i></span>
+                    <input 
+                        type="email" 
+                        formControlName="email"
+                        placeholder="Ingresar Mail"
+                        required
+                    >
+                </div>
+
+                <div class="form-item">
+                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-envelope"></i></span>
+                    <input 
+                        type="text" 
+                        formControlName="userName"
+                        placeholder="Ingresar PSN ID"
+                        required
+                    >
+                </div>
+
+                <div class="form-item">
+                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-lock"></i></span>
+                    <input 
+                        type="password" 
+                        formControlName="password"
+                        placeholder="Ingresar Contraseña"
+                        required
+                    >
+                </div>
+                <div class="form-item-other">
+                    <a href="#">Olvidaste tu contraseña!</a>
+                </div>
+                <button type="submit" (click)="onSubmit()">Registrarse</button>
+            </form>
+            <div class="login-card-footer">
+                Ya tienes una cuenta? <a href="/auth/login">Login.</a>
+            </div>
+        </div>
+    </div>
+</div>

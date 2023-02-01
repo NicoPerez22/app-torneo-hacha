@@ -1,0 +1,106 @@
+<div >
+    <div class="card-custom" *ngIf="myTeam.isRevision">
+        <div style="margin-top: 5%;">
+            <div class="text-center">
+                <h4>Equipo pendiente de confirmacion</h4>
+            </div>
+    
+            <div class="text-center">
+                <h6>El equipo que creo esta bajo revision de un administrador, espere a que sea confirmado</h6>
+            </div>
+        </div>
+
+        <div class="text-center" style="margin-top: 5%;">
+            <div>
+                <h5>{{myTeam.nombre}}</h5>
+            </div>
+    
+            <div style="margin-top: 2%;">
+                <img [src]="myTeam.files" width="100" height="100">
+            </div>
+        </div>
+
+		<div class="row mt-5 text-center" style="margin-top: 2%;">
+			<div class="mb-5" style="flex:auto ;">
+				<h5 style="color: white ;">Estado:<span class="state-confirmation">Pendiente Confirmacion</span></h5>
+			</div>
+		</div>
+    </div>
+
+    <div *ngIf="!myTeam.isRevision">
+        <div class="header__wrapper">
+            <header></header>
+            <div class="cols__container">
+              <div class="left__col">
+                <div class="img__container">
+                  <img [src]="myTeam.files" />
+                  <span></span>
+                  
+                </div>
+                <h2 style="color: white">{{myTeam.nombre}}</h2>
+                <p></p>
+                <p>{{myTeam.nacionalidad}}</p>
+      
+                <!-- <ul class="about">
+                  <li><span>4,073</span>Followers</li>
+                  <li><span>322</span>Following</li>
+                  <li><span>200,543</span>Attraction</li>
+                </ul> -->
+      
+                <div class="content">
+                  <ul>
+                    <li><i class="fa fa-twitter" style="color:white ;"></i></li>
+                    <i class="fa fa-youtube" style="color:white ;"></i>
+                    <i class="fa fa-facebook" style="color:white ;"></i>
+                    <i class="fa fa-instagram" style="color:white ;"></i>
+                  </ul>
+
+                  <div class="btn-edit-profile">
+                    <button class="btn btn-success">
+                      <i class="fa fa-pencil"></i>
+                      Editar perfil
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="right__col">
+                <nav>
+                  <ul>
+                    <li><a style="cursor: pointer;" (click)="showPlayers()">Jugadores</a></li>
+                    <li><a style="cursor: pointer;" (click)="showResults()">Resultados</a></li>
+                    <li><a style="cursor: pointer;" (click)="showStadistics()">Estadisticas</a></li>
+                    <li><a style="cursor: pointer;" (click)="showMatch()">Proximos partidos</a></li>
+                  </ul>
+                  <button *ngIf="!myTeamEnable">Enviar Mensaje</button>
+                </nav>
+      
+
+
+                <div *ngIf="players">
+                    <app-players [myTeam]="myTeam" [user]="user"></app-players>
+                </div>
+
+                
+                <div *ngIf="results">
+                    <app-results></app-results>
+                </div>
+
+                
+                <div *ngIf="stadistics">
+                    <app-stadistics></app-stadistics>
+                </div>
+
+                
+                <div *ngIf="match">
+                    <app-match></app-match>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+    </div>
+</div>

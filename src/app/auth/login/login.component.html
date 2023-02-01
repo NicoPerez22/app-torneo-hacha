@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="input-align">
+        <div class="login-card">
+            <div class="login-card-header">
+                <h1>Inicio sesion</h1>
+                <div>Por favor, inicia sesion para utilizar la plataforma</div>
+            </div>
+            <form [formGroup]="formLoginUser" class="login-card-form">
+                <div class="form-item">
+                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-envelope"></i></span>
+                    <input 
+                        type="email" 
+                        formControlName="email"
+                        placeholder="Enter email"
+                    >
+                </div>
+                <div class="form-item">
+                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-lock"></i></span>
+                    <input 
+                        type="password" 
+                        formControlName="password"
+                        placeholder="Enter Password"
+                    >
+                </div>
+                <div class="form-item-other">
+                    <div class="checkbox">
+                        <!-- <input type="checkbox" id="rememberMeCheckbox" checked>
+                        <label for="rememberMeCheckbox">Remember me</label> -->
+                    </div>
+                    <a href="#">Olvidaste tu contraseña?</a>
+                </div>
+                <button type="submit" (click)="onSubmit()">Iniciar sesion</button>
+            </form>
+            <div class="login-card-footer">
+                No tienes una cuenta? <a href="/auth/register">Registarse</a>
+            </div>
+        </div>
+    </div>
+</div>

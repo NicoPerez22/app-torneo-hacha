@@ -1,0 +1,101 @@
+<div class="container items-aling">
+    <div class="card-custom-image custom-img text-custom">
+        <div>
+            <h2></h2>
+        </div>
+                
+    </div>
+
+    <div class="card-custom">
+        <div class="container form-custom">
+
+            <div class="text-center">
+                <h4>Crear tu equipo</h4>
+            </div>
+
+            <form [formGroup]="teamForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="exampleFormControlInput1" class="form-label">Nombre del equipo</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            formControlName="nombre"
+                            
+                        >
+                    </div>
+        
+                    <div class="col-md-6">
+                        <label for="exampleFormControlInput1" class="form-label">Abreviatura</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            formControlName="abreviatura"
+                            
+                        >
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 10%;">
+                    <div class="col-md-6">
+                        <label for="exampleFormControlInput1" class="form-label">Apodo</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            formControlName="apodo"
+                            
+                        >
+                    </div>
+    
+                    <div class="col-md-6">
+                        <label for="exampleFormControlInput1" class="form-label">Nacionalidad</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            formControlName="nacionalidad"
+                            
+                        >
+                    </div>
+                </div>
+
+                <div class="items-aling">
+                    <div class="select-logo">
+                        <label>
+                            <input
+                                #file
+                                class="input-custom"
+                                type="file" 
+                                accept="image/*" 
+                                (change)="selectFile($event)" 
+                            />
+                            <button (click)="file.click()" class="btn-custom-file">
+                                Seleccione logo
+                            </button>
+
+                        </label>
+                    </div>
+                    
+                    <div >
+                        <div >
+                            <img [src]="image" class="preview" *ngFor="let image of filesArray"/>
+                        </div>
+                        <!-- <button
+                        class="btn btn-success btn-sm float-right"
+                        [disabled]="!selectedFiles"
+                        (click)="upload()"
+                        >
+                        Upload
+                        </button> -->
+                    </div>
+                </div>
+
+                <div class="text-center btn-top">
+                    <button class="btn btn-warning" (click)="onSubmit()">
+                        Crear equipo
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+</div>

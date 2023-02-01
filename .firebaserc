@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "ivg-latam": {
+      "hosting": {
+        "ivg-latam": [
+          "ivg-latam"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "ivg-latam"
+  }
+}

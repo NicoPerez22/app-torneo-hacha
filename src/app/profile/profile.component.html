@@ -1,0 +1,86 @@
+<div >
+  <div>
+      <div class="header__wrapper">
+          <header></header>
+          <div class="cols__container">
+            <div class="left__col">
+              <div class="img__container">
+                <img *ngIf="!myUser.image" src="../../assets/images/profile.jpg" />
+                <img *ngIf="myUser.image" [src]="myUser.image" />
+                <span></span>
+                
+              </div>
+              
+              <h2 style="color: white">{{myUser.userName}}</h2>
+              <p>{{myUser.nacionalidad}}</p>
+    
+              <ul class="about">
+                <li><span>4,073</span>Followers</li>
+                <li><span>322</span>Following</li>
+                <li><span>200,543</span>Attraction</li>
+              </ul>
+    
+              <div class="content">
+                <ul>
+                  <li><i class="fa fa-twitter" style="color:white ;"></i></li>
+                  <i class="fa fa-youtube" style="color:white ;"></i>
+                  <i class="fa fa-facebook" style="color:white ;"></i>
+                  <i class="fa fa-instagram" style="color:white ;"></i>
+                </ul>
+
+                <div class="btn-edit-profile">
+                  <button class="btn btn-success">
+                    <i class="fa fa-pencil"></i>
+                    Editar perfil
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div role="tabpanel">
+              <div class="right__col" >
+                <nav>
+                  <ul role="tablist">
+                    <li class="active" role="presentation">
+                      <a href="#players" aria-controls="players" data-toggle="tab" role="tab" >Jugadores</a>
+                    </li>
+                    <li role="presentation">
+                      <a href="#results" aria-controls="results" data-toggle="tab" role="tab" >Resultados</a>
+                    </li>
+                    <li role="presentation">
+                      <a href="#stadistics" aria-controls="stadistics" data-toggle="tab" role="tab" >Estadisticas</a>
+                    </li>
+                    <li role="presentation">
+                      <a href="#match" aria-controls="match" data-toggle="tab" role="tab" >Proximos partidos</a>
+                    </li>
+                  </ul>
+                  <button>Enviar Mensaje</button>
+                </nav>
+      
+                <div class="tab-content">
+                  <div role="tabpanel" class="tab-pane active" id="players">
+                    <app-personal-data [myUser]="myUser"></app-personal-data>
+                  </div>
+  
+                  <div role="tabpanel" class="tab-pane" id="results">
+                    <a>ss</a>
+                  </div>
+  
+                  <div role="tabpanel" class="tab-pane" id="stadistics">
+                    <a>wewew</a>
+                  </div>
+  
+                  <div role="tabpanel" class="tab-pane" id="match">
+                    <a>fdfdfdfd</a>
+                  </div>
+                </div>
+  
+              </div>
+            </div>
+
+          </div>
+        </div>
+  </div>
+</div>
