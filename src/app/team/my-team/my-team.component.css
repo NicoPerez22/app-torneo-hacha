@@ -64,7 +64,7 @@ a {
 
 .header__wrapper header {
   width: 100%;
-  background: url("../../../assets/images/fondoKylian.jpg") no-repeat 50% 20% / cover;
+  background: url("../../../assets/images/fondo1.png") no-repeat 50% 20% / cover;
   min-height: calc(100px + 15vw);
 }
 

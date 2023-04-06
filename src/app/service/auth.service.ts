@@ -1,9 +1,8 @@
+import { HttpClient } from '@angular/common/http';
+import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Firestore, collection, doc, getDoc, collectionData, addDoc, deleteDoc } from '@angular/fire/firestore';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { User } from '../models/user';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,61 +10,58 @@ import { User } from '../models/user';
 export class AuthService {
 
   auhtState$: Observable<any>;
+  USER_KEY = 'auth-user';
 
   constructor(
     private afAuth: AngularFireAuth, 
-    private firestore: Firestore,
-    private angularFirestore: AngularFirestore
+    private http: HttpClient,
   ) {
-    this.auhtState$ = this.afAuth.authState
   }
 
   userObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null)
+  API_URL = environment.API_URL;
 
-  postUserInDB(user: any){
-    const postUser = new User();
-    postUser.email = user.email;
-    postUser.userName = user.userName;
-
-    const userRef = collection(this.firestore, 'users');
-    return addDoc(userRef, Object.assign({}, postUser));
-  }
-
-  updateTeam(players: Array<any>, team): Promise<void>{
-    const teamRef = this.angularFirestore.collection('teams')
-    return teamRef.doc(team.id).update({players: players})
-  }
-
-  getUserById(): Observable<any[]>{
-    const userRef = collection(this.firestore, 'users');
-    return collectionData(userRef, {idField: 'id'}) as Observable<any[]>
-  }
 
   register(email: string, password: string, userName: string){
-    return this.afAuth.createUserWithEmailAndPassword(email, password)
-    .then((user) => {
-      const us = { email, password, userName }
-      this.postUserInDB(us)
-      this.afAuth.signInWithEmailAndPassword(email, password)
-    })
-    .catch(err => console.log(err))
   }
 
-  login(email: string, password: string){
-    return this.afAuth.signInWithEmailAndPassword(email, password)
-    .then((res) => {
-    })
-    .catch(err => {
-      console.log(err)
-    })
+  login(userLogin): Observable<any>{
+    const url = this.API_URL + `users/login`
+    return this.http.post<any>(url, userLogin)
+    .pipe(
+      map((res) => res)
+    );
+  } 
+  
+  clean(): void {
+    window.sessionStorage.clear();
+  }
+
+  saveUser(user: any): void {
+    window.sessionStorage.removeItem(this.USER_KEY);
+    window.sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+  }
+
+  getUser(): any {
+    const user = window.sessionStorage.getItem(this.USER_KEY);
+    if (user) {
+      return JSON.parse(user);
+    }
+
+    return {};
+  }
+
+  isLoggedIn(): boolean {
+    const user = window.sessionStorage.getItem(this.USER_KEY);
+    if (user) {
+      return true;
+    }
+
+    return false;
   }
 
   logout(){
     this.afAuth.signOut()
-  }
-
-  stateUser(){
-    return this.auhtState$;
   }
 
   get getUserObservable(){

@@ -11,14 +11,8 @@
                 
               </div>
               
-              <h2 style="color: white">{{myUser.userName}}</h2>
-              <p>{{myUser.nacionalidad}}</p>
-    
-              <ul class="about">
-                <li><span>4,073</span>Followers</li>
-                <li><span>322</span>Following</li>
-                <li><span>200,543</span>Attraction</li>
-              </ul>
+              <h2 style="color: white">{{myUser.username}}</h2>
+              <p>{{myUser.dorsal}}</p>
     
               <div class="content">
                 <ul>
@@ -41,42 +35,77 @@
 
             <div role="tabpanel">
               <div class="right__col" >
-                <nav>
-                  <ul role="tablist">
-                    <li class="active" role="presentation">
-                      <a href="#players" aria-controls="players" data-toggle="tab" role="tab" >Jugadores</a>
-                    </li>
-                    <li role="presentation">
-                      <a href="#results" aria-controls="results" data-toggle="tab" role="tab" >Resultados</a>
-                    </li>
-                    <li role="presentation">
-                      <a href="#stadistics" aria-controls="stadistics" data-toggle="tab" role="tab" >Estadisticas</a>
-                    </li>
-                    <li role="presentation">
-                      <a href="#match" aria-controls="match" data-toggle="tab" role="tab" >Proximos partidos</a>
-                    </li>
-                  </ul>
-                  <button>Enviar Mensaje</button>
-                </nav>
-      
-                <div class="tab-content">
-                  <div role="tabpanel" class="tab-pane active" id="players">
-                    <app-personal-data [myUser]="myUser"></app-personal-data>
+                <div class="card" style="margin-top: 8%;">
+
+                  <div class="text-center">
+                    <h4>Estadisticas</h4>
                   </div>
-  
-                  <div role="tabpanel" class="tab-pane" id="results">
-                    <a>ss</a>
+
+
+                  <div class="row">
+                    <div class="col">
+                      <h5>Goles</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>Asistencias</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>PJ</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>Amonestaciones</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>Expulsiones</h5>
+                      <h6>12</h6>
+                    </div>
                   </div>
-  
-                  <div role="tabpanel" class="tab-pane" id="stadistics">
-                    <a>wewew</a>
-                  </div>
-  
-                  <div role="tabpanel" class="tab-pane" id="match">
-                    <a>fdfdfdfd</a>
-                  </div>
+
                 </div>
-  
+
+                <div style="margin-top: 8%;">
+
+                  <div class="text-center">
+                    <h5>Datos de perfil</h5>
+                  </div>
+
+                  <hr>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Goles</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>Asistencias</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>PJ</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>Amonestaciones</h5>
+                      <h6>12</h6>
+                    </div>
+
+                    <div class="col">
+                      <h5>Expulsiones</h5>
+                      <h6>12</h6>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
 

@@ -12,7 +12,7 @@
 
         <div class="text-center" style="margin-top: 5%;">
             <div>
-                <h5>{{myTeam.nombre}}</h5>
+                <h5>{{myTeam.name}}</h5>
             </div>
     
             <div style="margin-top: 2%;">
@@ -37,7 +37,7 @@
                   <span></span>
                   
                 </div>
-                <h2 style="color: white">{{myTeam.nombre}}</h2>
+                <h2 style="color: white">{{myTeam.name}}</h2>
                 <p></p>
                 <p>{{myTeam.nacionalidad}}</p>
       
@@ -67,19 +67,15 @@
               </div>
 
               <div class="right__col">
-                <nav>
-                  <ul>
-                    <li><a style="cursor: pointer;" (click)="showPlayers()">Jugadores</a></li>
-                    <li><a style="cursor: pointer;" (click)="showResults()">Resultados</a></li>
-                    <li><a style="cursor: pointer;" (click)="showStadistics()">Estadisticas</a></li>
-                    <li><a style="cursor: pointer;" (click)="showMatch()">Proximos partidos</a></li>
-                  </ul>
-                  <button *ngIf="!myTeamEnable">Enviar Mensaje</button>
-                </nav>
-      
+
+                <nz-tabset nzType="card">
+                  <nz-tab nzTitle="Tab 1"><app-players [myTeam]="myTeam" [user]="user"></app-players></nz-tab>
+                  <nz-tab nzTitle="Tab 2">Content of Tab Pane 2</nz-tab>
+                  <nz-tab nzTitle="Tab 3">Content of Tab Pane 3</nz-tab>
+                </nz-tabset>
 
 
-                <div *ngIf="players">
+                <!-- <div *ngIf="players">
                     <app-players [myTeam]="myTeam" [user]="user"></app-players>
                 </div>
 
@@ -96,7 +92,7 @@
                 
                 <div *ngIf="match">
                     <app-match></app-match>
-                </div>
+                </div> -->
 
 
               </div>

@@ -17,10 +17,8 @@ export class ProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.stateUser().subscribe(res => this.myUser = res)
-    this.teamService.getPLayers().subscribe((res) => {
-      this.myUser = res.find(user => user.email == this.myUser.email)
-    })
+    this.myUser = this.authService.getUser()
+    // this.teamService.getPLayers().subscribe(res => this.myUser = res)
   }
 
 }

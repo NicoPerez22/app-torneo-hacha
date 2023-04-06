@@ -13,7 +13,7 @@ export class PlayersComponent implements OnInit {
   @Input() myTeam;
   @Input() user;
   playersList: Array<any> = [];
-  teamsList: Array<any> = [];
+  team;
   players: Array<any> = [];
   resultPlayer: Array<any> = [];
 
@@ -24,9 +24,13 @@ export class PlayersComponent implements OnInit {
   ){ }
 
   ngOnInit(): void {
-    this.teamService.getPLayers().subscribe((res) =>  {
-      this.playersList = res;
-      this.resultPlayer = res
+    // this.teamService.getPLayers().subscribe((res) =>  {
+    //   this.playersList = res;
+    //   this.resultPlayer = res
+    // })
+
+    this.teamService.getTeamByID(1).subscribe((res) => {
+      this.team = res;
     })
   }
 
@@ -35,8 +39,17 @@ export class PlayersComponent implements OnInit {
   }
 
   addPlayer(player){
-    this.players.push(player)
-    console.log(this.players)
+    const invitacion = {
+      id: 2,
+      message: 'Tiene una solicitud disponible',
+      stateInvitacion: true,
+      userId: 1,
+      teamId: this.team.id
+    }
+    this.teamService.sendInvitacionTeam(invitacion)
+    .subscribe((res) => {
+      console.log(res)
+    })
   }
 
   searchPlayerKeyUp(value){

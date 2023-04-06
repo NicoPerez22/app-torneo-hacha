@@ -17,9 +17,9 @@ export class SearchPlayersComponent implements OnInit {
   ){ }
 
   ngOnInit(): void {
-    this.teamService.getPLayers().subscribe((res) =>  {
-      this.playersList = res;
-    })
+    // this.teamService.getPLayers().subscribe((res) =>  {
+    //   this.playersList = res;
+    // })
   }
 
   searchPlayerKeyUp(value){

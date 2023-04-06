@@ -15,13 +15,19 @@
 
 .img-profile{
     border-radius: 50px;
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translatex(-50%);
+    margin-bottom: 10%;
 }
 
-.th-item{
+.content-card{
+    margin-top: 15px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    gap: 50px;
+    gap: 20px;
 }
 
 .th-item-2{
@@ -64,12 +70,32 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    max-width: 20%;
+    max-height: 100%;
+    margin-top: 10%;
+    margin-right: 2%;
+    margin-left: 2%;
+    color: white;
     word-wrap: break-word;
-    background-color: #E8F5FA;
+    background-color: #31394D;
     background-clip: border-box;
     border: 1px solid rgba(0,0,0,.125);
-    border-radius: 0.25rem;
+    border-radius: 0.75rem;
+}
+
+.card-custom:hover{
+	box-shadow: 5px 5px 20px rgba(0,0,0,0.4);
+	transform: translateY(-3%);
+}
+
+.footer-card{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .search-bar{

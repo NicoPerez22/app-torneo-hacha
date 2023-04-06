@@ -1,4 +1,8 @@
 <div class="container">
+    <div class="text-center" style="margin-top:10% ;">
+        <h6 style="color: white;">Ingrese el nombre de usuario del jugador que desea buscar</h6>
+    </div>
+
     <div class="search-bar">
         <input 
             class="search-bar-style" 
@@ -6,10 +10,6 @@
             #searchPlayer
             (keyup)="searchPlayerKeyUp(searchPlayer.value)"
         >
-    </div>
-
-    <div class="">
-
     </div>
 
     <div class="card-custom card-style" *ngFor="let pl of resultPlayer">

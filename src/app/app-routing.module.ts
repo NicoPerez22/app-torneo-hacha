@@ -1,3 +1,5 @@
+import { UserGuard } from './shared/guard/user.guard';
+import { TournamentModule } from './tournament/tournament.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
@@ -11,6 +13,7 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       {
+        canActivate: [UserGuard],
         path: 'home',
         loadChildren: () => import('../app/home/home.module').then(m => m.HomeModule)
       },
@@ -22,20 +25,26 @@ const routes: Routes = [
 
       {
         path: 'team',
-        ...canActivate(() => redirectUnauthorizedTo(['/auth/login'])),
+        canActivate: [UserGuard],
         loadChildren: () => import('../app/team/team.module').then(m => m.TeamModule)
       },
 
       {
         path: 'profile',
-        ...canActivate(() => redirectUnauthorizedTo(['/auth/login'])),
+        canActivate: [UserGuard],
         loadChildren: () => import('../app/profile/profile.module').then(m => m.ProfileModule)
       },
 
       {
         path: 'search-player',
-        ...canActivate(() => redirectUnauthorizedTo(['/auth/login'])),
+        canActivate: [UserGuard],
         loadChildren: () => import('../app/search-players/search.module').then(m => m.SearchModule)
+      },
+
+      {
+        path: 'tournament',
+        canActivate: [UserGuard],
+        loadChildren: () => import('../app/tournament/tournament.module').then(m => m.TournamentModule)
       },
     ]
   }

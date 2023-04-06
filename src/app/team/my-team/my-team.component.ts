@@ -24,17 +24,21 @@ export class MyTeamComponent implements OnInit {
   ){ }
 
   ngOnInit(): void {
-    this.authService.stateUser().subscribe(res => this.user = res)
-    this.teamService.getTeam().subscribe((res) => {
-      this.teamsList = res;
-      this.myTeam = this.teamsList.find(team => team.uid == this.user.uid);
+    this.authService.getUserObservable
+    .subscribe((res) => {
+      this.user = res;
+      this.teamService.getPLayers(this.user.id)
+      .subscribe((res) => {
+        this.myTeam = res.teamPlay
+        console.log(this.myTeam)
 
-      if(this.myTeam){
-        this.myTeamEnable = true
-        this.teamService.setMyTeamObservable = this.myTeam;
-      }
-      
+        if(this.myTeam){
+          this.myTeamEnable = true
+          this.teamService.setMyTeamObservable = this.myTeam;
+        }   
+      })
     })
+
   }
 
   showPlayers(){

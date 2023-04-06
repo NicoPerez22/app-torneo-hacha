@@ -23,6 +23,8 @@
     "@ng-bootstrap/ng-bootstrap": "^13.0.0",
     "@popperjs/core": "^2.10.2",
     "bootstrap": "^5.2.0",
+    "ng-zorro-antd": "^14.0.0",
+    "ngx-cookie-service": "^15.0.0",
     "ngx-pagination": "^6.0.3",
     "ngx-toastr": "^15.2.2",
     "rxjs": "~7.5.0",

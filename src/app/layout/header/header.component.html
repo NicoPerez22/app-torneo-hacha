@@ -71,9 +71,9 @@
           <ul class="navbar-nav me-auto">
             <ul class="group">
                 <li class="item" routerLink="/home">Inicio</li>
-                <li class="item" routerLink="/team/create-team">Competencias</li>
-                <li *ngIf="!teamExiste" class="item" routerLink="/team/create-team">Crear equipo</li>
-                <li *ngIf="teamExiste" class="item" routerLink="/team/my-team">Mi equipo</li>
+                <li class="item" routerLink="/tournament">Competencias</li>
+                <li class="item" routerLink="/team/create-team">Crear equipo</li>
+                <li class="item" routerLink="/team/my-team">Mi equipo</li>
                 <li class="item" routerLink="/search-player">Buscar jugador</li>
             </ul>
           </ul>
@@ -96,7 +96,7 @@
 
             <div class="item-profile d-flex">
                 <div style="margin-top: 10px; margin-left: 30px; cursor: pointer;" routerLink="/profile">
-                    <h6 style="color: white;">{{myUser.userName}}</h6>
+                    <h6 style="color: white;">{{user.username}}</h6>
                 </div>
                 <div>
                     <img class="img-profile" src="../../../assets/images/Nicp.png" width="50" height="50">

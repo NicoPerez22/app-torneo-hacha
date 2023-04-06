@@ -1,4 +1,6 @@
+import { TeamService } from './../service/team.service';
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../service/auth.service';
 // import { Router } from '@angular/router';
 // import { User } from '../Models/User-Model';
 // import { Subscription } from 'rxjs';
@@ -14,14 +16,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  // currentUser: User;
+  currentUser: any;
   // currentUserSubscription: Subscription;
-  // user: User;
+  user: any;
   // users: User[];
   // token;
   constructor(
-      // private authenticationService: AuthenticationService,
-      // private userService: UserService
+    private authService: AuthService,
+    private teamService: TeamService 
   ) {
     // this.users = new Array<User>();
     //   this.currentUserSubscription = this.authenticationService.currentUser.subscribe(resp => {
@@ -36,6 +38,14 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.authService.getUserObservable
+    .subscribe((res) => {
+      this.currentUser = res;
+      this.teamService.getPLayers(this.currentUser.id)
+      .subscribe((res) => {
+      })
+    })
+    
   }
 
   // loadAllUsers() {

@@ -1,4 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { JwtInterceptorInterceptor } from './shared/Interceptor/jwt-interceptor.interceptor';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -11,12 +12,21 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { provideStorage,getStorage } from '@angular/fire/storage';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { LayoutModule } from './layout/layout.module';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { es_ES } from 'ng-zorro-antd/i18n';
+import es from '@angular/common/locales/es';
+import { FormsModule } from '@angular/forms';
+import { TournamentComponent } from './tournament/tournament.component';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthGuard } from '@angular/fire/auth-guard';
+
+registerLocaleData(es);
 
 @NgModule({
   declarations: [
@@ -39,12 +49,17 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
-    NgbModule
+    NgbModule,
+    FormsModule,
   ],
   providers: [
+    AuthGuard,
     ScreenTrackingService,
+    CookieService,
     UserTrackingService,
-    { provide: FIREBASE_OPTIONS, useValue: environment.firebase}
+    { provide: FIREBASE_OPTIONS, useValue: environment.firebase},
+    { provide: NZ_I18N, useValue: es_ES },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

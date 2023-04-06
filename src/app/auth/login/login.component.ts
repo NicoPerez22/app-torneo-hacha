@@ -1,3 +1,4 @@
+import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
@@ -15,7 +16,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cookieService: CookieService
   ){}
 
   ngOnInit(): void {
@@ -23,31 +25,28 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(){
-    const { email, password } = this.formLoginUser.getRawValue();
-    this.authService.login(email, password)
-    .then((user) => {
-      setTimeout(() => {
-        this.router.routeReuseStrategy.shouldReuseRoute = function () {
-          return false;
-        };
+    const userLogin = this.formLoginUser.value;
+
+    this.authService.login(userLogin)
+    .subscribe((res) => {
+      if(res.status == 200){
+        window.sessionStorage.setItem('token', res.token)
+        this.authService.saveUser(res.user);
+        this.authService.setUserObservable = res.user;
         this.router.navigate(['/home'])
-      }, 500)
+      }
     })
-    .catch(error => {
-      console.log(error)
-    })
-    
   }
 
   createformLoginUser(){
     this.formLoginUser = this.fb.group({
-      email: ['', Validators.required],
+      username: ['', Validators.required],
       password: ['', Validators.required],
     })
   }
 
-  get email(): FormControl {
-    return this.formLoginUser.get('email')
+  get username(): FormControl {
+    return this.formLoginUser.get('username')
   }
 
   get password(): FormControl {

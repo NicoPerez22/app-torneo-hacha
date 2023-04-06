@@ -1,0 +1,38 @@
+.card-custom{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    margin-bottom: 5%;
+    background-image: linear-gradient(111.02deg, 
+    rgba(39, 35, 67, 0.7) -7.54%, 
+    rgba(39, 35, 67, 0) 137.24%);
+    word-wrap: break-word;
+    color: white;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 5px;
+    gap: 30px;
+    padding: 10px;
+}
+
+
+.fondo-card{
+    background-image: url(../../../assets/images/1366_521.jpeg);
+}
+
+th{
+    color: yellow;
+}
+
+h6{
+    color: white;
+}
+
+td{
+    color: white;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

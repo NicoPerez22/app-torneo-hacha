@@ -25,26 +25,16 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.stateUser().subscribe(res => this.user = res)
-    this.teamService.getPLayers().subscribe((res) => {
-      this.playerList = res;
-
-      this.myUser = this.playerList.find(user => user.email == this.user.email)
-
+    this.authService.getUserObservable
+    .subscribe((res) => {
+      this.myUser = res
     })
-    this.teamService.getTeam().subscribe((res) => {
-      this.teamsList = res;
-      this.myTeam = this.teamsList.find(team => team.uid == this.user.uid)
 
-      if(this.myTeam){
-        this.teamExiste = true;
-      }
-      
-    })
+    this.user = this.authService.getUser();
   }
 
   logout(){
-    this.authService.logout()
+    this.authService.clean()
     this.router.navigate(['/home']);
   }
 
