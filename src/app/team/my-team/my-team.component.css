@@ -20,6 +20,14 @@
   box-shadow: 0px 10px 16px -13px black
 }
 
+/* nz-tabset{
+  background-color: #0091ff;
+}
+
+nz-tab{
+  background-color: #2afa6a;
+} */
+
 .item-btn{
   display: flex;
   flex-direction: row;

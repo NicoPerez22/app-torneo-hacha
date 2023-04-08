@@ -6,5 +6,5 @@ body {
     margin-right: 0px;
     margin-bottom: 0px;
     margin-left: 0px;
-    background-color: #0f141a;
+    background: linear-gradient(to top, rgb(17, 24, 39), rgb(88, 28, 135), rgb(46, 10, 109))
 }
