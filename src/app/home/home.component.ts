@@ -38,13 +38,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.getUserObservable
-    .subscribe((res) => {
-      this.currentUser = res;
-      this.teamService.getPLayers(this.currentUser.id)
-      .subscribe((res) => {
-      })
-    })
     
   }
 

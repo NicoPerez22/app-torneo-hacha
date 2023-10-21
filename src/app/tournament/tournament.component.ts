@@ -19,4 +19,8 @@ export class TournamentComponent implements OnInit {
     this.router.navigate(['/tournament/view'])
   }
 
+  createTournament(){
+    this.router.navigate(['tournament/create']);
+  }
+
 }

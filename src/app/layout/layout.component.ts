@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { AuthService } from './../service/auth.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -9,13 +10,17 @@ import { Component, OnInit } from '@angular/core';
 export class LayoutComponent implements OnInit {
 
   user: any
+  isExistingUser: boolean = false;
 
   constructor(
     private authService: AuthService
   ){ }
 
   ngOnInit(): void {
-    this.user = this.authService.getUser();
+    this.user = this.authService.returnUserLogged();
+    if(this.user !== null){
+      this.isExistingUser = true;
+    }
   }
 
 }

@@ -65,10 +65,10 @@ export class PlayersComponent implements OnInit {
   }
 
   confirmPlayers(){
-    this.teamService.updateTeam(this.players, this.myTeam)
-    .then(() => {
-      this.toastService.success('Jugador guardado con exito', 'Exito')
-    })
+    // this.teamService.updateTeam(this.players, this.myTeam)
+    // .then(() => {
+    //   this.toastService.success('Jugador guardado con exito', 'Exito')
+    // })
   }
 
 }

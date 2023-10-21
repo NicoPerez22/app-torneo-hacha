@@ -6,17 +6,20 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ViewTournamentComponent } from './view-tournament/view-tournament.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { CreateTournammentComponent } from './create-tournamment/create-tournamment.component';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 
 
 @NgModule({
-  declarations: [TournamentComponent, ViewTournamentComponent],
+  declarations: [TournamentComponent, ViewTournamentComponent, CreateTournammentComponent],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
     TournamentRoutingModule,
-    NzTableModule
+    NzTableModule,
+    NzStepsModule
   ]
 })
 export class TournamentModule { }

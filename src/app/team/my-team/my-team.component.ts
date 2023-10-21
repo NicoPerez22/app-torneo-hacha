@@ -13,10 +13,7 @@ export class MyTeamComponent implements OnInit {
   user: any;
   myTeam: any
   myTeamEnable: boolean = false
-  players: boolean = true
-  results: boolean = false
-  stadistics: boolean = false
-  match: boolean = false
+  playersTeamsList: Array<any> = [];
 
   constructor(
     private teamService: TeamService,
@@ -24,48 +21,18 @@ export class MyTeamComponent implements OnInit {
   ){ }
 
   ngOnInit(): void {
-    this.authService.getUserObservable
-    .subscribe((res) => {
-      this.user = res;
-      this.teamService.getPLayers(this.user.id)
-      .subscribe((res) => {
-        this.myTeam = res.teamPlay
-        console.log(this.myTeam)
+    this.user = this.authService.returnUserLogged();
+    this.teamService.getTeamByID(this.user.teamPlayId)
+    .subscribe(res => {
+      console.log(res)
+      this.myTeam = res
 
-        if(this.myTeam){
-          this.myTeamEnable = true
-          this.teamService.setMyTeamObservable = this.myTeam;
-        }   
-      })
+      if(this.myTeam){
+        this.myTeamEnable = true
+        this.playersTeamsList = this.myTeam.players;
+      }
     })
 
   }
 
-  showPlayers(){
-    this.players = true;
-    this.results = false;
-    this.stadistics = false;
-    this.match = false;
-  }
-
-  showResults(){
-    this.players = false;
-    this.results = true;
-    this.stadistics = false;
-    this.match = false;
-  }
-
-  showStadistics(){
-    this.players = false;
-    this.results = false;
-    this.stadistics = true;
-    this.match = false;
-  }
-
-  showMatch(){
-    this.players = false;
-    this.results = false;
-    this.stadistics = false;
-    this.match = true;
-  }
 }

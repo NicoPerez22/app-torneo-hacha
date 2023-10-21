@@ -18,13 +18,12 @@ export class JwtInterceptorInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const token: string = window.sessionStorage.getItem('auth-user');
+    const token: string = window.sessionStorage.getItem('token');
     let req = request;
     req = request.clone({
       setHeaders: {
         authorization: `Bearer ${token}`
-      },
-      // withCredentials: true,
+      }
     })
     
     return next.handle(req)

@@ -31,22 +31,24 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(){
-    // if(this.formRegisterUser.valid){
-    //   const { email, userName, password } = this.formRegisterUser.getRawValue();
+    if(this.formRegisterUser.valid){
+      const { email, userName, password } = this.formRegisterUser.getRawValue();
+      const user = {
+        email: email,
+        username: userName,
+        password: password
+      }
       
-    //   this.authService.register(email, password, userName)
-    //   .then((user) => {
-    //     this.router.routeReuseStrategy.shouldReuseRoute = function () {
-    //       return false;
-    //     };
-    //     this.router.navigate(['/home'])
-    //   })
-    //   .catch(error => {
-    //     console.log(error)
-    //   })
-    // } else {
-    //   this.formRegisterUser.markAllAsTouched();
-    // }
+      this.authService.register(user)
+      .subscribe((user) => {
+        this.router.routeReuseStrategy.shouldReuseRoute = function () {
+          return false;
+        };
+        this.router.navigate(['/home'])
+      })
+    } else {
+      this.formRegisterUser.markAllAsTouched();
+    }
     
   }
 

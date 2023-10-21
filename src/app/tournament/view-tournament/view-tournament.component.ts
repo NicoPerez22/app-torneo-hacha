@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,30 +8,97 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ViewTournamentComponent implements OnInit {
 
-  listOfData: any[] = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park'
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park'
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    }
+  teamList: Array<any> = []
+  listaMatch: Array<any> = [];
+  gamesList = [
+    { id: 1, name: "FIFA" },
+    { id: 2, name: "F1" },
+    { id: 2, name: "CSGO" },
   ];
 
-  constructor() { }
+  constructor(
+    private router: Router
+  ){ }
 
   ngOnInit(): void {
+  }
+
+  formatoLiga(){
+    let listaFormato = [
+      { id: 1, name: "LIGA" },
+      { id: 2, name: "ELIMINATORIAS" },
+      { id: 2, name: "FASE DE GRUPO" },
+    ]
+
+    let listaEquipos = [
+      { id: 1, name: "HACHA Y TIZA ESPORTS" },
+      { id: 2, name: "AESMA GAMING" },
+      { id: 3, name: "GIMNASIA ESPORTS" },
+      { id: 4, name: "HYT ESPORTS" },
+    ]
+
+    let listaRandom = [];
+
+    //ORDENA LOS EQUIPOS EN NUEVO ARRAY DE FORMA RANDOM
+    while(listaEquipos.length > 0){
+      const random = Math.floor(Math.random() * listaEquipos.length);
+      const equipo = listaEquipos[random];
+
+      listaRandom.push(equipo);
+      listaEquipos.splice(random, 1)
+    }
+    
+    //EL EQUIPO AL AZAR SELECCIONADO, ENFRENTARLO CON LOS EQUIPOS RESTANTES
+    for (let index = 0; index < listaRandom.length; index++) {
+      const equipo = listaRandom[index];
+      listaRandom.map((e) => {
+        if(equipo.id !== e.id){
+          const match = {
+            id: 0,
+            equipo1: equipo,
+            equipo2: e
+          }
+          
+          this.listaMatch.push(match)
+        }
+      })
+    }
+
+    //ELIMINA LOS ENFRENTAMIENTOS DOBLES
+    for (let index = 0; index <= 6; index++) {
+      this.listaMatch.splice(index, 1)      
+    }
+
+    console.log(this.listaMatch)
+  }
+
+  formatoEliminatoria(){
+    let listaEquipos = [
+      { id: 1, name: "HACHA Y TIZA ESPORTS" },
+      { id: 2, name: "AESMA GAMING" },
+      { id: 3, name: "GIMNASIA ESPORTS" },
+      { id: 4, name: "HYT ESPORTS" },
+    ]
+
+    let listaRandom = [];
+
+    //ORDENA LOS EQUIPOS EN NUEVO ARRAY DE FORMA RANDOM
+    while(listaEquipos.length > 0){
+      const random = Math.floor(Math.random() * listaEquipos.length);
+      const equipo = listaEquipos[random];
+
+      listaRandom.push(equipo);
+      listaEquipos.splice(random, 1)
+    }
+    
+    //EL EQUIPO AL AZAR SELECCIONADO, ENFRENTARLO CON LOS EQUIPOS RESTANTES
+    for (let index = 0; index < listaRandom.length; index++) {
+      const element = listaRandom[index];
+
+      
+    }
+
+    console.log(this.listaMatch)
   }
 
 }

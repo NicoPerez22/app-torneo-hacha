@@ -3,6 +3,7 @@ import { TournamentComponent } from './tournament.component';
 import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CreateTournammentComponent } from './create-tournamment/create-tournamment.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,11 @@ const routes: Routes = [
   {
     path: 'view',
     component: ViewTournamentComponent
+  },
+
+  {
+    path: 'create',
+    component: CreateTournammentComponent
   },
 ]
 

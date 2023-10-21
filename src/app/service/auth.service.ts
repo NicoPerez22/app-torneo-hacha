@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, BehaviorSubject, map } from 'rxjs';
 
 @Injectable({
@@ -13,7 +12,6 @@ export class AuthService {
   USER_KEY = 'auth-user';
 
   constructor(
-    private afAuth: AngularFireAuth, 
     private http: HttpClient,
   ) {
   }
@@ -22,7 +20,12 @@ export class AuthService {
   API_URL = environment.API_URL;
 
 
-  register(email: string, password: string, userName: string){
+  register(userRegister): Observable<any>{
+    const url = this.API_URL + `users/register`
+    return this.http.post<any>(url, userRegister)
+    .pipe(
+      map((res) => res)
+    );
   }
 
   login(userLogin): Observable<any>{
@@ -38,33 +41,38 @@ export class AuthService {
   }
 
   saveUser(user: any): void {
-    window.sessionStorage.removeItem(this.USER_KEY);
-    window.sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    sessionStorage.removeItem(this.USER_KEY);
+    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
   getUser(): any {
-    const user = window.sessionStorage.getItem(this.USER_KEY);
+    const user = sessionStorage.getItem(this.USER_KEY);
     if (user) {
-      return JSON.parse(user);
+      this.setUserObservable = JSON.parse(user);
     }
 
     return {};
   }
 
   isLoggedIn(): boolean {
-    const user = window.sessionStorage.getItem(this.USER_KEY);
+    const user = sessionStorage.getItem(this.USER_KEY);
     if (user) {
       return true;
     }
-
     return false;
   }
 
-  logout(){
-    this.afAuth.signOut()
+  returnUserLogged(){
+    var us
+    this.getUserObservable.subscribe(res => {
+      us = res
+    })
+
+    return us;
   }
 
   get getUserObservable(){
+    this.getUser()
     return this.userObservable.asObservable();
   }
 

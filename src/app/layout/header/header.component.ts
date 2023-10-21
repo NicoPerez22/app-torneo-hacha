@@ -1,6 +1,6 @@
 import { User } from './../../models/user';
 import { TeamService } from './../../service/team.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 
@@ -10,10 +10,10 @@ import { AuthService } from 'src/app/service/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  @Input() user: any;
 
   teamsList: Array<any> = [];
   playerList: Array<User> = [];
-  user: any;
   myUser: any;
   myTeam: any;
   teamExiste: boolean = false;
@@ -25,12 +25,10 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.getUserObservable
-    .subscribe((res) => {
-      this.myUser = res
-    })
-
-    this.user = this.authService.getUser();
+    if(this.user.teamPlay !== null){
+      console.log(this.user)
+      this.teamExiste = true;
+    }
   }
 
   logout(){

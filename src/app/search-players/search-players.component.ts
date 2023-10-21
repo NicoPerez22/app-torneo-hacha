@@ -1,6 +1,7 @@
 import { AuthService } from './../service/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { TeamService } from '../service/team.service';
+import { UserService } from '../service/user.service';
 
 @Component({
   selector: 'app-search-players',
@@ -13,7 +14,7 @@ export class SearchPlayersComponent implements OnInit {
   resultPlayer: Array<any> = [];
 
   constructor(
-    private teamService: TeamService
+    private userService: UserService
   ){ }
 
   ngOnInit(): void {
@@ -23,8 +24,10 @@ export class SearchPlayersComponent implements OnInit {
   }
 
   searchPlayerKeyUp(value){
-    if(value.length > 6){
-      this.resultPlayer = this.playersList.filter(elem => elem.userName == value);
+    if(value.length > 4){
+      // this.resultPlayer = this.playersList.filter(elem => elem.userName == value);
+      this.userService.getUserByUserName(value)
+      .subscribe(res => this.resultPlayer = res)
     }
   }
 
