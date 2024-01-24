@@ -76,8 +76,24 @@ export class TeamService {
   }
 
   sendInvitacionTeam(player): Observable<Notification>{
-    const url = this.API_URL + 'usuarios/send-invitacion'
+    const url = this.API_URL + 'team/sendInvitacion'
     return this.http.post<Notification>(url, player)
+    .pipe(
+      map((res) => res)
+    );
+  }
+
+  getInvitacionTeam(idUser): Observable<any>{
+    const url = this.API_URL + `team/invitacion/${idUser}`
+    return this.http.get<any>(url)
+    .pipe(
+      map((res) => res)
+    );
+  }
+
+  aceptarInvitacion(invtacion): Observable<any>{
+    const url = this.API_URL + `team/acceptInvitacion`
+    return this.http.post<any>(url, invtacion)
     .pipe(
       map((res) => res)
     );

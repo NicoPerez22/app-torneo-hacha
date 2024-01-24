@@ -41,9 +41,9 @@
             <img src="../../../assets/images/GELP.png" />
             <span></span>
           </div>
-          <h2 style="color: white">{{ myTeam.name }}</h2>
+          <h2 style="color: white">{{ myTeam?.name }}</h2>
           <p></p>
-          <p>{{ myTeam.nacionalidad }}</p>
+          <p>{{ myTeam?.nacionalidad }}</p>
 
           <!-- <ul class="about">
                   <li><span>4,073</span>Followers</li>
@@ -60,10 +60,11 @@
             </ul>
 
             <div class="btn-edit-profile">
-              <button class="btn btn-success">
+              <app-players [myTeam]="myTeam"></app-players>
+              <!-- <button class="btn btn-success" (click)="openModalSearchPlayers()">
                 <i class="fa fa-user"></i>
                 Invitar jugador
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
@@ -71,49 +72,43 @@
         <div class="row mt-5 mb-5">
           <div
             *ngFor="let player of playersTeamsList"
-            class="card"
-            style="
-              width: 25%;
-              background-color: black;
-              border-radius: 10px;
-              margin-right: 2%;
-            "
+            class="card-custom mb-5 align-items-center"
           >
-            <div
-              style="
-                display: flex;
-                gap: 20px;
-                flex-direction: column;
-                height: 300px;
-                align-items: center;
-                justify-content: center;
-              "
-            >
-              <div>
-                <img
-                  class="img-profile"
-                  src="../../../assets/images/Nicp.png"
-                  width="50px"
-                  height="50px"
-                />
-              </div>
+              <div class="row">
+                <div class="col-md-1">
+                  <img
+                    class="img-profile"
+                    src="../../../assets/images/Nicp.png"
+                    width="60px"
+                    height="60px"
+                  />
+                </div>
 
-              <div>
-                <h6>{{player.username}}</h6>
-              </div>
+                <div class="col-md-2 mt-4">
+                  <h6>{{player?.username}}</h6>
+                </div>
 
-              <div>
-                <h6>{{player?.nacionalidad}}</h6>
-              </div>
+                <div class="col-md-3 mt-4">
+                  <h6>{{player?.user?.dorsal}}</h6>
+                </div>
 
-              <div>
-                <h6>MCO</h6>
-              </div>
+                <div class="col-md-3 mt-3">
+                  <div class="state-confirmation w-50 text-center align-items-center">
+                    <h6>Habilitado</h6>
+                  </div>
+                </div>
 
-              <div class="state-confirmation">
-                <h6>Habilitado</h6>
+                <div class="col-md-1 mt-3 offset-md-2">
+                  <button
+                    class="btn btn-danger"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+
+                <div>
+                </div>
               </div>
-            </div>
           </div>
         </div>
       </div>

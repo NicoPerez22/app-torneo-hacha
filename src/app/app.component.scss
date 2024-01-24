@@ -1,0 +1,39 @@
+.header {
+  &__logo {
+    max-width: 350px;
+    height: auto;
+    margin: 15px;
+  }
+}
+
+.footer {
+  &__logo {
+    max-width: 125px;
+    height: auto;
+    margin: 15px;
+  }
+}
+
+.mat-mdc-button {
+  border-radius: 0px !important;
+}
+
+.mat-mdc-unelevated-button {
+  border-radius: 0px !important;
+}
+
+.btnSideNav {
+  background-color: #8ee5ee !important;
+}
+
+@media (max-height: 599px) {
+  .fixed-bottom {
+    position: relative !important;
+    bottom: auto !important;
+    width: auto !important;
+  }
+}
+
+.app-body {
+  min-height: calc(100vh - 199px);
+}

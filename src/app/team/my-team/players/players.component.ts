@@ -24,14 +24,7 @@ export class PlayersComponent implements OnInit {
   ){ }
 
   ngOnInit(): void {
-    // this.teamService.getPLayers().subscribe((res) =>  {
-    //   this.playersList = res;
-    //   this.resultPlayer = res
-    // })
 
-    this.teamService.getTeamByID(1).subscribe((res) => {
-      this.team = res;
-    })
   }
 
   sendPlayer(content){
@@ -40,12 +33,13 @@ export class PlayersComponent implements OnInit {
 
   addPlayer(player){
     const invitacion = {
-      id: 2,
       message: 'Tiene una solicitud disponible',
-      stateInvitacion: true,
-      userId: 1,
-      teamId: this.team.id
+      estado: true,
+      userId: player.id,
+      teamId: this.myTeam.id
     }
+
+    console.log(invitacion)
     this.teamService.sendInvitacionTeam(invitacion)
     .subscribe((res) => {
       console.log(res)
@@ -54,7 +48,11 @@ export class PlayersComponent implements OnInit {
 
   searchPlayerKeyUp(value){
     if(value.length > 3){
-      this.resultPlayer = this.playersList.filter(elem => elem.userName == value);
+      this.teamService.getUser()
+      .subscribe(res => {
+        this.playersList = res;
+        this.resultPlayer = this.playersList.filter(elem => elem.username == value);
+      })
     }
   }
 

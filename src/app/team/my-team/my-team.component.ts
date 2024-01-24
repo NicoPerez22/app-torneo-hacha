@@ -1,6 +1,8 @@
 import { AuthService } from 'src/app/service/auth.service';
 import { TeamService } from './../../service/team.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PlayersComponent } from './players/players.component';
 
 @Component({
   selector: 'app-my-team',
@@ -8,6 +10,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./my-team.component.css']
 })
 export class MyTeamComponent implements OnInit {
+
+  @ViewChild('playersComponent') PlayersComponent;
 
   teamsList: Array<any> = [];
   user: any;
@@ -17,14 +21,14 @@ export class MyTeamComponent implements OnInit {
 
   constructor(
     private teamService: TeamService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: NgbModal
   ){ }
 
   ngOnInit(): void {
     this.user = this.authService.returnUserLogged();
     this.teamService.getTeamByID(this.user.teamPlayId)
     .subscribe(res => {
-      console.log(res)
       this.myTeam = res
 
       if(this.myTeam){
@@ -33,6 +37,10 @@ export class MyTeamComponent implements OnInit {
       }
     })
 
+  }
+
+  openModalSearchPlayers(){
+    this.modalService.open(PlayersComponent)
   }
 
 }

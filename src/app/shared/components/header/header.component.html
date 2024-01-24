@@ -1,48 +1,6 @@
-<!-- <nav class="menu-bar">
-
-    <div class="item-logo">
-        <div>
-            <img src="../../../assets/images/logo 3.png" width="200" height="130">
-        </div>
-    
-        <div>
-            <h4 style="color: white;">IVG LATAM</h4>
-        </div>
-    </div>
-
-
-    <ul class="group">
-        <li class="item">INICIO</li>
-        <li class="item">COMPETENCIAS</li>
-        <li *ngIf="!teamExiste" class="item" routerLink="/team/create-team">CREAR EQUIPO</li>
-        <li *ngIf="teamExiste" class="item" routerLink="/team/my-team">MI EQUIPO</li>
-        <li class="item">CHAT</li>
-        <li class="item">MERCADO</li>
-        <li class="item">JUGADORES</li>
-    </ul>
-
-    <div>
-        <img src="../../../assets/images/logo 3.png" width="280" height="180">
-    </div>
-    <div class="item-profile">
-        <div>
-            <h6 style="color: white;">NicoPerez22</h6>
-        </div>
-        <div>
-            <img class="img-profile" src="../../../assets/images/Nicp.png" width="50" height="50">
-        </div>
-
-        <button (click)="logout()" class="btn-custom">
-            Cerrar Sesion
-        </button>
-    </div>
-
-
-</nav> -->
-
 <!-- Inicio del menu -->
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark w-100">
   <div class="container-fluid">
     <!-- icono o nombre -->
 
@@ -79,8 +37,8 @@
         <ul class="group">
           <li class="item" routerLink="/home">Inicio</li>
           <li class="item" routerLink="/tournament">Competencias</li>
-          <li class="item" routerLink="/team/create-team" *ngIf="!teamExiste">Crear equipo</li>
-          <li class="item" routerLink="/team/my-team" *ngIf="teamExiste">Mi equipo</li>
+          <li class="item" routerLink="/team/create-team" *ngIf="!user?.teamPlay">Crear equipo</li>
+          <li class="item" routerLink="/team/my-team" *ngIf="user?.teamPlay">Mi equipo</li>
           <li class="item" routerLink="/search-player">Buscar jugador</li>
         </ul>
       </ul>
@@ -105,7 +63,7 @@
             style="margin-top: 10px; margin-left: 30px; cursor: pointer"
             routerLink="/profile"
           >
-            <h6 style="color: white">{{ user.username }}</h6>
+            <h6 style="color: white">{{ user?.username }}</h6>
           </div>
           <div>
             <img

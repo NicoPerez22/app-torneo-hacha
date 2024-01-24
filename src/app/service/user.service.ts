@@ -25,4 +25,12 @@ export class UserService {
       map((res) => res)
     );
   }
+
+  getUserByID(id): Observable<any>{
+    const url = this.API_URL + `users/${id}`
+    return this.http.get<any>(url)
+    .pipe(
+      map((res) => res)
+    );
+  }
 }

@@ -6,7 +6,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 
-import { LayoutModule } from './layout/layout.module';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -22,6 +21,7 @@ import { AuthGuard } from '@angular/fire/auth-guard';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
 import { playerReducer } from './state/reduce/player.reduce';
+import { SharedModule } from './shared/shared.module';
 
 registerLocaleData(es);
 
@@ -30,9 +30,9 @@ registerLocaleData(es);
     AppComponent,
   ],
   imports: [
-    LayoutModule,
     CommonModule,
     RouterModule,
+    SharedModule,
     HttpClientModule,
     AppRoutingModule,
     BrowserModule,

@@ -1,39 +1,57 @@
-<div class="container">
-    <div class="input-align">
-        <div class="login-card">
-            <div class="login-card-header">
-                <h1>Inicio sesion</h1>
-                <div>Por favor, inicia sesion para utilizar la plataforma</div>
-            </div>
-            <form [formGroup]="formLoginUser" class="login-card-form">
-                <div class="form-item">
-                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-envelope"></i></span>
+<div class="container row" style="margin-top: 200px; margin-left: 15%;">
+	<div class="card-custom row">
+		<form [formGroup]="formLoginUser" class="flex-custom col" #login="ngForm" (ngSubmit)="onSubmit()">
+			<span style="color: black; margin-bottom: 10%;">
+				IVG LATAM
+			</span>
+
+			<div>
+				<div>
                     <input 
-                        type="email" 
-                        formControlName="username"
-                        placeholder="Enter email"
-                    >
-                </div>
-                <div class="form-item">
-                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-lock"></i></span>
+                    type="email" 
+                    formControlName="username"
+                    placeholder="Enter email"
+                >					
+                <span class="focus-input100"></span>
+				</div>
+			</div>
+			<br>
+			<div>
+				<div>
                     <input 
-                        type="password" 
-                        formControlName="password"
-                        placeholder="Enter Password"
-                    >
-                </div>
-                <div class="form-item-other">
-                    <div class="checkbox">
-                        <!-- <input type="checkbox" id="rememberMeCheckbox" checked>
-                        <label for="rememberMeCheckbox">Remember me</label> -->
-                    </div>
-                    <a href="#">Olvidaste tu contraseña?</a>
-                </div>
-                <button type="submit" (click)="onSubmit()">Iniciar sesion</button>
-            </form>
-            <div class="login-card-footer">
-                No tienes una cuenta? <a href="/auth/register">Registarse</a>
-            </div>
-        </div>
-    </div>
+                    type="password" 
+                    formControlName="password"
+                    placeholder="Enter Password"
+                >					
+                <span class="focus-input100"></span>
+				</div>
+			</div>
+
+			<div class="margin-custom">
+				<button class="btn btn-info" type="submit">
+					Login
+				</button>
+			</div>
+
+			<div class="margin-custom">
+				<div class="text-center w-full p-t-25 p-b-230">
+					<a href="#" class="txt1">
+						Olvidaste tu usuario o contraseña?
+					</a>
+				</div>
+	
+				<div class="text-center w-full">
+					<a class="txt1" href="#">
+						Crear nueva cuenta
+						<i class="fa fa-long-arrow-right"></i>						
+					</a>
+				</div>
+			</div>
+
+		</form>
+	</div>
+
+	<div class="card-custom-right col">
+
+	</div>
 </div>

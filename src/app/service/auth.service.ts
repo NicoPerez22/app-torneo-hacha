@@ -51,7 +51,7 @@ export class AuthService {
       this.setUserObservable = JSON.parse(user);
     }
 
-    return {};
+    return JSON.parse(user);
   }
 
   isLoggedIn(): boolean {

@@ -73,37 +73,10 @@
 
                 <div style="margin-top: 8%;">
 
-                  <div class="text-center">
-                    <h5>Datos de perfil</h5>
-                  </div>
-
-                  <hr>
-                  <div class="row">
-                    <div class="col">
-                      <h5>Goles</h5>
-                      <h6>12</h6>
-                    </div>
-
-                    <div class="col">
-                      <h5>Asistencias</h5>
-                      <h6>12</h6>
-                    </div>
-
-                    <div class="col">
-                      <h5>PJ</h5>
-                      <h6>12</h6>
-                    </div>
-
-                    <div class="col">
-                      <h5>Amonestaciones</h5>
-                      <h6>12</h6>
-                    </div>
-
-                    <div class="col">
-                      <h5>Expulsiones</h5>
-                      <h6>12</h6>
-                    </div>
-                  </div>
+                  <h5>Tiene solicitudes pendientes</h5>
+                  <button class="btn btn-info" (click)="openSolicitudes(content)">
+                    Ver solicitud
+                  </button>
 
                 </div>
               </div>
@@ -113,3 +86,22 @@
         </div>
   </div>
 </div>
+
+
+
+<ng-template #content let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Solicitudes</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+    <ul *ngFor="let solicitud of solicitudes">
+      <li>
+        {{solicitud?.message}} - {{solicitud?.isTransferenciaMessage}}
+        <button (click)="aceptarSolicitud(solicitud)">
+          Aceptar
+        </button>
+      </li>
+    </ul>
+	</div>
+</ng-template>

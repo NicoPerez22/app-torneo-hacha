@@ -1,5 +1,6 @@
-import { User } from './../../models/user';
-import { TeamService } from './../../service/team.service';
+import { UserService } from './../../../service/user.service';
+import { User } from '../../../models/user';
+import { TeamService } from '../../../service/team.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
@@ -21,13 +22,16 @@ export class HeaderComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private teamService: TeamService
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
-    if(this.user.teamPlay !== null){
-      console.log(this.user)
-      this.teamExiste = true;
+    this.user = this.authService.getUser();
+    if(this.user){
+      this.userService.getUserByID(this.user.id)
+      .subscribe(res => {
+        this.user = res
+      })
     }
   }
 

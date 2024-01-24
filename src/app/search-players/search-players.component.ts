@@ -13,14 +13,18 @@ export class SearchPlayersComponent implements OnInit {
   playersList: Array<any> = [];
   resultPlayer: Array<any> = [];
 
+  jsonInArray: Array<any> = [];
+
+  isJson = {
+    id: 0,
+    value: ""
+  }
+
   constructor(
     private userService: UserService
   ){ }
 
   ngOnInit(): void {
-    // this.teamService.getPLayers().subscribe((res) =>  {
-    //   this.playersList = res;
-    // })
   }
 
   searchPlayerKeyUp(value){
@@ -30,5 +34,8 @@ export class SearchPlayersComponent implements OnInit {
       .subscribe(res => this.resultPlayer = res)
     }
   }
+
+
+
 
 }

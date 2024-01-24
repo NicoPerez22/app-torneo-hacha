@@ -18,7 +18,7 @@ export class UserGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    const cookie = window.sessionStorage.getItem('token')
+    const cookie = sessionStorage.getItem('token')
     if(!cookie){
       this.router.navigate(['/auth/login'])
       return false;
