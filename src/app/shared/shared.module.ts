@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -11,10 +13,14 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     HttpClientModule,
-    RouterModule
+    RouterModule,
+    NgxSpinnerModule,
+    BrowserAnimationsModule
   ],
   exports: [
-    HeaderComponent
+    HeaderComponent,
+    NgxSpinnerModule,
+    BrowserAnimationsModule
   ]
 })
 export class SharedModule { }

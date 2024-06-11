@@ -23,11 +23,6 @@
                     >
                 </div>
             </div>
-<!-- 
-            <div class="col-md 6">
-                <h5>Debe ingresar el PSN ID o nombre de usuario para invitar al jugador</h5>
-            </div> -->
-
         </div>
 
         <table class="table table-hover">
@@ -46,7 +41,7 @@
                   <td>{{player.displayName}}</td>
                   <td>{{player.team}}</td>
                   <td>{{player.nacionalidad}}</td>
-                  <td><button class="btn btn-success" (click)="addPlayer(player)"><i class="bi bi-plus-circle"></i></button></td>
+                  <td><button class="btn btn-success" (click)="onAddPlayer(player)"><i class="bi bi-plus-circle"></i></button></td>
                 </tr>
             </tbody>
         </table>

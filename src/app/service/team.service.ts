@@ -50,6 +50,14 @@ export class TeamService {
 
   }
 
+  deletePlayer(id){
+    const url = this.API_URL + `team/player/${id}`
+    return this.http.delete<any>(url)
+    .pipe(
+      map((res) => res)
+    );
+  }
+
   getPLayers(id: number): Observable<any>{
     const url = this.API_URL + `users/${id}`
     return this.http.get<any>(url)
@@ -58,6 +66,13 @@ export class TeamService {
     );
   }
 
+  addPlayer(player){
+    const url = this.API_URL + `team/player`
+    return this.http.post<any[]>(url, player)
+    .pipe(
+      map((res) => res)
+    );
+  }
   
   getUser(): Observable<any[]>{
     const url = this.API_URL + `users`
@@ -94,6 +109,14 @@ export class TeamService {
   aceptarInvitacion(invtacion): Observable<any>{
     const url = this.API_URL + `team/acceptInvitacion`
     return this.http.post<any>(url, invtacion)
+    .pipe(
+      map((res) => res)
+    );
+  }
+
+  createTorneo(team){
+    const url = this.API_URL + `tournament`
+    return this.http.post<any>(url, team)
     .pipe(
       map((res) => res)
     );

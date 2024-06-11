@@ -1,11 +1,10 @@
 import { UserGuard } from './shared/guard/user.guard';
-import { TournamentModule } from './tournament/tournament.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { canActivate, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     canActivate: [UserGuard],
     path: 'home',

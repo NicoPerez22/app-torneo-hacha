@@ -1,84 +1,164 @@
-.input-align{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-
-.login-card-right{
-    background-image: url('../../../assets/images/1500x500.jpg');
-    width: 100%;
+body {
+    color: #000;
+    overflow-x: hidden;
+    height: 100%;
+    background-image: linear-gradient(111.02deg, 
+    rgba(39, 35, 67, 0.7) -7.54%, 
+    rgba(39, 35, 67, 0) 137.24%);
     background-repeat: no-repeat;
-    background-size: cover;
 }
 
-/* Login Card */
-.login-card {
-    margin-top: 10%;
-    padding: 4rem;
-    border-radius: 10px;
-    position: relative;
+input, textarea {
+    background-color: #F3E5F5;
+    border-radius: 50px !important;
+    padding: 12px 15px 12px 15px !important;
+    width: 100%;
+    box-sizing: border-box;
+    border: none !important;
+    border: 1px solid #F3E5F5 !important;
+    font-size: 16px !important;
+    color: #000 !important;
+    font-weight: 400;
 }
 
+input:focus, textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: 1px solid #D500F9 !important;
+    outline-width: 0;
+    font-weight: 400;
+}
 
-/* Responsive */
-@media (max-width: 768px) {
+button:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    outline-width: 0;
+}
 
-    body {
-        padding: 2rem 0;
+.card {
+    border-radius: 0;
+    border: none;
+}
+
+.card1 {
+    width: 50%;
+    padding: 40px 30px 10px 30px;
+}
+
+.card2 {
+    width: 50%;
+    background: rgb(25,38,133);
+    background: linear-gradient(90deg, rgba(25,38,133,1) 0%, rgba(29,101,253,1) 100%, rgba(0,0,0,1) 100%);
+}
+
+#logo {
+    width: 130px;
+    height: 100px;
+}
+
+.heading {
+    margin-bottom: 60px !important;
+}
+
+::placeholder {
+    color: #000 !important;
+    opacity: 1;
+}
+
+:-ms-input-placeholder {
+    color: #000 !important;
+}
+
+::-ms-input-placeholder {
+    color: #000 !important;
+}
+
+.form-control-label {
+    font-size: 12px;
+    margin-left: 15px;
+}
+
+.msg-info {
+    padding-left: 15px;
+    margin-bottom: 30px;
+}
+
+.btn-color {
+    border-radius: 50px;
+    color: #fff;
+    background: rgb(25,38,133);
+    background: linear-gradient(90deg, rgba(25,38,133,1) 0%, rgba(29,101,253,1) 50%, rgba(0,0,0,1) 100%);
+    padding: 15px;
+    cursor: pointer;
+    border: none !important;
+    margin-top: 40px;
+}
+
+.btn-color:hover {
+    color: #fff;
+    background-image: linear-gradient(to right, #D500F9, #8415df);
+}
+
+.btn-white {
+    border-radius: 50px;
+    color: #D500F9;
+    background-color: #fff;
+    padding: 8px 40px;
+    cursor: pointer;
+    border: 2px solid #D500F9 !important;
+}
+
+.btn-white:hover {
+    color: #fff;
+    background-image: linear-gradient(to right, #8415df, #D500F9);
+}
+
+a {
+    color: #000;
+}
+
+a:hover {
+    color: #000;
+}
+
+.bottom {
+    width: 100%;
+    margin-top: 50px !important;
+}
+
+.sm-text {
+    font-size: 15px;
+}
+
+@media screen and (max-width: 992px) {
+    .card1 {
+        width: 100%;
+        padding: 40px 30px 10px 30px;
     }
 
-    .login-card {
-        width: 280px;
-        padding: 2rem;
+    .card2 {
+        width: 100%;
     }
 
+    .right {
+        margin-top: 100px !important;
+        margin-bottom: 100px !important;
+    }
 }
 
-.card-custom {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 50%;
-    height: 500px;
-    padding-left: 0px;
-    padding-right: 0px;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-    background-color: #ffffff;
-    margin-top: 8%;
-    margin-left: 10%;
-}
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 10px !important;
+    }
 
-/* .video-custom{
-    width: 100%;
-    background-image: url(../../assets/hacha.mp4);
-} */
+    .card2 {
+        padding: 50px;
+    }
 
-.card-custom-right{
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 50%;
-    height: 500px;
-    padding-left: 0px;
-    padding-right: 0px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    background-color: #2278e2;
-    background-image: url('../../../assets/images/1500x500.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    margin-top: 8%;
-}
-
-.flex-custom{
-    margin-top: 5%;
-    margin-left: 0%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-
-.margin-custom{
-    margin-top: 8%;
+    .right {
+        margin-top: 50px !important;
+        margin-bottom: 50px !important;
+    }
 }

@@ -21,4 +21,40 @@ export class TournamentService {
       map((res) => res)
     );
   }
+
+  getTournament(): Observable<any>{
+    const url = this.API_URL + `tournament`
+    return this.http.get<any>(url)
+    .pipe(
+      map((res) => res)
+    );
+    
+  }
+
+  getTournamentByID(id): Observable<any>{
+    const url = this.API_URL + `tournament/${id}`
+    return this.http.get<any>(url)
+    .pipe(
+      map((res) => res)
+    );
+    
+  }
+
+  getTeams(): Observable<any>{
+    const url = this.API_URL + `team`
+    return this.http.get<any>(url)
+    .pipe(
+      map((res) => res)
+    );
+    
+  }
+
+  createTournament(tournament): Observable<any>{
+    const url = this.API_URL + `tournament`
+    return this.http.post<any>(url, tournament)
+    .pipe(
+      map((res) => res)
+    );
+    
+  }
 }

@@ -1,11 +1,19 @@
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  transition: 0.3s;
-  width: 100%;
-  padding-left: 0px;
-  padding-right: 0px;
+
+.card-custom {
   border-radius: 5px;
-  margin-right: 50px
+  color: white;
+  background: rgb(25,38,133);
+  background: linear-gradient(90deg, rgba(25,38,133,1) 0%, rgba(253,29,176,1) 100%, rgba(0,0,0,1) 100%);
+  background-repeat: no-repeat;
+}
+
+.img-profile{
+  border-radius: 50px;
+}
+
+.title{
+  color: white;
+  font-family: 'Lexend Deca';
 }
 
 .card:hover {
@@ -19,6 +27,67 @@
   border-bottom-color: #e95207;
 }
 
+
+.img-section{
+  z-index: -1;
+  position: absolute;
+  background-image: url('../../assets/images/eafc-24-etihad.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 90vh;
+  opacity: 0.5;
+  // filter: opacity(80%);
+  // filter: brightness(50%);
+}
+
+#background-video {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+  backface-visibility: brightness(50%);
+}
+
+h1, h2 {
+  color: white;
+  font-family: 'Lexend Deca';
+  font-weight: bold; text-align: left;
+}
+
+h4 {
+  font-family: 'Lexend Deca';
+  font-weight: bold; text-align: left;
+  color: #006BCE;
+}
+
+h1 {
+  font-size: 5rem;
+}
+
+h2 {
+  font-size: 3rem;
+}
+
+h5 {
+  color: white;
+}
+
+/* Add some content at the bottom of the video/page */
+// .content {
+//   position: fixed;
+//   bottom: 0;
+//   background: rgba(0, 0, 0, 0.5);
+//   color: #f1f1f1;
+//   width: 100%;
+//   padding: 20px;
+// }
+
 .text-notice {
   padding: 20px;
 }
@@ -26,14 +95,6 @@
 .button-card{
   margin-left: 10px;
   margin-bottom: 20px;
-}
-
-.video-custom{
-  position: absolute;
-  filter: brightness(30%);
-  right: 0;
-  bottom: 0;
-  z-index: -1;
 }
 
 .content{
@@ -62,6 +123,83 @@
   padding: 14px 70px;
   border-radius: 50px;
   margin-top: 20px;
+}
+
+.circle {
+  width: 400px; /* Width of the circle */
+  height: 400px; /* Height of the circle */
+  background-color: rgba(0, 0, 0, 0.5); /* Red color with 50% opacity */
+  border-radius: 50%; /* Makes the div a circle */
+}
+
+.circle-container {
+  position: relative;
+  // width: 100px;
+  // height: 100px;
+}
+
+.circle-image {
+  position: absolute;
+  top: -40%;
+  left: -60px;
+  width: 500px;
+  height: 600px;
+  border-radius: 50%; /* Keeps the image within the circle */
+  object-fit: cover; /* Ensures the image covers the entire circle */
+}
+
+.home-section {
+  position: relative;
+  height: 100vh; /* Full viewport height */
+  // display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.home-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../assets/images/eafc-24-etihad.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2; /* Desired opacity for the background image */
+  z-index: -1; /* Ensure the background is behind the content */
+}
+
+
+.home-content {
+  position: relative;
+  color: white;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.backFutbolGrid{
+  background-color: #006BCE;
+  position: absolute;
+  opacity: 0.2; /* Desired opacity for the background image */
+  z-index: -1; 
+}
+
+.backFutbol {
+  position: relative;
+  color: #006BCE;
+}
+
+@media (max-width: 750px) {
+  #background-video {
+    display: none;
+  } 
+  body {
+     background: url("https://assets.codepen.io/6093409/river.jpg") no-repeat;
+     background-size: cover;
+  }
 }
 
 @media (min-aspect-ratio: 16/9) {

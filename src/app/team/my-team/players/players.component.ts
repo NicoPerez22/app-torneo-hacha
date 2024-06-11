@@ -39,10 +39,29 @@ export class PlayersComponent implements OnInit {
       teamId: this.myTeam.id
     }
 
-    console.log(invitacion)
     this.teamService.sendInvitacionTeam(invitacion)
     .subscribe((res) => {
       console.log(res)
+    })
+  }
+
+  onAddPlayer(player){
+    //SOLO ADMINS
+
+    const playerPost = {
+      username: player.username,
+      userId: player.id,
+      teamId: this.myTeam.id
+    }
+    
+    this.teamService.addPlayer(playerPost)
+    .subscribe({
+      next: (res) => {
+        console.log(res)
+      },
+      error: (err) => {
+        console.log(err)
+      }
     })
   }
 

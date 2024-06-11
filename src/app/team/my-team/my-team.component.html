@@ -88,11 +88,11 @@
                   <h6>{{player?.username}}</h6>
                 </div>
 
-                <div class="col-md-3 mt-4">
+                <div class="col-md-4 mt-4">
                   <h6>{{player?.user?.dorsal}}</h6>
                 </div>
 
-                <div class="col-md-3 mt-3">
+                <div class="col-md-2 mt-3">
                   <div class="state-confirmation w-50 text-center align-items-center">
                     <h6>Habilitado</h6>
                   </div>
@@ -101,6 +101,7 @@
                 <div class="col-md-1 mt-3 offset-md-2">
                   <button
                     class="btn btn-danger"
+                    (click)="onDelete(player.id)"
                   >
                     <i class="fa fa-trash"></i>
                   </button>

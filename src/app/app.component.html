@@ -1,18 +1,15 @@
 <header *ngIf="user">
-    <app-header></app-header>
+  <app-header></app-header>
 </header>
 
-<div class="row">
-    <div class="col-12 w-100 app-body">
-      <router-outlet></router-outlet>
-    </div>
-</div>
+<router-outlet></router-outlet>
 
-<footer *ngIf="user">
-  <div class="row bg-warning footer text-center p-5 mt-2">
+
+<!-- <footer *ngIf="user">
+  <div class="row back footer text-center p-5 mt-2">
     <div class="col-sm-12">
     </div>
     <div class="col-sm-12">
     </div>
   </div>
-</footer>
+</footer> -->

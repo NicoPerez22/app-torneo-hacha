@@ -1,48 +1,60 @@
-<div class="fondo">
-    <div class="input-align">
-        <div class="login-card">
-            <div class="login-card-header">
-                <h1>Registro</h1>
-                <div>Porfavor, registrate para utilizar la plataforma</div>
-            </div>
-            <form [formGroup]="formRegisterUser" class="login-card-form">
-                <div class="form-item">
-                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-envelope"></i></span>
-                    <input 
-                        type="email" 
-                        formControlName="email"
-                        placeholder="Ingresar Mail"
-                        required
-                    >
+<div class="container px-4 py-5 mx-auto">
+    <div class="card card0">
+      <div class="d-flex flex-lg-row flex-column-reverse">
+        <div class="card card1">
+          <div class="row justify-content-center my-auto">
+            <div class="col-md-8 col-10 my-5">
+              <div class="row justify-content-center px-3 mb-3">
+                <img id="logo" src="https://i.imgur.com/PSXxjNY.png" />
+              </div>
+              <h3 class="mb-5 text-center heading">We are Tidi</h3>
+  
+              <h6 class="msg-info">Por favor, registrese para poder utilizar la plataforma</h6>
+  
+              <form [formGroup]="formRegisterUser">
+                <div class="form-group">
+                    <label class="form-control-label text-muted">Email</label>
+                    <input formControlName="email" type="email" id="email" name="email" class="form-control" />
                 </div>
 
-                <div class="form-item">
-                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-envelope"></i></span>
-                    <input 
-                        type="text" 
-                        formControlName="userName"
-                        placeholder="Ingresar PSN ID"
-                        required
-                    >
+                <div class="form-group mt-4">
+                  <label class="form-control-label text-muted">Username</label>
+                  <input formControlName="username" type="text" id="email" name="email" class="form-control" />
                 </div>
-
-                <div class="form-item">
-                    <span class="form-item-icon material-symbols-rounded"><i class="fa fa-lock"></i></span>
-                    <input 
-                        type="password" 
-                        formControlName="password"
-                        placeholder="Ingresar Contraseña"
-                        required
-                    >
+  
+                <div class="form-group mt-4">
+                  <label class="form-control-label text-muted">Password</label>
+                  <input formControlName="password" type="password" id="psw" name="psw" class="form-control" />
                 </div>
-                <div class="form-item-other">
-                    <a href="#">Olvidaste tu contraseña!</a>
+  
+                <div class="row justify-content-center my-3 px-3">
+                  <button class="btn-block btn-color" (click)="onSubmit()">Crear Cuenta</button>
                 </div>
-                <button type="submit" (click)="onSubmit()">Registrarse</button>
-            </form>
-            <div class="login-card-footer">
-                Ya tienes una cuenta? <a href="/auth/login">Login.</a>
+              </form>
+  
             </div>
+          </div>
+          <div class="bottom text-center mb-5">
+            <p href="#" class="sm-text mx-auto mb-3">
+              Ya tenes una cuenta?<button class="btn btn-white ml-4">
+                Iniciar Sesion
+              </button>
+            </p>
+          </div>
         </div>
+        <div class="card card2">
+          <div class="my-auto mx-md-5 px-md-5 right">
+            <h3 class="text-white">
+              Vivi la mejor experiencia del futbol virtual
+            </h3>
+            <small class="text-white"
+              >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat.</small
+            >
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>

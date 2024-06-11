@@ -28,14 +28,20 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     const userLogin = this.formLoginUser.value;
 
-    this.authService.login(userLogin).subscribe((res) => {
-      if (res.status == 200) {
-        sessionStorage.setItem('token', res.token);
-        this.authService.saveUser(res.user);
-        this.authService.setUserObservable = res.user;
-        this.router.navigate(['/home']);
-      } else {
-        this.toastrService.error(res.message);
+    this.authService.login(userLogin)
+    .subscribe({
+      next: (res) => {
+        if (res.status == 200) {
+          sessionStorage.setItem('token', res.token);
+          this.authService.saveUser(res.user);
+          this.authService.setUserObservable = res.user;
+          this.router.navigate(['/home']);
+        } else {
+          this.toastrService.error(res.message);
+        }
+      },
+      error: (error) => {
+        this.toastrService.error(error.message);
       }
     });
   }

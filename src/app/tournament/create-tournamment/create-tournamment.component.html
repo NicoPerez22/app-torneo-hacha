@@ -1,72 +1,88 @@
 <div class="container">
-  <div class="card" style="margin-top: 5%">
+  <div class="card" style="margin-top: 15%">
     <div class="card-header">
-      <h5>Crear Torneo</h5>
+      <div>
+        <h2 class="text-center">CREAR TORNEO</h2>
+      </div>
     </div>
 
-    <div class="card-content" style="margin-top: 5%; margin-bottom: 5%">
-      <form
-        [formGroup]="torneoForm"
-        style="padding-left: 5%; padding-right: 5%"
-      >
+    <div class="card-content" style="padding: 5%">
+      <form nz-form nzLayout="vertical" [formGroup]="torneoForm">
         <div class="row">
-          <div class="col-md-6">
-            <label>Nombre del torneo</label>
-            <input class="form-control" formControlName="nombreTorneo" />
+          <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label nzFor="name">Nombre del torneo</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="name" type="email" id="email" />
+              </nz-form-control>
+            </nz-form-item>
           </div>
 
-          <div class="col-md-6">
-            <label>Formato</label>
-            <select
-              class="form-select"
-              formControlName="formatoTorneo"
-              aria-label="Default select example"
-            >
-              <option selected="true" disabled value="0">
-                Seleccionar Formato
-              </option>
-              <option *ngFor="let ft of formatTorneo"
-                [value]="ft.id">{{ ft.descripcion }}</option>
-            </select>
+          <!-- <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label nzFor="email">Modalidad</nz-form-label>
+              <nz-form-control>
+                <nz-select ngModel="lucy">
+                  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+                  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+                  <nz-option
+                    nzValue="disabled"
+                    nzLabel="Disabled"
+                    nzDisabled
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label nzFor="email">Formato</nz-form-label>
+              <nz-form-control>
+                <nz-select ngModel="lucy">
+                  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+                  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+                  <nz-option
+                    nzValue="disabled"
+                    nzLabel="Disabled"
+                    nzDisabled
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div> -->
+
+          <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label nzFor="teams">Equipos</nz-form-label>
+              <nz-form-control>
+                <nz-select formControlName="teams" (ngModelChange)="onSelectTeam($event)">
+                  <nz-option
+                    *ngFor="let item of teams"
+                    [nzValue]="item.id"   
+                    [nzLabel]="item.name"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
           </div>
         </div>
 
-        <div class="row" style="margin-top: 5%">
-          <div class="col-md-6">
-            <label>Modalidad</label>
-            <select
-              class="form-select"
-              formControlName="modalidadTorneo"
-              aria-label="Default select example"
+        <div class="row mt-2">
+          <div class="col-md-2 mt-5" *ngFor="let item of teamsSelected">
+            <div
+              class="card-teams"
+              style="display: flex; flex-direction: column; align-items: center"
             >
-              <option selected>Open this select menu</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
+              <img
+                src="../../../assets/images/HYT-IESA.png"
+                width="60"
+                height="60"
+                alt=""
+              />
+              <span><b>{{ item.name }}</b></span>
+            </div>
           </div>
-
-          <div class="col-md-6">
-            <label>Cantidad de equipos</label>
-            <select
-              class="form-select"
-              formControlName="cantidadEquipos"
-              aria-label="Default select example"
-            >
-              <option selected>Open this select menu</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top: 5%">
-          <div class="col-md-6">
-            <button class="btn btn-warning">Agregar logo</button>
-          </div>
-
-          <div class="col-md-6"></div>
         </div>
       </form>
     </div>

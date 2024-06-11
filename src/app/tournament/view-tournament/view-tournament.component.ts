@@ -1,5 +1,6 @@
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
+import { TournamentService } from '../service/tournament.service';
 
 @Component({
   selector: 'app-view-tournament',
@@ -16,11 +17,36 @@ export class ViewTournamentComponent implements OnInit {
     { id: 2, name: "CSGO" },
   ];
 
+  listaEquipos = [
+    { id: 1, name: "HACHA Y TIZA ESPORTS", logo: '../../assets/images/HYT-IESA.png' },
+    { id: 2, name: "AESMA GAMING", logo: '../../assets/images/logo 1.png' },
+    { id: 3, name: "GIMNASIA ESPORTS", logo: '../../assets/images/GELP.png' },
+    { id: 4, name: "HYT ESPORTS", logo: '../../assets/images/logo 2.png' },
+  ]
+
+  tournament
+  id
+
   constructor(
-    private router: Router
+    private route: ActivatedRoute,
+    private router: Router,
+    private tournamentService: TournamentService
   ){ }
 
   ngOnInit(): void {
+    this.route.params.subscribe((params: any) => {
+      this.id = +params.id
+    })
+
+    this.tournamentService.getTournamentByID(this.id)
+    .subscribe({
+      next:(resp) => {
+        this.tournament = resp
+      },
+      error: (error) => {
+        console.log(error)
+      }
+    })
   }
 
   formatoLiga(){

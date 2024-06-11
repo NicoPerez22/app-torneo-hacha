@@ -1,7 +1,7 @@
 import { UserService } from './../../../service/user.service';
 import { User } from '../../../models/user';
 import { TeamService } from '../../../service/team.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 
@@ -13,6 +13,8 @@ import { AuthService } from 'src/app/service/auth.service';
 export class HeaderComponent implements OnInit {
   @Input() user: any;
 
+  isScrolled = false;
+  
   teamsList: Array<any> = [];
   playerList: Array<User> = [];
   myUser: any;
@@ -33,6 +35,11 @@ export class HeaderComponent implements OnInit {
         this.user = res
       })
     }
+  }
+  
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.isScrolled = window.scrollY > 50;
   }
 
   logout(){

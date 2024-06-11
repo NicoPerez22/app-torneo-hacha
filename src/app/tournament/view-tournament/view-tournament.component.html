@@ -1,85 +1,85 @@
 <div class="container">
+  <div style="margin-top: 15%; border-radius: 8px;">
+    <h2 class="text-center" style="color: white;">{{tournament?.name}}</h2>
+    <h6 class="text-center" style="color: white;">Fase Eliminatoria - Octavos de Final</h6>
+  </div>
 
-  <div class="row" style="margin-top: 5%; margin-bottom:5%">
-    <div class="col">
-      <div class="card fondo-card">
-        <h6 class="text-center" style="padding: 10%;">TABLA DE POSICIONES</h6>
-      </div>
-    </div>
+  <div style="margin-top: 3%;" class="row justify-content-center">
+    <div class="card mt-4" *ngFor="let item of tournament?.rounds" style="border-radius: 15px; height: 70px; width: 60%;">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-5">
+            <div class="d-flex flex-row justify-content-center bd-highlight align-content-center">
+              <div class="col-md-2">
+                <img src="../../../assets/images/HYT-IESA.png" width="50" height="45"/>
+              </div>
 
-    <div class="col">
-      <div class="card fondo-card">
-        <h6 class="text-center" style="padding: 10%;">CALENDARIO</h6>
-      </div>
-    </div>
+              <div class="col-md-5 align-content-center ml-5">
+                <h6 class="">
+                  {{item.home}}
+                </h6>
+                <!-- <p>Argentina</p> -->
+              </div>
+            </div>
+          </div>
 
-    <div class="col">
-      <div class="card fondo-card">
-        <h6 class="text-center" style="padding: 10%;">GOLEADORES</h6>
-      </div>
-    </div>
+          <div class="col-md-2">
+            <div class="row">
+              <div class="col">
+                <h5>0</h5>
+              </div>
+              <div class="col">
+                <h5>-</h5>
+              </div>
+              <div class="col">
+                <h5>0</h5>
+              </div>
+            </div>
+          </div>
 
-    <div class="col">
-      <div class="card fondo-card">
-        <h6 class="text-center" style="padding: 10%;">ASISTENCIAS</h6>
+
+          <div class="col-md-5">
+            <div class="d-flex flex-row-reverse justify-content-center bd-highlight align-content-center">
+              <div class="col-md-2">
+                <img src="../../../assets/images/HYT-IESA.png" width="50" height="45"/>
+              </div>
+
+              <div class="col-md-5 align-content-center">
+                <h6 class="">
+                  {{item.away}}
+                </h6>
+                <!-- <p>Argentina</p> -->
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="card-custom">
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">POS</th>
-          <th scope="col"></th>
-          <th scope="col">Equipo</th>
-          <th scope="col">PTS</th>
-          <th scope="col">PJ</th>
-          <th scope="col">GF</th>
-          <th scope="col">GE</th>
-          <th scope="col">DIF</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td scope="row">1</td>
-          <td>
-            <img src="../../../assets/images/HYT-IESA.png" width="40" height="40">
-          </td>
-          <td>Hacha y tiza eSports</td>
-          <td>42</td>
-          <td>18</td>
-          <td>32</td>
-          <td>10</td>
-          <td>22</td>
-        </tr>
-        <tr>
-          <td scope="row">1</td>
-          <td>
-            <img src="../../../assets/images/GELP.png" width="40" height="40">
-          </td>
-          <td>Hacha y tiza eSports</td>
-          <td>42</td>
-          <td>18</td>
-          <td>32</td>
-          <td>10</td>
-          <td>22</td>
-        </tr>
-        <tr>
-          <td scope="row">1</td>
-          <td>
-            <img src="../../../assets/images/HYT-IESA.png" width="40" height="40">
-          </td>
-          <td>Hacha y tiza eSports</td>
-          <td>42</td>
-          <td>18</td>
-          <td>32</td>
-          <td>10</td>
-          <td>22</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+
+  <!-- <nz-table #basicTable [nzData]="listaEquipos" style="margin-top: 10%; border-radius: 8px;" class="bg-dark">
+    <thead>
+      <tr>
+        <th>Equipo</th>
+        <th>Puntos</th>
+        <th>PJ</th>
+        <th>GF</th>
+        <th>GE</th>
+        <th>DIF</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td><img src="{{ data.logo }}" width="50" height="45"/> {{ data.name }}</td>
+        <td>35</td>
+        <td>35</td>
+        <td>35</td>
+        <td>35</td>
+        <td>35</td>
+      </tr>
+    </tbody>
+  </nz-table> -->
 </div>
 
 

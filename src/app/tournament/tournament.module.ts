@@ -7,7 +7,9 @@ import { CommonModule } from '@angular/common';
 import { ViewTournamentComponent } from './view-tournament/view-tournament.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { CreateTournammentComponent } from './create-tournamment/create-tournamment.component';
-import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 @NgModule({
@@ -19,7 +21,9 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
     ReactiveFormsModule,
     TournamentRoutingModule,
     NzTableModule,
-    NzStepsModule
+    NzInputModule,
+    NzSelectModule,
+    NzFormModule
   ]
 })
 export class TournamentModule { }

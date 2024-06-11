@@ -3,6 +3,7 @@ import { TeamService } from './../../service/team.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PlayersComponent } from './players/players.component';
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 @Component({
   selector: 'app-my-team',
@@ -41,6 +42,21 @@ export class MyTeamComponent implements OnInit {
 
   openModalSearchPlayers(){
     this.modalService.open(PlayersComponent)
+  }
+
+  onDelete(id){
+    this.teamService.deletePlayer(id)
+    .subscribe(res => {
+      if(res){
+        Swal.fire({
+          title: 'Error!',
+          text: 'Do you want to continue',
+          icon: 'success',
+          Animation: true,
+          position: 'top-end'
+        })
+      }
+    })
   }
 
 }
