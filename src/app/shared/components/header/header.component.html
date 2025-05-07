@@ -37,9 +37,10 @@
         <ul class="group">
           <li class="item" routerLink="/home">INICIO</li>
           <li class="item" routerLink="/tournament">TORNEOS</li>
-          <!-- <li class="item" routerLink="/team/create-team" *ngIf="!user?.teamPlay">Crear equipo</li> -->
+          <li class="item" routerLink="/team/create-team" *ngIf="!user?.teamPlay">CREAR EQUIPO</li>
           <li class="item" routerLink="/team/my-team" *ngIf="user?.teamPlay">MI EQUIPO</li>
           <li class="item" routerLink="/search-player">BUSCAR JUGADOR</li>
+          <li class="item">FANTASY <span class="become">Proximamente</span></li>
         </ul>
       </ul>
 

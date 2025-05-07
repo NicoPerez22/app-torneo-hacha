@@ -7,5 +7,5 @@ export const loadPlayers = createAction(
 
 export const LoadedPlayers = createAction(
     '[Player List] Loaded Success',
-    props<{Players: PlayerModel[]}>()
+    props<{ Players: any[] }>()
 )

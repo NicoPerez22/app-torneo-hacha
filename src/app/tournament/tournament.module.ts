@@ -10,14 +10,19 @@ import { CreateTournammentComponent } from './create-tournamment/create-tournamm
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { SharedModule } from '../shared/shared.module';
+import { FiltersComponent } from './filters/filters.component';
+import { InputComponent } from './filters/input/input.component';
+import { SelectComponent } from './filters/select/select.component';
 
 
 @NgModule({
-  declarations: [TournamentComponent, ViewTournamentComponent, CreateTournammentComponent],
+  declarations: [TournamentComponent, ViewTournamentComponent, CreateTournammentComponent, FiltersComponent, InputComponent, SelectComponent],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
+    SharedModule,
     ReactiveFormsModule,
     TournamentRoutingModule,
     NzTableModule,

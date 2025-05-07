@@ -35,7 +35,7 @@ const routes: Routes = [
 
   {
     path: 'tournament',
-    canActivate: [UserGuard],
+    // canActivate: [UserGuard],
     loadChildren: () => import('../app/tournament/tournament.module').then(m => m.TournamentModule)
   },
 ];

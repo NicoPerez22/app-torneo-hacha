@@ -15,12 +15,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     RouterModule,
     NgxSpinnerModule,
-    BrowserAnimationsModule
   ],
   exports: [
+    CommonModule,
     HeaderComponent,
     NgxSpinnerModule,
-    BrowserAnimationsModule
   ]
 })
 export class SharedModule { }

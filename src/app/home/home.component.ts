@@ -1,6 +1,7 @@
 import { TeamService } from './../service/team.service';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../service/auth.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 // import { Router } from '@angular/router';
 // import { User } from '../Models/User-Model';
 // import { Subscription } from 'rxjs';
@@ -20,14 +21,18 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private spinnerService: NgxSpinnerService
   ) {
+
     this.authService.getUserObservable.subscribe((resp) => {
       this.user = resp;
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
 
 
 

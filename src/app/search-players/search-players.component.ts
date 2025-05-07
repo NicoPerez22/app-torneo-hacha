@@ -2,6 +2,10 @@ import { AuthService } from './../service/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { TeamService } from '../service/team.service';
 import { UserService } from '../service/user.service';
+import { Store } from '@ngrx/store';
+import { LoadedPlayers, loadPlayers } from '../state/actions/players.actions';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { TournamentService } from '../tournament/service/tournament.service';
 
 @Component({
   selector: 'app-search-players',
@@ -21,10 +25,29 @@ export class SearchPlayersComponent implements OnInit {
   }
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private tournamentService: TournamentService,
+    private spinnerService: NgxSpinnerService,
+    private store: Store<any>
   ){ }
 
   ngOnInit(): void {
+    this.tournamentService.getGames()
+    .subscribe({
+      next: (res) => {
+        this.playersList = res.results
+        this.store.dispatch(LoadedPlayers(
+          { Players: res.results }
+        ))
+
+        setTimeout(() => {
+          this.spinnerService.hide();
+        }, 1000)
+      },
+      error: () => {
+      }
+    }
+    )    
   }
 
   searchPlayerKeyUp(value){

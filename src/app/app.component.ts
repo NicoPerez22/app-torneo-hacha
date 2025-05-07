@@ -9,10 +9,15 @@ import { AuthService } from './service/auth.service';
 export class AppComponent {
   title = 'ivg-latam';
   user
+  showHeader: boolean = false;
 
   constructor(
     private authService: AuthService
   ) {
     this.user = this.authService.getUser();
+
+    if (this.user) {
+      this.showHeader = true;
+    }
   }
 }

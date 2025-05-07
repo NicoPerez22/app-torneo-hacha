@@ -28,8 +28,8 @@ export class TeamComponent implements OnInit {
   ){ }
 
   ngOnInit(): void {
-    this.teamService.getTeam().subscribe((res) => this.teamList = res);
-    this.createFormTeam();
+    // this.teamService.getTeam().subscribe((res) => this.teamList = res);
+    // this.createFormTeam();
   }
 
   onSubmit(){

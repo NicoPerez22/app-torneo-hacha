@@ -70,3 +70,13 @@
 .navbar.scrolled {
   background-color: rgba(0, 0, 0, 0.8) !important;
 }
+
+.become{
+    background-color: #41a9ff;
+    color: black;
+    border-radius: 8px;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-size: 13px;
+    font-weight: bold;
+}

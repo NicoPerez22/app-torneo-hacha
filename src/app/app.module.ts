@@ -20,9 +20,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { AuthGuard } from '@angular/fire/auth-guard';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
-import { playerReducer } from './state/reduce/player.reduce';
 import { SharedModule } from './shared/shared.module';
-import { NgxSpinnerModule } from 'ngx-spinner';
 
 registerLocaleData(es);
 

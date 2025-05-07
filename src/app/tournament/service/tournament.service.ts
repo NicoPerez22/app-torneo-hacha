@@ -57,4 +57,13 @@ export class TournamentService {
     );
     
   }
+  
+  getGames(): Observable<any>{
+    const url = 'https://pokeapi.co/api/v2/pokemon'
+    return this.http.get<any>(url)
+    .pipe(
+      map((res) => res)
+    );
+    
+  }
 }
