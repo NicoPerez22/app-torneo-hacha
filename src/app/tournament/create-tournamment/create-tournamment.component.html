@@ -1,103 +1,193 @@
 <div class="container">
-  <div class="card" style="margin-top: 15%">
-    <div class="card-header">
-      <div>
-        <h2 class="text-center">CREAR TORNEO</h2>
-      </div>
-    </div>
+  <div class="row">
+    <div class="col-12">
+      <nz-steps [nzCurrent]="current">
+        <nz-step nzTitle="Datos del torneo"></nz-step>
+        <nz-step nzTitle="Equipos"></nz-step>
+        <nz-step nzTitle="Draft"></nz-step>
+      </nz-steps>
 
-    <div class="card-content" style="padding: 5%">
-      <form nz-form nzLayout="vertical" [formGroup]="torneoForm">
-        <div class="row">
-          <div class="col-md-3">
-            <nz-form-item>
-              <nz-form-label nzFor="name">Nombre del torneo</nz-form-label>
-              <nz-form-control>
-                <input nz-input formControlName="name" type="email" id="email" />
-              </nz-form-control>
-            </nz-form-item>
-          </div>
+      <div class="steps-content">
+        <form nz-form nzLayout="vertical" [formGroup]="form">
+          <div *ngIf="index == 0">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-item>
+                  <nz-form-label nzFor="name">Nombre del torneo</nz-form-label>
+                  <nz-form-control>
+                    <input
+                      nz-input
+                      formControlName="name"
+                      type="email"
+                      id="email"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
 
-          <!-- <div class="col-md-3">
-            <nz-form-item>
-              <nz-form-label nzFor="email">Modalidad</nz-form-label>
-              <nz-form-control>
-                <nz-select ngModel="lucy">
-                  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-                  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-                  <nz-option
-                    nzValue="disabled"
-                    nzLabel="Disabled"
-                    nzDisabled
-                  ></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
+              <div class="col-md-4">
+                <nz-form-item class="mb-0">
+                  <nz-form-label nzFor="description" nzRequired
+                    >Formatos del torneo</nz-form-label
+                  >
+                  <nz-form-control
+                    nzHasFeedback
+                    [nzErrorTip]="descriptionErrorTpl"
+                  >
+                    <nz-select
+                      tabindex="4"
+                      nzPlaceHolder="Seleccione"
+                      formControlName="description"
+                      nzShowSearch
+                    >
+                      <nz-option
+                        *ngFor="let elem of formats"
+                        [nzValue]="elem.id"
+                        [nzLabel]="elem.description"
+                      ></nz-option>
+                    </nz-select>
 
-          <div class="col-md-3">
-            <nz-form-item>
-              <nz-form-label nzFor="email">Formato</nz-form-label>
-              <nz-form-control>
-                <nz-select ngModel="lucy">
-                  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-                  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-                  <nz-option
-                    nzValue="disabled"
-                    nzLabel="Disabled"
-                    nzDisabled
-                  ></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div> -->
+                    <ng-template #descriptionErrorTpl let-control>
+                      <span *ngIf="control.hasError('required')">
+                        El formato es obligatorio
+                      </span>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
 
-          <div class="col-md-3">
-            <nz-form-item>
-              <nz-form-label nzFor="teams">Equipos</nz-form-label>
-              <nz-form-control>
-                <nz-select formControlName="teams" (ngModelChange)="onSelectTeam($event)">
-                  <nz-option
-                    *ngFor="let item of teams"
-                    [nzValue]="item.id"   
-                    [nzLabel]="item.name"
-                  ></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
+              <div class="col-md-3">
+                <nz-form-item class="mb-0">
+                  <nz-form-label nzFor="countTeams" nzRequired
+                    >Cantidad de equipos</nz-form-label
+                  >
+                  <nz-form-control
+                    nzHasFeedback
+                    [nzErrorTip]="countTeamsErrorTpl"
+                  >
+                    <nz-select
+                      tabindex="4"
+                      nzPlaceHolder="Seleccione"
+                      formControlName="countTeams"
+                      nzShowSearch
+                    >
+                      <nz-option
+                        *ngFor="let elem of cantTeams"
+                        [nzValue]="elem.id"
+                        [nzLabel]="elem.value"
+                      ></nz-option>
+                    </nz-select>
 
-        <div class="row mt-2">
-          <div class="col-md-2 mt-5" *ngFor="let item of teamsSelected">
-            <div
-              class="card-teams"
-              style="display: flex; flex-direction: column; align-items: center"
-            >
-              <img
-                src="../../../assets/images/HYT-IESA.png"
-                width="60"
-                height="60"
-                alt=""
-              />
-              <span><b>{{ item.name }}</b></span>
+                    <ng-template #countTeamsErrorTpl let-control>
+                      <span *ngIf="control.hasError('required')">
+                        El formato es obligatorio
+                      </span>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div class="row">
+              <div
+                class="d-flex justify-content-center mt-5"
+                *ngIf="!images.length"
+              >
+                <input
+                  type="file"
+                  #fileInput
+                  accept="image/*"
+                  (change)="onLoadImage($event)"
+                  style="display: none"
+                />
+                <button
+                  type="button"
+                  (click)="fileInput.click()"
+                  class="btn-custom-file"
+                >
+                  Seleccione logo
+                </button>
+              </div>
+
+              <div class="d-flex justify-content-center" *ngIf="showSpinner">
+                <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+              </div>
+
+              <div class="d-flex justify-content-center" *ngIf="images.length">
+                <div *ngFor="let image of images" style="margin-top: 5%">
+                  <img [src]="image.url" width="100" />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
-    </div>
 
-    <div class="card-footer">
-      <div style="display: flex; justify-content: center; gap: 20px">
-        <div>
-          <button class="btn btn-info">Volver Atras</button>
-        </div>
+          <div *ngIf="index == 1">
+            <div class="col-md-4">
+              <nz-form-item>
+                <nz-form-label nzFor="teams">Equipos</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    formControlName="teams"
+                    (ngModelChange)="onSelectTeam($event)"
+                  >
+                    <nz-option
+                      *ngFor="let item of teams"
+                      [nzValue]="item.id"
+                      [nzLabel]="item.name"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
 
-        <div>
-          <button class="btn btn-success" (click)="onSubmitData()">
-            Crear Torneo
-          </button>
-        </div>
+            <div class="row mt-2">
+              <div class="col-auto mt-5" *ngFor="let item of teamsSelected">
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                  "
+                >
+                  <img
+                    [src]="item.logo.secureUrl"
+                    width="40"
+                    height="60"
+                    alt=""
+                  />
+                  <span
+                    ><b>{{ item.name }}</b></span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="index == 2">ss</div>
+        </form>
+      </div>
+
+      <hr style="border-top: 0px" />
+
+      <div class="steps-action">
+        <button class="btn btn-primary" (click)="pre()" *ngIf="current > 0">
+          <span>Previous</span>
+        </button>
+        <button class="btn btn-primary" (click)="next()" *ngIf="current < 2">
+          <span>Next</span>
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          (click)="done()"
+          *ngIf="current === 2"
+        >
+          <span>Done</span>
+        </button>
+
+        <!-- <div class="text-center mt-5">
+          <button class="btn btn-warning">Crear torneo</button>
+        </div> -->
       </div>
     </div>
   </div>

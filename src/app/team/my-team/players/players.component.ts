@@ -1,91 +1,72 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { TeamService } from './../../../service/team.service';
-import { Component, Input, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TeamService } from 'src/app/service/team.service';
 
 @Component({
   selector: 'app-players',
   templateUrl: './players.component.html',
-  styleUrls: ['./players.component.css']
+  styleUrls: ['./players.component.css'],
 })
 export class PlayersComponent implements OnInit {
-
-  @Input() myTeam;
-  @Input() user;
-  playersList: Array<any> = [];
-  team;
+  form: FormGroup;
+  teams: Array<any> = [];
   players: Array<any> = [];
-  resultPlayer: Array<any> = [];
 
   constructor(
-    private modalService: NgbModal,
-    private teamService: TeamService,
-    private toastService: ToastrService
-  ){ }
+    private readonly fb: FormBuilder,
+    private readonly teamService: TeamService,
+    private readonly toasteService: ToastrService,
+    private readonly modalRef: NzModalRef,
+  ) {}
 
   ngOnInit(): void {
-
+    this._initForm();
+    this._getTeams();
   }
 
-  sendPlayer(content){
-    this.modalService.open(content, { size: 'xl' });
+  onChangeTeam() {
+    this._getPlayersByIdTeam(this.form.get('teamOrigin').value);
   }
 
-  addPlayer(player){
-    const invitacion = {
-      message: 'Tiene una solicitud disponible',
-      estado: true,
-      userId: player.id,
-      teamId: this.myTeam.id
-    }
+  onSubmit() {
+    const id = this.form.get('player').value;
+    const idTeam = this.form.get('teamDestination').value;
 
-    this.teamService.sendInvitacionTeam(invitacion)
-    .subscribe((res) => {
-      console.log(res)
-    })
-  }
-
-  onAddPlayer(player){
-    //SOLO ADMINS
-
-    const playerPost = {
-      username: player.username,
-      userId: player.id,
-      teamId: this.myTeam.id
-    }
-    
-    this.teamService.addPlayer(playerPost)
-    .subscribe({
-      next: (res) => {
-        console.log(res)
+    this.teamService.transferPalyer(id, idTeam).subscribe({
+      next: (resp) => {
+        this.toasteService.success(resp.msg);
+        this.modalRef.close(true);
       },
-      error: (err) => {
-        console.log(err)
-      }
-    })
+
+      error: () => {},
+    });
   }
 
-  searchPlayerKeyUp(value){
-    if(value.length > 3){
-      this.teamService.getUser()
-      .subscribe(res => {
-        this.playersList = res;
-        this.resultPlayer = this.playersList.filter(elem => elem.username == value);
-      })
-    }
+  private _initForm() {
+    this.form = this.fb.group({
+      teamOrigin: [null, Validators.required],
+      player: [null, Validators.required],
+      teamDestination: [null, Validators.required],
+    });
   }
 
-  reset(value){
-    if(value.length == 0){
-      this.resultPlayer = this.playersList;
-    }
+  private _getTeams() {
+    this.teamService.getTeams().subscribe({
+      next: (resp) => {
+        this.teams = resp.data;
+      },
+    });
   }
 
-  confirmPlayers(){
-    // this.teamService.updateTeam(this.players, this.myTeam)
-    // .then(() => {
-    //   this.toastService.success('Jugador guardado con exito', 'Exito')
-    // })
-  }
+  private _getPlayersByIdTeam(id) {
+    this.teamService.getPlayersByIdTeam(id).subscribe({
+      next: (resp) => {
+        this.players = resp.data;
+      },
 
+      error: () => {},
+    });
+  }
 }

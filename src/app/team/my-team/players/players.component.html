@@ -1,68 +1,59 @@
-<div class="text-center">
-    <button class="btn btn-success" (click)="sendPlayer(content)">
-        <i class="fa fa-user"></i>
-        Invitar jugador
-    </button>
+<div class="container">
+  <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
+    <div class="row">
+      <div class="col-md-4">
+        <nz-form-item>
+          <nz-form-label nzFor="teams">Equipos Origen</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              formControlName="teamOrigin"
+              (ngModelChange)="onChangeTeam()"
+            >
+              <nz-option
+                *ngFor="let item of teams"
+                [nzValue]="item.id"
+                [nzLabel]="item.name"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col-md-4">
+        <nz-form-item>
+          <nz-form-label nzFor="teams">Juagdores</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="player">
+              <nz-option
+                *ngFor="let item of players"
+                [nzValue]="item.id"
+                [nzLabel]="item.name"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col-md-4">
+        <nz-form-item>
+          <nz-form-label nzFor="teams">Equipo Destino</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="teamDestination">
+              <nz-option
+                *ngFor="let item of teams"
+                [nzValue]="item.id"
+                [nzLabel]="item.name"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-2">
+        <button class="btn btn-warning" (click)="onSubmit()">Confirmar</button>
+      </div>
+    </div>
+  </form>
 </div>
-
-<ng-template #content let-modal>
-	<div class="modal-header">
-		<h4 class="modal-title">Invitar jugador</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-	</div>
-	<div class="modal-body">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="search-bar">
-                    <input 
-                        class="search-bar-style" 
-                        placeholder="Buscar jugador"
-                        #searchPlayer
-                        (keyup)="searchPlayerKeyUp(searchPlayer.value)"
-                        (keyup.backspace)="reset(searchPlayer.value)"
-                    >
-                </div>
-            </div>
-        </div>
-
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                  <th>PSN ID</th>
-                  <th>Nombre</th>
-                  <th>Equipo</th>
-                  <th>Nacionalidad</th>
-                  <th>Agregar Jugador</th>
-                </tr>
-            </thead>
-            <tbody *ngFor="let player of resultPlayer">
-                <tr>
-                  <td>{{player.username}}</td>
-                  <td>{{player.displayName}}</td>
-                  <td>{{player.team}}</td>
-                  <td>{{player.nacionalidad}}</td>
-                  <td><button class="btn btn-success" (click)="onAddPlayer(player)"><i class="bi bi-plus-circle"></i></button></td>
-                </tr>
-            </tbody>
-        </table>
-		<!-- <ul class="items-ul" *ngFor="let player of playersList">
-            <h6>{{player.userName}}</h6>
-            <h6>{{player.displayName}}</h6>
-            <h6>{{player.team}}</h6>
-            <h6>{{player.nacionalidad}}</h6>
-            <h6>
-                <button class="btn btn-success" (click)="addPlayer(player)">
-                    Agregar jugador
-                </button>
-            </h6>
-        </ul> -->
-	</div>
-	<div class="modal-footer-custom">
-        <!-- <div>
-            <h6>Debe confirmar los cambios para que los jugadores ingresen al equipo</h6>
-        </div> -->
-        <div>
-            <button type="button" class="btn btn-info" (click)="confirmPlayers()">Confirmar cambios</button>
-        </div>
-	</div>
-</ng-template>

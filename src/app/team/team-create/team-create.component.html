@@ -1,0 +1,96 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <div>
+        <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
+          <div class="row justify-content-center">
+            <div class="col-md-4">
+              <nz-form-item class="mb-0">
+                <nz-form-label nzFor="name" nzRequired
+                  >Nombre del equipo</nz-form-label
+                >
+                <nz-form-control nzHasFeedback [nzErrorTip]="nameErrorTpl">
+                  <input
+                    nz-input
+                    formControlName="name"
+                    type="text"
+                    id="name"
+                  />
+
+                  <ng-template #nameErrorTpl let-control>
+                    <span *ngIf="control.hasError('required')">
+                      El nombre es obligatorio
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="col-md-4">
+              <nz-form-item class="mb-0">
+                <nz-form-label nzFor="abreviatura" nzRequired
+                  >Abreviatura</nz-form-label
+                >
+                <nz-form-control
+                  nzHasFeedback
+                  [nzErrorTip]="abreviaturaErrorTpl"
+                >
+                  <input
+                    nz-input
+                    formControlName="abreviatura"
+                    type="text"
+                    id="abreviatura"
+                  />
+
+                  <ng-template #abreviaturaErrorTpl let-control>
+                    <span *ngIf="control.hasError('required')">
+                      La abreviatura es obligatoria
+                    </span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div class="row">
+            <div
+              class="d-flex justify-content-center mt-5"
+              *ngIf="!images.length"
+            >
+              <input
+                type="file"
+                #fileInput
+                accept="image/*"
+                (change)="onLoadImage($event)"
+                style="display: none"
+              />
+              <button
+                type="button"
+                (click)="fileInput.click()"
+                class="btn-custom-file"
+              >
+                Seleccione logo
+              </button>
+            </div>
+
+            <div class="d-flex justify-content-center" *ngIf="showSpinner">
+              <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+            </div>
+
+            <div class="d-flex justify-content-center" *ngIf="images.length">
+              <div *ngFor="let image of images" style="margin-top: 5%">
+                <img [src]="image.url" width="100" />
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-5">
+            <button class="btn btn-warning" (click)="onSubmit()">
+              Crear equipo
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

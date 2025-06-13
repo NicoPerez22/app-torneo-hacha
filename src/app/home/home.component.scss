@@ -1,17 +1,21 @@
-
 .card-custom {
   border-radius: 5px;
   color: white;
-  background: rgb(25,38,133);
-  background: linear-gradient(90deg, rgba(25,38,133,1) 0%, rgba(253,29,176,1) 100%, rgba(0,0,0,1) 100%);
+  background: rgb(25, 38, 133);
+  background: linear-gradient(
+    90deg,
+    rgba(25, 38, 133, 1) 0%,
+    rgba(253, 29, 176, 1) 100%,
+    rgba(0, 0, 0, 1) 100%
+  );
   background-repeat: no-repeat;
 }
 
-.img-profile{
+.img-profile {
   border-radius: 50px;
 }
 
-.title{
+.title {
   color: white;
   font-family: 'Lexend Deca';
 }
@@ -20,15 +24,14 @@
   box-shadow: 0 8px 16px 0 rgba(255, 255, 255, 0.2);
 }
 
-.back-color{
+.back-color {
   border-bottom-width: 4px;
   background-color: #2b2a2a;
   border-bottom-style: solid;
   border-bottom-color: #e95207;
 }
 
-
-.img-section{
+.img-section {
   z-index: -1;
   position: absolute;
   background-image: url('../../assets/images/eafc-24-etihad.jpg');
@@ -54,16 +57,19 @@
   backface-visibility: brightness(50%);
 }
 
-h1, h2 {
+h1,
+h2 {
   color: white;
   font-family: 'Lexend Deca';
-  font-weight: bold; text-align: left;
+  font-weight: bold;
+  text-align: left;
 }
 
 h4 {
   font-family: 'Lexend Deca';
-  font-weight: bold; text-align: left;
-  color: #006BCE;
+  font-weight: bold;
+  text-align: left;
+  color: #006bce;
 }
 
 h1 {
@@ -92,12 +98,12 @@ h5 {
   padding: 20px;
 }
 
-.button-card{
+.button-card {
   margin-left: 10px;
   margin-bottom: 20px;
 }
 
-.content{
+.content {
   margin-top: 15%;
   margin-left: 10%;
   text-align: left;
@@ -149,7 +155,6 @@ h5 {
 }
 
 .home-section {
-  position: relative;
   height: 100vh; /* Full viewport height */
   // display: flex;
   align-items: center;
@@ -160,7 +165,7 @@ h5 {
 }
 
 .home-section::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -173,70 +178,68 @@ h5 {
   z-index: -1; /* Ensure the background is behind the content */
 }
 
-
 .home-content {
   position: relative;
   color: white;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
 }
 
-.backFutbolGrid{
-  background-color: #006BCE;
+.backFutbolGrid {
+  background-color: #006bce;
   position: absolute;
   opacity: 0.2; /* Desired opacity for the background image */
-  z-index: -1; 
+  z-index: -1;
 }
 
 .backFutbol {
   position: relative;
-  color: #006BCE;
+  color: #006bce;
 }
 
 @media (max-width: 750px) {
   #background-video {
     display: none;
-  } 
+  }
   body {
-     background: url("https://assets.codepen.io/6093409/river.jpg") no-repeat;
-     background-size: cover;
+    background: url('https://assets.codepen.io/6093409/river.jpg') no-repeat;
+    background-size: cover;
   }
 }
 
 @media (min-aspect-ratio: 16/9) {
-  .video-custom{
+  .video-custom {
     width: 100%;
     height: auto;
   }
 }
 
 @media (max-aspect-ratio: 16/9) {
-  .video-custom{
+  .video-custom {
     width: auto;
     height: 100%;
   }
 }
 
 @media screen and (max-width: 600px) {
-
-  .video-custom{
+  .video-custom {
     position: absolute;
     filter: brightness(30%);
     right: 0;
     bottom: 0;
     z-index: -1;
   }
-  
-  .content{
+
+  .content {
     margin-top: 70%;
     text-align: center;
   }
-  
+
   .content h1 {
     font-size: 25px;
     color: #fff;
     font-weight: 600;
   }
-  
+
   .content a {
     text-decoration: none;
     display: inline-block;
@@ -249,5 +252,4 @@ h5 {
     border-radius: 50px;
     margin-top: 20px;
   }
-
 }

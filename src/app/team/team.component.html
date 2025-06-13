@@ -1,101 +1,51 @@
-<div class="container items-aling">
-    <div class="card-custom-image custom-img text-custom">
-        <div>
-            <h2></h2>
-        </div>
-                
+<div class="container">
+  <button
+    style="margin-bottom: 2%"
+    class="btn btn-primary"
+    (click)="onCreate()"
+  >
+    Crear equipo
+  </button>
+
+  <div class="tittle-header">
+    <div>
+      <h4>Listado de equipos</h4>
     </div>
 
-    <div class="card-custom">
-        <div class="container form-custom">
-
-            <div class="text-center">
-                <h4>Crear tu equipo</h4>
-            </div>
-
-            <form [formGroup]="teamForm">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="exampleFormControlInput1" class="form-label">Nombre del equipo</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            formControlName="nombre"
-                            
-                        >
-                    </div>
-        
-                    <div class="col-md-6">
-                        <label for="exampleFormControlInput1" class="form-label">Abreviatura</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            formControlName="abreviatura"
-                            
-                        >
-                    </div>
-                </div>
-
-                <div class="row" style="margin-top: 10%;">
-                    <div class="col-md-6">
-                        <label for="exampleFormControlInput1" class="form-label">Apodo</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            formControlName="apodo"
-                            
-                        >
-                    </div>
-    
-                    <div class="col-md-6">
-                        <label for="exampleFormControlInput1" class="form-label">Nacionalidad</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            formControlName="nacionalidad"
-                            
-                        >
-                    </div>
-                </div>
-
-                <div class="items-aling">
-                    <div class="select-logo">
-                        <label>
-                            <input
-                                #file
-                                class="input-custom"
-                                type="file" 
-                                accept="image/*" 
-                               
-                            />
-                            <button (click)="file.click()" class="btn-custom-file">
-                                Seleccione logo
-                            </button>
-
-                        </label>
-                    </div>
-                    
-                    <div >
-                        <div >
-                            <img [src]="image" class="preview" *ngFor="let image of filesArray"/>
-                        </div>
-                        <!-- <button
-                        class="btn btn-success btn-sm float-right"
-                        [disabled]="!selectedFiles"
-                        (click)="upload()"
-                        >
-                        Upload
-                        </button> -->
-                    </div>
-                </div>
-
-                <div class="text-center btn-top">
-                    <button class="btn btn-warning" (click)="onSubmit()">
-                        Crear equipo
-                    </button>
-                </div>
-            </form>
-        </div>
-        
+    <div>
+      <input
+        class="search-bar-style"
+        placeholder="Buscar torneo"
+        #searchPlayer
+      />
     </div>
+  </div>
+  <hr />
+
+  <ul class="list-group-bg list-group-flush" style="padding: 0px">
+    <li
+      class="list-group-item d-flex justify-content-between align-items-center"
+      style="border-bottom: 1px solid"
+      *ngFor="let item of teams"
+    >
+      <div class="logo d-flex align-items-center d-grid gap-0 column-gap-4">
+        <img [src]="item.logo.secureUrl" width="40" />
+        <h5>{{ item.name }}</h5>
+      </div>
+
+      <div class="d-flex align-items-center d-grid gap-0 column-gap-2">
+        <button class="btn btn-warning" (click)="onViewTeam(item.id)">
+          <i class="fa fa-eye" aria-hidden="true"></i>
+        </button>
+
+        <button class="btn btn-primary">
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+        </button>
+
+        <button class="btn btn-danger" (click)="onDelete(item.id)">
+          <i class="fa fa-trash" aria-hidden="true"></i>
+        </button>
+      </div>
+    </li>
+  </ul>
 </div>

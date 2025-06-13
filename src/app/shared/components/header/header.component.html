@@ -1,17 +1,28 @@
 <!-- Inicio del menu -->
 
-<nav class="navbar navbar-expand-lg navbar-light fixed-top" [ngClass]="{'scrolled': isScrolled}">
+<nav
+  class="navbar navbar-expand-lg navbar-light fixed-top"
+  [ngClass]="{ scrolled: isScrolled }"
+>
   <div class="container-fluid">
     <!-- icono o nombre -->
 
     <a class="navbar-brand" href="#">
       <div class="item-logo">
         <div>
-          <img src="../../../../assets/images/HYT-IESA.png" width="80" height="70" />
+          <img
+            src="../../../../assets/images/seaneternos.png"
+            width="60"
+            height="50"
+          />
         </div>
 
         <div style="margin-top: 10px">
-          <h5 style="color: white; font-weight: bold; font-family: 'Lexend Deca';">HACHA PRO<br> LEAGUE</h5>
+          <h5
+            style="color: white; font-weight: bold; font-family: 'Lexend Deca'"
+          >
+            SEAN ETERNOS
+          </h5>
         </div>
       </div>
     </a>
@@ -37,10 +48,10 @@
         <ul class="group">
           <li class="item" routerLink="/home">INICIO</li>
           <li class="item" routerLink="/tournament">TORNEOS</li>
-          <li class="item" routerLink="/team/create-team" *ngIf="!user?.teamPlay">CREAR EQUIPO</li>
-          <li class="item" routerLink="/team/my-team" *ngIf="user?.teamPlay">MI EQUIPO</li>
-          <li class="item" routerLink="/search-player">BUSCAR JUGADOR</li>
-          <li class="item">FANTASY <span class="become">Proximamente</span></li>
+          <li class="item" routerLink="/equipos">EQUIPOS</li>
+          <!-- <li class="item" routerLink="/team/my-team">MI EQUIPO</li>
+          <li class="item" routerLink="/team/listado">EQUIPOS</li> -->
+          <!-- <li class="item">FANTASY <span class="become">Proximamente</span></li> -->
         </ul>
       </ul>
 
@@ -64,7 +75,7 @@
             style="margin-top: 10px; margin-left: 30px; cursor: pointer"
             routerLink="/profile"
           >
-            <h6 style="color: white">{{ user?.username }}</h6>
+            <!-- <h6 style="color: white">{{ loginService?.user().nombre}}</h6> -->
           </div>
           <div>
             <img
@@ -90,7 +101,6 @@
     </div>
   </div>
 </nav>
-
 
 <!-- <nav class="navbar navbar-expand-lg navbar-light fixed-top" [ngClass]="{'scrolled': isScrolled}">
   <a class="navbar-brand" href="#">Navbar</a>

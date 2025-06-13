@@ -1,15 +1,9 @@
-<!-- <section style="background-color: #31394D; width: 100%;">
-    <div class="search-bar">
-        <input 
-            class="search-bar-style" 
-            placeholder="Buscar jugador"
-            #searchPlayer
-        >
-    </div>
-</section> -->
-
-<div class="container" style="margin-top: 5%">
-  <button style="margin-top: 5%; margin-bottom: 2%;" (click)="createTournament()" class="btn btn-primary">
+<div class="container">
+  <button
+    style="margin-bottom: 2%"
+    (click)="onCreate()"
+    class="btn btn-primary"
+  >
     Crear Torneo
   </button>
 
@@ -26,9 +20,8 @@
       />
     </div>
   </div>
-  <hr />
 
-  <!-- <app-filters></app-filters> -->
+  <hr />
 
   <div class="card-custom" *ngFor="let item of tournament">
     <div class="logo">
@@ -71,7 +64,9 @@
     </div>
 
     <div class="btn-position">
-      <button class="btn btn-warning" (click)="viewTournament(item.id)">Ver</button>
+      <button class="btn btn-warning" (click)="viewTournament(item.id)">
+        Ver
+      </button>
     </div>
   </div>
 </div>

@@ -1,14 +1,5 @@
-import { TeamService } from './../service/team.service';
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../service/auth.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-// import { Router } from '@angular/router';
-// import { User } from '../Models/User-Model';
-// import { Subscription } from 'rxjs';
-// import { AuthenticationService } from '../services/authentication.service';
-// import { UserService } from '../services/user.service';
-// import * as jwt_decode from 'jwt-decode';
-// import { first } from 'rxjs/operators';
+import { LoginService } from '../service/login.service';
 
 @Component({
   selector: 'app-home',
@@ -20,38 +11,11 @@ export class HomeComponent implements OnInit {
   user: any;
 
   constructor(
-    private authService: AuthService,
-    private teamService: TeamService,
-    private spinnerService: NgxSpinnerService
+    public loginService: LoginService,
   ) {
-
-    this.authService.getUserObservable.subscribe((resp) => {
-      this.user = resp;
-    });
   }
 
   ngOnInit() {
-
   }
 
-
-
-  // Crear 32 equipos
-
-  // Iniciar el sorteo del torneo
-  onClickBtn() {
-    let teams = Array.from({ length: 32 }, (_, i) => `Equipo ${i + 1}`);
-
-    const teamSave = {
-      idFormat: 1,
-      teams: teams,
-      name: "Hacha Pro League",
-      logo: null
-    }
-
-    this.teamService.createTorneo(teamSave).subscribe(
-      res => console.log(res)
-    )
-
-  }
 }

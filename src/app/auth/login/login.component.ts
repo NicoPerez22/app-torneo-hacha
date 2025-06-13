@@ -1,3 +1,4 @@
+import { LoginService } from 'src/app/service/login.service';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
@@ -17,7 +18,7 @@ export class LoginComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private authService: AuthService,
     private router: Router,
-    private cookieService: CookieService,
+    private loginService: LoginService,
     private toastrService: ToastrService
   ) {}
 
@@ -25,25 +26,29 @@ export class LoginComponent implements OnInit {
     this.createformLoginUser();
   }
 
-  onSubmit() {
-    const userLogin = this.formLoginUser.value;
-
-    this.authService.login(userLogin)
-    .subscribe({
-      next: (res) => {
-        if (res.status == 200) {
-          sessionStorage.setItem('token', res.token);
-          this.authService.saveUser(res.user);
-          this.authService.setUserObservable = res.user;
-          this.router.navigate(['/home']);
-        } else {
-          this.toastrService.error(res.message);
-        }
-      },
-      error: (error) => {
-        this.toastrService.error(error.message);
-      }
-    });
+  onLogin() {
+    if (this.formLoginUser.valid) {
+      const loginForm: any = {
+        email: this.formLoginUser.value.email,
+        password: this.formLoginUser.value.password,
+      };
+      this.authService.login(loginForm).subscribe({
+        next: (resp) => {
+          if (resp.httpCode == 200) {
+            this.toastrService.success('Bienvenido');
+            this.loginService.login(resp.data);
+            this.router.navigate(['/home']);
+          } else {
+            this.toastrService.error('Usuario o contraseña incorrectos');
+          }
+        },
+        error: () => {
+          this.toastrService.error('No se pudo ingresar, la conexión falló');
+        },
+      });
+    } else {
+      this.toastrService.error('El formulario es inválido');
+    }
   }
 
   createformLoginUser() {

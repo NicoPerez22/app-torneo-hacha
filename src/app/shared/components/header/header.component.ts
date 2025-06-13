@@ -1,3 +1,4 @@
+import { LoginService } from 'src/app/service/login.service';
 import { UserService } from './../../../service/user.service';
 import { User } from '../../../models/user';
 import { TeamService } from '../../../service/team.service';
@@ -24,17 +25,11 @@ export class HeaderComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private userService: UserService
+    public loginService: LoginService
   ) { }
 
   ngOnInit(): void {
-    this.user = this.authService.getUser();
-    if(this.user){
-      this.userService.getUserByID(this.user.id)
-      .subscribe(res => {
-        this.user = res
-      })
-    }
+    this.loginService.isAuthenticated()
   }
   
   @HostListener('window:scroll', [])
@@ -43,8 +38,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(){
-    this.authService.clean()
-    this.router.navigate(['/home']);
+    this.loginService.logout();
   }
 
 }

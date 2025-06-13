@@ -14,7 +14,7 @@ export const environment = {
     measurementId: 'G-E2CMJD9NF8',
   },
 
-  API_URL: "http://localhost:3000/api/",
+  API_URL: "http://localhost:3000/api/v1/",
   production: false
 };
 

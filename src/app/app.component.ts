@@ -12,10 +12,7 @@ export class AppComponent {
   showHeader: boolean = false;
 
   constructor(
-    private authService: AuthService
   ) {
-    this.user = this.authService.getUser();
-
     if (this.user) {
       this.showHeader = true;
     }

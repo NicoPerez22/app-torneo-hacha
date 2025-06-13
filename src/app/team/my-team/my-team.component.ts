@@ -3,60 +3,75 @@ import { TeamService } from './../../service/team.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PlayersComponent } from './players/players.component';
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { ActivatedRoute } from '@angular/router';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-my-team',
   templateUrl: './my-team.component.html',
-  styleUrls: ['./my-team.component.css']
+  styleUrls: ['./my-team.component.css'],
 })
 export class MyTeamComponent implements OnInit {
-
   @ViewChild('playersComponent') PlayersComponent;
+  params: any;
 
   teamsList: Array<any> = [];
   user: any;
-  myTeam: any
-  myTeamEnable: boolean = false
+  myTeam: any;
+  myTeamEnable: boolean = false;
   playersTeamsList: Array<any> = [];
 
   constructor(
     private teamService: TeamService,
     private authService: AuthService,
-    private modalService: NgbModal
-  ){ }
+    private modalService: NzModalService,
+    private activatedRoute: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
-    this.user = this.authService.returnUserLogged();
-    this.teamService.getTeamByID(this.user.teamPlayId)
-    .subscribe(res => {
-      this.myTeam = res
+    this.params = this.activatedRoute.snapshot.params;
 
-      if(this.myTeam){
-        this.myTeamEnable = true
-        this.playersTeamsList = this.myTeam.players;
+    this._getTeamById(this.params.id);
+  }
+
+  openModalSearchPlayers() {
+    const modal = this.modalService.create({
+      nzTitle: 'Buscar jugador',
+      nzContent: PlayersComponent,
+      nzWidth: 800,
+      nzFooter: null,
+    });
+
+    modal.afterClose.subscribe((result) => {
+      if (result === true) {
+        this._getTeamById(this.params.id);
       }
-    })
-
+    });
   }
 
-  openModalSearchPlayers(){
-    this.modalService.open(PlayersComponent)
-  }
-
-  onDelete(id){
-    this.teamService.deletePlayer(id)
-    .subscribe(res => {
-      if(res){
+  onDelete(id) {
+    this.teamService.deletePlayer(id).subscribe((res) => {
+      if (res) {
         Swal.fire({
           title: 'Error!',
           text: 'Do you want to continue',
           icon: 'success',
           Animation: true,
-          position: 'top-end'
-        })
+          position: 'top-end',
+        });
       }
-    })
+    });
   }
 
+  private _getTeamById(id) {
+    this.teamService.getTeamByID(id).subscribe((res) => {
+      this.myTeam = res.data;
+
+      if (this.myTeam) {
+        this.myTeamEnable = true;
+        this.playersTeamsList = this.myTeam.players;
+      }
+    });
+  }
 }

@@ -29,7 +29,7 @@ export class AuthService {
   }
 
   login(userLogin): Observable<any>{
-    const url = this.API_URL + `users/login`
+    const url = this.API_URL + `auth/login`
     return this.http.post<any>(url, userLogin)
     .pipe(
       map((res) => res)

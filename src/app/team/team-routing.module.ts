@@ -6,22 +6,23 @@ import { MyTeamComponent } from './my-team/my-team.component';
 
 const routes: Routes = [
   {
-    path: 'create-team',
-    component: TeamComponent
+    path: '',
+    component: TeamComponent,
+  },
+
+  {
+    path: ':id',
+    component: MyTeamComponent,
   },
 
   {
     path: 'my-team',
-    component: MyTeamComponent
-  }
-]
-
+    component: MyTeamComponent,
+  },
+];
 
 @NgModule({
   declarations: [],
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule
-  ]
+  imports: [RouterModule.forChild(routes), CommonModule],
 })
-export class TeamRoutingModule { }
+export class TeamRoutingModule {}
