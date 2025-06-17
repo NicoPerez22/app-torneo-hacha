@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private loginService: LoginService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -32,11 +32,13 @@ export class LoginComponent implements OnInit {
         email: this.formLoginUser.value.email,
         password: this.formLoginUser.value.password,
       };
+
       this.authService.login(loginForm).subscribe({
         next: (resp) => {
           if (resp.httpCode == 200) {
             this.toastrService.success('Bienvenido');
             this.loginService.login(resp.data);
+
             this.router.navigate(['/home']);
           } else {
             this.toastrService.error('Usuario o contraseña incorrectos');

@@ -9,13 +9,13 @@ import { AuthService } from 'src/app/service/auth.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent implements OnInit {
   @Input() user: any;
 
   isScrolled = false;
-  
+
   teamsList: Array<any> = [];
   playerList: Array<User> = [];
   myUser: any;
@@ -25,20 +25,17 @@ export class HeaderComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    public loginService: LoginService
-  ) { }
+    public loginService: LoginService,
+  ) {}
 
-  ngOnInit(): void {
-    this.loginService.isAuthenticated()
-  }
-  
+  ngOnInit(): void {}
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.isScrolled = window.scrollY > 50;
   }
 
-  logout(){
+  logout() {
     this.loginService.logout();
   }
-
 }

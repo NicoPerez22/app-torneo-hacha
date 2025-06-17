@@ -4,33 +4,25 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-
-  
-  constructor(
-    private http: HttpClient,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   API_URL = environment.API_URL;
 
-  getUserByUserName(userName: string): Observable<any>{
-    const QueryParams = new HttpParams()
+  getUserByUserName(userName: string): Observable<any> {
+    const QueryParams = new HttpParams();
     QueryParams.set('username', userName);
 
-    const url = this.API_URL + `users`
-    return this.http.get<any>(url, { params: QueryParams })
-    .pipe(
-      map((res) => res)
-    );
+    const url = this.API_URL + `users`;
+    return this.http
+      .get<any>(url, { params: QueryParams })
+      .pipe(map((res) => res));
   }
 
-  getUserByID(id): Observable<any>{
-    const url = this.API_URL + `users/${id}`
-    return this.http.get<any>(url)
-    .pipe(
-      map((res) => res)
-    );
+  getUserByID(id): Observable<any> {
+    const url = this.API_URL + `user/${id}`;
+    return this.http.get<any>(url);
   }
 }

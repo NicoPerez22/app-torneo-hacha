@@ -2,46 +2,34 @@ import { TeamService } from './../service/team.service';
 import { AuthService } from 'src/app/service/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UserService } from '../service/user.service';
+import { LoginService } from '../service/login.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
-
-  myUser: any;
-  solicitudes: Array<any> = [];
+  user: any;
+  team: any;
 
   constructor(
-    private authService: AuthService,
-    private teamService: TeamService,
-    private modalService: NgbModal
-  ) { }
+    private readonly userService: UserService,
+    private readonly loginService: LoginService,
+    private readonly modalService: NgbModal,
+  ) {}
 
   ngOnInit(): void {
-    this.myUser = this.authService.returnUserLogged();
-    this.teamService.getInvitacionTeam(this.myUser.id)
-    .subscribe(res => {
-      this.solicitudes = res
-    })
+    this._getProfile(this.loginService.user.id);
   }
 
-  openSolicitudes(content){
-    this.modalService.open(content, { size: 'xl' });
-  }
-
-  aceptarSolicitud(solicitud){
-    const invitacion = {
-      message: 'Tiene una solicitud disponible',
-      estado: false,
-      username: this.myUser.username,
-      userId: solicitud.userId,
-      isTransferencia: false,
-      teamId: solicitud.teamId
-    }
-
-    this.teamService.aceptarInvitacion(invitacion)
-    .subscribe(res => console.log(res))
+  private _getProfile(id) {
+    this.userService.getUserByID(id).subscribe({
+      next: (resp) => {
+        this.user = resp.data.user;
+        this.team = resp.data;
+      },
+    });
   }
 }
