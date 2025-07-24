@@ -6,6 +6,7 @@ import { PlayersComponent } from './players/players.component';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-my-team',
@@ -24,7 +25,7 @@ export class MyTeamComponent implements OnInit {
 
   constructor(
     private teamService: TeamService,
-    private authService: AuthService,
+    private spinnerService: NgxSpinnerService,
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
   ) {}
@@ -65,13 +66,21 @@ export class MyTeamComponent implements OnInit {
   }
 
   private _getTeamById(id) {
-    this.teamService.getTeamByID(id).subscribe((res) => {
-      this.myTeam = res.data;
+    this.spinnerService.show();
+    this.teamService.getTeamByID(id).subscribe({
+      next: (res) => {
+        this.myTeam = res.data;
+        this.spinnerService.hide();
 
-      if (this.myTeam) {
-        this.myTeamEnable = true;
-        this.playersTeamsList = this.myTeam.players;
-      }
+        if (this.myTeam) {
+          this.myTeamEnable = true;
+          this.playersTeamsList = this.myTeam.players;
+        }
+      },
+
+      error: () => {
+        this.spinnerService.hide();
+      },
     });
   }
 }

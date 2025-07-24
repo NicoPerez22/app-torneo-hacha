@@ -23,7 +23,7 @@ export class TournamentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this._getTournaments();
+    this._getTournaments();
   }
 
   viewTournament(id) {
@@ -48,7 +48,7 @@ export class TournamentComponent implements OnInit {
 
     this.tournamentService.getTournament().subscribe({
       next: (res) => {
-        this.tournament = res;
+        this.tournament = res.data;
 
         setTimeout(() => {
           this.spinnerService.hide();

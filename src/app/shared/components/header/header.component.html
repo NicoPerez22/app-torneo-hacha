@@ -45,14 +45,33 @@
 
     <div class="collapse navbar-collapse" id="menu">
       <ul class="navbar-nav me-auto">
-        <ul class="group">
-          <li class="item" routerLink="/home">INICIO</li>
-          <li class="item" routerLink="/tournament">TORNEOS</li>
-          <li class="item" routerLink="/equipos">EQUIPOS</li>
-          <!-- <li class="item" routerLink="/team/my-team">MI EQUIPO</li>
-          <li class="item" routerLink="/team/listado">EQUIPOS</li> -->
-          <!-- <li class="item">FANTASY <span class="become">Proximamente</span></li> -->
-        </ul>
+        <li class="nav-item">
+          <span
+            class="item"
+            routerLink="/home"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >INICIO</span
+          >
+        </li>
+        <li class="nav-item">
+          <span class="item" routerLink="/tournament" routerLinkActive="active"
+            >TORNEOS</span
+          >
+        </li>
+        <li class="nav-item">
+          <span class="item" routerLink="/equipos" routerLinkActive="active"
+            >EQUIPOS</span
+          >
+        </li>
+        <li class="nav-item">
+          <span
+            class="item"
+            routerLink="/mercado-transferencias"
+            routerLinkActive="active"
+            >MERCADO TRANSFERENCIAS</span
+          >
+        </li>
       </ul>
 
       <hr class="d-md-none text-white-50" />

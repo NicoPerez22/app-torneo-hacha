@@ -13,9 +13,12 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { TableComponent } from './components/table/table.component';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @NgModule({
-  declarations: [HeaderComponent],
+  declarations: [HeaderComponent, TableComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -30,11 +33,14 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
     NzSpinModule,
     NzListModule,
     NzModalModule,
-    NzStepsModule
+    NzStepsModule,
+    NzTableModule,
+    NzDropDownModule,
   ],
   exports: [
     CommonModule,
     HeaderComponent,
+    TableComponent,
     NgxSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
@@ -45,7 +51,9 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
     NzSpinModule,
     NzListModule,
     NzModalModule,
-    NzStepsModule
+    NzStepsModule,
+    NzTableModule,
+    NzDropDownModule,
   ],
 })
 export class SharedModule {}

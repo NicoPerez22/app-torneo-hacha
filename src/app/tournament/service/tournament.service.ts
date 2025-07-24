@@ -18,7 +18,7 @@ export class TournamentService {
 
   getTournament(): Observable<any> {
     const url = this.API_URL + `tournament`;
-    return this.http.get<any>(url).pipe(map((res) => res));
+    return this.http.get<any>(url);
   }
 
   getTournamentByID(id): Observable<any> {

@@ -1,42 +1,77 @@
-<div class="container">
-    <div class="text-center" style="margin-top:10% ;">
-        <h6 style="color: white;">Ingrese el nombre de usuario del jugador que desea buscar</h6>
-    </div>
+<div class="container py-5">
+  <h2 class="text-info mb-3">Jugadores Transferibles</h2>
+  <p class="text-light mb-4">
+    Transferencias abiertas. ¿A quién fichás para tu equipo campeón?
+  </p>
 
-    <div class="search-bar">
-        <input 
-            class="search-bar-style" 
-            placeholder="Buscar jugador"
-            #searchPlayer
-            (keyup)="searchPlayerKeyUp(searchPlayer.value)"
-        >
-    </div>
-
-    <div class="card-custom card-style" *ngFor="let pl of resultPlayer">
-        <div class="items">
-            <div class="col-md-1">
-                <img class="img-profile" src="../../assets/images/Nicp.png" width="50" height="50">
-            </div>
-            
-            <div class="col-md-2">
-                Usuario: <strong>{{pl?.username}}</strong>
-            </div>
-
-            <div class="col-md-2">
-                Nombre: <strong>{{pl?.name}}</strong>
-            </div>
-    
-            <div class="col-md-2">
-                Equipo: <strong>{{pl?.teamPlay?.name}}</strong>
-            </div>
-
-            <div class="col-md-2">
-                Nacionalidad: <strong>{{pl?.nacionalidad}}</strong>
-            </div>
-
-            <div class="col-md-3">
-                Estado:<span class="state-confirmation"><strong>Pendiente Confirmacion</strong></span>
-            </div>
-        </div>
-    </div>
+  <div class="table-responsive table-wrapper">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Jugador</th>
+          <th>Equipo Actual</th>
+          <th>Valoración</th>
+          <th>Posición</th>
+          <th>Accion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of playersList">
+          <td class="player-name">
+            <span>
+              <img
+                [src]="
+                  player?.photo
+                    ? player.photo.secureUrl
+                    : '../../../assets/images/player-default.png'
+                "
+                class="mb-2"
+                width="60"
+                height="60"
+                style="
+                  object-fit: cover;
+                  background-color: #303134;
+                  border-color: #303134;
+                  margin-right: 2%;
+                "
+              />
+            </span>
+            {{ player.fullName }}
+          </td>
+          <td>
+            <img
+              [src]="
+                player?.photo
+                  ? player.photo.secureUrl
+                  : '../../../assets/images/HYT-IESA.png'
+              "
+              class="mb-2"
+              width="40"
+              height="40"
+              style="object-fit: cover; border-color: #303134"
+            />
+            <span class="player-name">Hacha eSports</span>
+          </td>
+          <td>
+            <span class="rating-badge">{{ player.valoration }}</span>
+          </td>
+          <td>
+            <span
+              class="tag"
+              [ngClass]="{
+                gk: player.position == 'GK',
+                defence: player.position == 'DFI' || 'DFC' || 'DFD',
+                medio: player.position == 'MCO',
+                attack: player.position == 'DC'
+              }"
+              >{{ player?.position }}</span
+            >
+          </td>
+          <td>
+            <button class="btn btn-warning">Ofertar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

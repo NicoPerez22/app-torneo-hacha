@@ -33,7 +33,8 @@ const routes: Routes = [
   },
 
   {
-    path: 'search-player',
+    path: 'mercado-transferencias',
+    canActivate: [UserGuard],
     loadChildren: () =>
       import('../app/search-players/search.module').then((m) => m.SearchModule),
   },

@@ -92,4 +92,9 @@ export class TeamService {
     const url = this.API_URL + `player/transfer/${id}/${idTeam}`;
     return this.http.get<any>(url);
   }
+
+  getPlayers() {
+    const url = this.API_URL + `player`;
+    return this.http.get<any>(url);
+  }
 }

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container py-5">
   <button
     style="margin-bottom: 2%"
     class="btn btn-primary"
@@ -7,45 +7,69 @@
     Crear equipo
   </button>
 
-  <div class="tittle-header">
-    <div>
-      <h4>Listado de equipos</h4>
-    </div>
+  <h2 class="text-info mb-3">Listado Equipos</h2>
+  <p class="text-light mb-4">
+    Agrega, edita o elimina equipos de la lista. Cada equipo puede tener
+    múltiples jugadores y estadísticas asociadas.
+  </p>
 
-    <div>
-      <input
-        class="search-bar-style"
-        placeholder="Buscar torneo"
-        #searchPlayer
-      />
-    </div>
+  <div class="table-responsive table-wrapper">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Equipo</th>
+          <th>Manager</th>
+          <th>Activo</th>
+          <th>Accion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of teams">
+          <td class="player-name">
+            <span>
+              <img
+                [src]="
+                  item?.logo
+                    ? item?.logo?.secureUrl
+                    : '../../../assets/images/player-default.png'
+                "
+                class="mb-2"
+                width="40"
+                style="border-color: #303134; margin-right: 2%"
+              />
+            </span>
+            {{ item.name }}
+          </td>
+
+          <td>
+            <span class="badge bg-secondary"> Nico Perez </span>
+          </td>
+
+          <td>
+            <span class="badge bg-secondary">
+              {{ item.currentTeam ? 'Si' : 'No' }}
+            </span>
+          </td>
+
+          <td>
+            <div
+              class="d-flex align-items-center justify-content-center d-grid gap-2 column-gap-2"
+            >
+              <button class="btn btn-warning" (click)="onViewTeam(item.id)">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+              </button>
+
+              <button class="btn btn-primary">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+              </button>
+
+              <button class="btn btn-danger" (click)="onDelete(item.id)">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <hr />
-
-  <ul class="list-group-bg list-group-flush" style="padding: 0px">
-    <li
-      class="list-group-item d-flex justify-content-between align-items-center"
-      style="border-bottom: 1px solid"
-      *ngFor="let item of teams"
-    >
-      <div class="logo d-flex align-items-center d-grid gap-0 column-gap-4">
-        <img [src]="item.logo.secureUrl" width="40" />
-        <h5>{{ item.name }}</h5>
-      </div>
-
-      <div class="d-flex align-items-center d-grid gap-0 column-gap-2">
-        <button class="btn btn-warning" (click)="onViewTeam(item.id)">
-          <i class="fa fa-eye" aria-hidden="true"></i>
-        </button>
-
-        <button class="btn btn-primary">
-          <i class="fa fa-pencil" aria-hidden="true"></i>
-        </button>
-
-        <button class="btn btn-danger" (click)="onDelete(item.id)">
-          <i class="fa fa-trash" aria-hidden="true"></i>
-        </button>
-      </div>
-    </li>
-  </ul>
 </div>
