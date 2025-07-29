@@ -57,3 +57,118 @@ body {
 .attack {
   color: #1c7ed6;
 }
+
+.match-item {
+  display: flex;
+  align-items: center;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-left: 4px solid #007bff;
+  border-right: 4px solid #ff8800;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  padding: 12px 15px;
+  font-size: 14px;
+  transition: background 0.2s ease;
+  color: white;
+  gap: 10px;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 40%; /* columnas fijas */
+}
+
+.match-item > div:nth-child(2) {
+  text-align: center;
+  width: 20%; /* Columna para "VS" */
+  font-weight: bold;
+  color: #ccc;
+}
+
+/* 🔥 Equipo derecho alineado al final */
+.match-item .team:last-child {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+.match-item:hover {
+  background: #1c222a;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.team img {
+  width: 28px;
+  height: 30px;
+}
+
+.score {
+  font-size: 18px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.separator {
+  color: #aaa;
+  font-weight: bold;
+}
+
+.valoration-yellow {
+  background-color: #ffc107;
+}
+
+.valoration-green-clarito {
+  background-color: #66a80f !important;
+}
+
+.valoration-green-dark {
+  background-color: #2b8a3e !important;
+}
+
+.gaming-tabs {
+  background: #181c2f;
+  border-radius: 12px;
+  overflow: hidden;
+  border-bottom: none !important;
+}
+
+.gaming-tab-btn {
+  background: linear-gradient(90deg, #232946 60%, #1a1a2e 100%);
+  color: #fff !important;
+  border: none !important;
+  border-radius: 0 !important;
+  border-right: 1px solid #232946;
+  border-bottom: 4px solid transparent;
+  transition: background 0.3s, color 0.3s, border-bottom 0.3s;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  height: 100%;
+  display: block;
+}
+
+.gaming-tab-btn:last-child {
+  border-right: none;
+}
+
+.gaming-tab-btn.active,
+.gaming-tab-btn:active,
+.gaming-tab-btn:focus {
+  border-bottom: 4px solid #00ffae !important;
+  background: linear-gradient(90deg, #232946 60%, #232946 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px #00ffae33;
+  z-index: 2;
+}
+
+.nav-tabs .nav-link {
+  margin-bottom: 0 !important;
+}

@@ -22,6 +22,7 @@ export class MyTeamComponent implements OnInit {
   myTeam: any;
   myTeamEnable: boolean = false;
   playersTeamsList: Array<any> = [];
+  p: number = 0;
 
   constructor(
     private teamService: TeamService,

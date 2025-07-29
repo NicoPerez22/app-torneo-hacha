@@ -1,85 +1,48 @@
-<div class="container">
-  <div style="margin-top: 15%; border-radius: 8px;">
-    <h2 class="text-center" style="color: white;">{{tournament?.name}}</h2>
-    <h6 class="text-center" style="color: white;">Fase Eliminatoria - Octavos de Final</h6>
-  </div>
-
-  <div style="margin-top: 3%;" class="row justify-content-center">
-    <div class="card mt-4" *ngFor="let item of tournament?.rounds" style="border-radius: 15px; height: 70px; width: 60%;">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-5">
-            <div class="d-flex flex-row justify-content-center bd-highlight align-content-center">
-              <div class="col-md-2">
-                <img src="../../../assets/images/HYT-IESA.png" width="50" height="45"/>
-              </div>
-
-              <div class="col-md-5 align-content-center ml-5">
-                <h6 class="">
-                  {{item.home}}
-                </h6>
-                <!-- <p>Argentina</p> -->
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-2">
-            <div class="row">
-              <div class="col">
-                <h5>0</h5>
-              </div>
-              <div class="col">
-                <h5>-</h5>
-              </div>
-              <div class="col">
-                <h5>0</h5>
-              </div>
-            </div>
-          </div>
-
-
-          <div class="col-md-5">
-            <div class="d-flex flex-row-reverse justify-content-center bd-highlight align-content-center">
-              <div class="col-md-2">
-                <img src="../../../assets/images/HYT-IESA.png" width="50" height="45"/>
-              </div>
-
-              <div class="col-md-5 align-content-center">
-                <h6 class="">
-                  {{item.away}}
-                </h6>
-                <!-- <p>Argentina</p> -->
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="tournament-container">
+  <h2>{{ tournament?.name }}</h2>
+  <p>{{ tournament?.format?.description }}</p>
+  <ul class="match-list">
+    <li
+      class="match-item d-flex justify-content-between align-items-center"
+      *ngFor="
+        let match of tournament?.rounds
+          | paginate : { itemsPerPage: 4, currentPage: p }
+      "
+    >
+      <div class="team">
+        <img
+          [src]="
+            match?.homeLogo?.secureUrl
+              ? match?.homeLogo?.secureUrl
+              : '../../../assets/images/player-default.png'
+          "
+          alt="Logo"
+        /><span>{{ match.home }}</span>
       </div>
+
+      <!-- <div class="score">0</div> -->
+      <!-- <div class="separator">VS</div> -->
+      <!-- <div class="score">0</div> -->
+
+      <div class="team">
+        <span>{{ match.away }}</span
+        ><img
+          [src]="
+            match?.awayLogo?.secureUrl
+              ? match?.awayLogo?.secureUrl
+              : '../../../assets/images/player-default.png'
+          "
+          alt="Logo"
+        />
+      </div>
+    </li>
+
+    <div class="mt-5">
+      <pagination-controls
+        (pageChange)="p = $event"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+      ></pagination-controls>
     </div>
-  </div>
-
-
-  <!-- <nz-table #basicTable [nzData]="listaEquipos" style="margin-top: 10%; border-radius: 8px;" class="bg-dark">
-    <thead>
-      <tr>
-        <th>Equipo</th>
-        <th>Puntos</th>
-        <th>PJ</th>
-        <th>GF</th>
-        <th>GE</th>
-        <th>DIF</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of basicTable.data">
-        <td><img src="{{ data.logo }}" width="50" height="45"/> {{ data.name }}</td>
-        <td>35</td>
-        <td>35</td>
-        <td>35</td>
-        <td>35</td>
-        <td>35</td>
-      </tr>
-    </tbody>
-  </nz-table> -->
+  </ul>
 </div>
-
-
