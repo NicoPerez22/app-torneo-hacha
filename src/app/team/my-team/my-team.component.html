@@ -98,9 +98,10 @@
               <!-- Contenedor relativo -->
               <div class="player-card position-relative p-2">
                 <!-- Ícono menú superpuesto -->
-                <ng-container *ngIf="spinner">
+                <ng-container *ngIf="!player.loading">
                   <i
                     class="fa fa-exchange icon position-absolute"
+                    (click)="onChangePlayer(player)"
                     style="
                       top: 8px;
                       right: 47px;
@@ -112,8 +113,10 @@
                   </i>
                 </ng-container>
 
-                <ng-container *ngIf="!spinner">
-                  <div class="spinner"></div>
+                <ng-container *ngIf="player.loading">
+                  <div>
+                    <div class="spinner"></div>
+                  </div>
                 </ng-container>
 
                 <!-- Imagen jugador -->
@@ -148,13 +151,21 @@
                   <h6 class="mt-1">
                     <span
                       [ngClass]="{
-                        gk: player.position == 'GK',
+                        gk: player?.position == 'POR',
                         defence:
-                          player.position == 'DFI' ||
-                          player.position == 'DFC' ||
-                          player.position == 'DFD',
-                        medio: player.position == 'MCO',
-                        attack: player.position == 'DC'
+                          player?.position == 'LD' ||
+                          player?.position == 'DFC' ||
+                          player?.position == 'LI',
+                        medio:
+                          player?.position == 'MCO' ||
+                          player?.position == 'MCD' ||
+                          player?.position == 'MC' ||
+                          player?.position == 'MI' ||
+                          player?.position == 'MD',
+                        attack:
+                          player?.position == 'DC' ||
+                          player?.position == 'ED' ||
+                          player?.position == 'EI'
                       }"
                     >
                       {{ player?.position }}

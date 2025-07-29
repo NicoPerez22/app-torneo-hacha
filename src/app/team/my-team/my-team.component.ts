@@ -84,6 +84,15 @@ export class MyTeamComponent implements OnInit {
     });
   }
 
+  onChangePlayer(player) {
+    player.loading = true;
+
+    setTimeout(() => {
+      player.loading = false;
+      // Aquí va tu lógica real
+    }, 2000);
+  }
+
   private _getTeamById(id) {
     this.spinnerService.show();
     this.teamService.getTeamByID(id).subscribe({
