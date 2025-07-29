@@ -1,18 +1,16 @@
 <div class="container py-5">
-  <button
-    style="margin-bottom: 2%"
-    class="btn btn-primary"
-    (click)="onCreate()"
-  >
-    Crear equipo
-  </button>
-
   <h2 class="text-info mb-3">Listado Equipos</h2>
   <p class="text-light mb-4">
     Agrega, edita o elimina equipos de la lista. Cada equipo puede tener
     múltiples jugadores y estadísticas asociadas.
   </p>
 
+  <div class="mb-2 mt-5 gap-2 d-flex">
+    <button class="btn btn-primary" (click)="onCreate()">Crear equipo</button>
+    <button class="btn btn-warning" (click)="openModalAssignManager()">
+      Asignar Manager
+    </button>
+  </div>
   <div class="table-responsive table-wrapper">
     <table class="table table-hover mb-0">
       <thead>

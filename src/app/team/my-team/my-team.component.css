@@ -172,3 +172,29 @@ body {
 .nav-tabs .nav-link {
   margin-bottom: 0 !important;
 }
+
+.player-card {
+  background: transparent; /* o el color que uses */
+  border-radius: 8px;
+  position: relative;
+}
+
+.icon:hover {
+  color: #00ffae;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #00ffae; /* color activo */
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,41 @@
+<div class="container">
+  <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
+    <div class="row">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-label nzFor="manager">Manager</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="manager">
+              <nz-option
+                *ngFor="let item of users"
+                [nzValue]="item.id"
+                [nzLabel]="item.name + ' ' + item.lastName"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-label nzFor="teams">Equipo Destino</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="teamDestination">
+              <nz-option
+                *ngFor="let item of teams"
+                [nzValue]="item.id"
+                [nzLabel]="item.name"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-2">
+        <button class="btn btn-warning" (click)="onSubmit()">Confirmar</button>
+      </div>
+    </div>
+  </form>
+</div>

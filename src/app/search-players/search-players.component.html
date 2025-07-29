@@ -38,19 +38,21 @@
             </span>
             {{ player.fullName }}
           </td>
-          <td>
-            <img
-              [src]="
-                player?.photo
-                  ? player.photo.secureUrl
-                  : '../../../assets/images/HYT-IESA.png'
-              "
-              class="mb-2"
-              width="40"
-              height="40"
-              style="object-fit: cover; border-color: #303134"
-            />
-            <span class="player-name">Hacha eSports</span>
+          <td class="text-center player-name">
+            <div class="d-flex flex-column align-items-center">
+              <img
+                [src]="
+                  player?.team?.logo?.secureUrl
+                    ? player?.team?.logo?.secureUrl
+                    : ''
+                "
+                alt="Logo equipo"
+                width="40"
+                height="40"
+                style="object-fit: cover; margin-bottom: 5px"
+              />
+              <span>{{ player?.team?.name }}</span>
+            </div>
           </td>
           <td>
             <span class="rating-badge">{{ player.valoration }}</span>

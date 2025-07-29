@@ -8,20 +8,10 @@
       >
         <img
           [src]="myTeam?.logo?.secureUrl"
-          class="rounded-circle shadow"
-          style="
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            border: 1px solid #fff;
-          "
+          style="width: 100px; height: 100px; object-fit: contain"
         />
-        <span
-          class="position-absolute bottom-0 end-0 translate-middle p-1 bg-success border border-white rounded-circle"
-          style="width: 16px; height: 16px"
-        ></span>
       </div>
-      <div style="margin-top: 80px">
+      <div style="margin-top: 60px">
         <h2 class="text-white fw-bold">{{ myTeam?.name }}</h2>
         <p class="text-secondary mb-1"></p>
       </div>
@@ -41,7 +31,7 @@
             Transferencia
           </button>
 
-          <button class="btn btn-warning" (click)="openModalSearchPlayers()">
+          <button class="btn btn-warning" (click)="openModalAssignManager()">
             <i class="fa fa-user" aria-hidden="true"></i>
             Asignar Manager
           </button>
@@ -92,79 +82,109 @@
       </li>
     </ul>
 
-    <div class="tab-content mb-4" id="teamTabsContent">
+    <div class="tab-content">
       <div
         class="tab-pane fade show active"
         id="jugadores"
         role="tabpanel"
         aria-labelledby="jugadores-tab"
-        tabindex="0"
       >
-        <!-- Aquí va tu grid de jugadores -->
         <div class="col-12">
           <div class="row g-3 justify-content-center mb-5">
             <div
-              class="col-6 col-sm-4 col-md-2 col-lg-2 text-center"
+              class="col-6 col-sm-4 col-md-2 col-lg-2 text-center mb-2"
               *ngFor="let player of playersTeamsList"
             >
-              <img
-                [src]="
-                  player?.photo
-                    ? player.photo.secureUrl
-                    : '../../../assets/images/player-default.png'
-                "
-                class="mb-2"
-                width="60"
-                height="60"
-                style="object-fit: cover"
-              />
-
-              <div
-                [ngClass]="
-                  player.isHabilitado ? 'state-confirmation' : 'state-red'
-                "
-              ></div>
-
-              <div>
-                <h6 class="mb-0">{{ player?.name }} {{ player?.lastName }}</h6>
-              </div>
-
-              <div>
-                <h6 class="mt-1">
-                  <span
-                    [ngClass]="{
-                      gk: player.position == 'GK',
-                      defence: player.position == 'DFI' || 'DFC' || 'DFD',
-                      medio: player.position == 'MCO',
-                      attack: player.position == 'DC'
-                    }"
-                    >{{ player?.position }}</span
+              <!-- Contenedor relativo -->
+              <div class="player-card position-relative p-2">
+                <!-- Ícono menú superpuesto -->
+                <ng-container *ngIf="spinner">
+                  <i
+                    class="fa fa-exchange icon position-absolute"
+                    style="
+                      top: 8px;
+                      right: 47px;
+                      font-size: 18px;
+                      cursor: pointer;
+                      color: #ccc;
+                    "
                   >
-                  -
-                  <span
-                    class="overball"
-                    [ngClass]="{
-                      'valoration-yellow': player?.valoration < 70,
-                      'valoration-green-clarito':
-                        player?.valoration >= 70 && player?.valoration < 85,
-                      'valoration-green-dark': player?.valoration >= 85
-                    }"
-                    >{{ player?.valoration }}</span
-                  >
-                </h6>
+                  </i>
+                </ng-container>
+
+                <ng-container *ngIf="!spinner">
+                  <div class="spinner"></div>
+                </ng-container>
+
+                <!-- Imagen jugador -->
+                <img
+                  [src]="
+                    player?.photo
+                      ? player.photo.secureUrl
+                      : '../../../assets/images/player-default.png'
+                  "
+                  class="mb-2"
+                  width="60"
+                  height="60"
+                  style="object-fit: cover; border-radius: 6px"
+                />
+
+                <!-- Estado -->
+                <div
+                  [ngClass]="
+                    player.isHabilitado ? 'state-confirmation' : 'state-red'
+                  "
+                ></div>
+
+                <!-- Nombre -->
+                <div>
+                  <h6 class="mb-0">
+                    {{ player?.name }} {{ player?.lastName }}
+                  </h6>
+                </div>
+
+                <!-- Posición y valoración -->
+                <div>
+                  <h6 class="mt-1">
+                    <span
+                      [ngClass]="{
+                        gk: player.position == 'GK',
+                        defence:
+                          player.position == 'DFI' ||
+                          player.position == 'DFC' ||
+                          player.position == 'DFD',
+                        medio: player.position == 'MCO',
+                        attack: player.position == 'DC'
+                      }"
+                    >
+                      {{ player?.position }}
+                    </span>
+                    -
+                    <span
+                      class="overball"
+                      [ngClass]="{
+                        'valoration-yellow': player?.valoration < 70,
+                        'valoration-green-clarito':
+                          player?.valoration >= 70 && player?.valoration < 85,
+                        'valoration-green-dark': player?.valoration >= 85
+                      }"
+                    >
+                      {{ player?.valoration }}
+                    </span>
+                  </h6>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div
         class="tab-pane fade"
         id="estadisticas"
         role="tabpanel"
         aria-labelledby="estadisticas-tab"
-        tabindex="0"
       >
-        <!-- Aquí puedes poner el contenido de estadísticas o lo que necesites -->
         <div class="text-center py-5">
           <div class="row justify-content-center">
             <div class="col-12 col-md-6 col-lg-8 mt-4 mt-md-4">

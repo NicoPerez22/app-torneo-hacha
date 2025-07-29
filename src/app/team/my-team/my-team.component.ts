@@ -7,6 +7,7 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ManagerComponent } from './manager/manager.component';
 
 @Component({
   selector: 'app-my-team',
@@ -16,6 +17,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class MyTeamComponent implements OnInit {
   @ViewChild('playersComponent') PlayersComponent;
   params: any;
+
+  spinner: boolean = true;
 
   teamsList: Array<any> = [];
   user: any;
@@ -41,6 +44,21 @@ export class MyTeamComponent implements OnInit {
     const modal = this.modalService.create({
       nzTitle: 'Buscar jugador',
       nzContent: PlayersComponent,
+      nzWidth: 800,
+      nzFooter: null,
+    });
+
+    modal.afterClose.subscribe((result) => {
+      if (result === true) {
+        this._getTeamById(this.params.id);
+      }
+    });
+  }
+
+  openModalAssignManager() {
+    const modal = this.modalService.create({
+      nzTitle: 'Asignar Manager',
+      nzContent: ManagerComponent,
       nzWidth: 800,
       nzFooter: null,
     });

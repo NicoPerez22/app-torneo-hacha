@@ -25,4 +25,9 @@ export class UserService {
     const url = this.API_URL + `user/${id}`;
     return this.http.get<any>(url);
   }
+
+  getUsers(): Observable<any> {
+    const url = this.API_URL + `user`;
+    return this.http.get<any>(url);
+  }
 }

@@ -94,7 +94,12 @@ export class TeamService {
   }
 
   getPlayers() {
-    const url = this.API_URL + `player`;
+    const url = this.API_URL + `player/market`;
+    return this.http.get<any>(url);
+  }
+
+  transferManager(teamId, id) {
+    const url = this.API_URL + `team/assingUser/${teamId}/${id}`;
     return this.http.get<any>(url);
   }
 }
