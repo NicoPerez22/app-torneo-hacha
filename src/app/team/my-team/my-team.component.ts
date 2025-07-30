@@ -30,12 +30,14 @@ export class MyTeamComponent implements OnInit {
   constructor(
     private teamService: TeamService,
     private spinnerService: NgxSpinnerService,
+    private authService: AuthService,
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.params = this.activatedRoute.snapshot.params;
+    this.user = this.authService.getUser();
 
     this._getTeamById(this.params.id);
   }
@@ -89,8 +91,8 @@ export class MyTeamComponent implements OnInit {
 
     setTimeout(() => {
       player.loading = false;
-      // Aquí va tu lógica real
-    }, 2000);
+      this._assignTransferPlayer(player.id, true);
+    }, 1000);
   }
 
   private _getTeamById(id) {
@@ -104,6 +106,26 @@ export class MyTeamComponent implements OnInit {
           this.myTeamEnable = true;
           this.playersTeamsList = this.myTeam.players;
         }
+      },
+
+      error: () => {
+        this.spinnerService.hide();
+      },
+    });
+  }
+
+  private _assignTransferPlayer(id, isTransfer) {
+    this.spinnerService.show();
+    this.teamService.assignTransferPlayer(id, isTransfer).subscribe({
+      next: (res) => {
+        this.spinnerService.hide();
+        Swal.fire({
+          title: 'Success!',
+          text: 'Player transfered successfully',
+          icon: 'success',
+          Animation: true,
+          position: 'top-end',
+        });
       },
 
       error: () => {

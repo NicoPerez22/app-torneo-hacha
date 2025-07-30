@@ -4,38 +4,27 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, map } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   auhtState$: Observable<any>;
-  USER_KEY = 'auth-user';
+  USER_KEY = 'user';
 
-  constructor(
-    private http: HttpClient,
-  ) {
-  }
+  constructor(private http: HttpClient) {}
 
-  userObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null)
+  userObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   API_URL = environment.API_URL;
 
-
-  register(userRegister): Observable<any>{
-    const url = this.API_URL + `users/register`
-    return this.http.post<any>(url, userRegister)
-    .pipe(
-      map((res) => res)
-    );
+  register(userRegister): Observable<any> {
+    const url = this.API_URL + `users/register`;
+    return this.http.post<any>(url, userRegister).pipe(map((res) => res));
   }
 
-  login(userLogin): Observable<any>{
-    const url = this.API_URL + `auth/login`
-    return this.http.post<any>(url, userLogin)
-    .pipe(
-      map((res) => res)
-    );
-  } 
-  
+  login(userLogin): Observable<any> {
+    const url = this.API_URL + `auth/login`;
+    return this.http.post<any>(url, userLogin).pipe(map((res) => res));
+  }
+
   clean(): void {
     window.sessionStorage.clear();
   }
@@ -46,7 +35,7 @@ export class AuthService {
   }
 
   getUser(): any {
-    const user = sessionStorage.getItem(this.USER_KEY);
+    const user = localStorage.getItem(this.USER_KEY);
     if (user) {
       this.setUserObservable = JSON.parse(user);
     }
@@ -62,23 +51,21 @@ export class AuthService {
     return false;
   }
 
-  returnUserLogged(){
-    var us
-    this.getUserObservable.subscribe(res => {
-      us = res
-    })
+  returnUserLogged() {
+    var us;
+    this.getUserObservable.subscribe((res) => {
+      us = res;
+    });
 
     return us;
   }
 
-  get getUserObservable(){
-    this.getUser()
+  get getUserObservable() {
+    this.getUser();
     return this.userObservable.asObservable();
   }
 
-  set setUserObservable(data){
-    this.userObservable.next(data)
+  set setUserObservable(data) {
+    this.userObservable.next(data);
   }
-
-
 }

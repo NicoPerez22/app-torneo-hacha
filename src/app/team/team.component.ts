@@ -5,6 +5,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { TeamCreateComponent } from './team-create/team-create.component';
 import { Router } from '@angular/router';
 import { ManagerComponent } from './my-team/manager/manager.component';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-team',
@@ -13,15 +14,19 @@ import { ManagerComponent } from './my-team/manager/manager.component';
 })
 export class TeamComponent implements OnInit {
   teams: Array<any> = [];
+  user: any;
 
   constructor(
     private teamService: TeamService,
     private toastrService: ToastrService,
+    private authService: AuthService,
     private modalService: NzModalService,
     private router: Router,
   ) {}
 
   ngOnInit(): void {
+    this.user = this.authService.getUser();
+
     this._getTeams();
   }
 

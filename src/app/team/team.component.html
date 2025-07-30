@@ -5,7 +5,7 @@
     múltiples jugadores y estadísticas asociadas.
   </p>
 
-  <div class="mb-2 mt-5 gap-2 d-flex">
+  <div class="mb-2 mt-5 gap-2 d-flex" *ngIf="user?.idRol == 1">
     <button class="btn btn-primary" (click)="onCreate()">Crear equipo</button>
     <button class="btn btn-warning" (click)="openModalAssignManager()">
       Asignar Manager
@@ -59,11 +59,15 @@
                 <i class="fa fa-eye" aria-hidden="true"></i>
               </button>
 
-              <button class="btn btn-primary">
+              <button class="btn btn-primary" *ngIf="user?.idRol == 1">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
               </button>
 
-              <button class="btn btn-danger" (click)="onDelete(item.id)">
+              <button
+                class="btn btn-danger"
+                (click)="onDelete(item.id)"
+                *ngIf="user?.idRol == 1"
+              >
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
             </div>

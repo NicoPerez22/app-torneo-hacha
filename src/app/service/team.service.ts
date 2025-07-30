@@ -93,6 +93,12 @@ export class TeamService {
     return this.http.get<any>(url);
   }
 
+  assignTransferPlayer(id, isTransfer) {
+    const isTransferParam = { isTransfer: isTransfer };
+    const url = this.API_URL + `player/transfer/${id}`;
+    return this.http.post<any>(url, isTransferParam);
+  }
+
   getPlayers() {
     const url = this.API_URL + `player/market`;
     return this.http.get<any>(url);

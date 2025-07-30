@@ -25,7 +25,10 @@
             <h6>{{ myTeam?.owner?.name }} {{ myTeam?.owner?.lastName }}</h6>
           </li>
         </ul>
-        <div class="d-flex gap-3 justify-content-center">
+        <div
+          class="d-flex gap-3 justify-content-center"
+          *ngIf="user?.idRol == 1"
+        >
           <button class="btn btn-success" (click)="openModalSearchPlayers()">
             <i class="fa fa-arrow-right" aria-hidden="true"></i>
             Transferencia
@@ -98,7 +101,9 @@
               <!-- Contenedor relativo -->
               <div class="player-card position-relative p-2">
                 <!-- Ícono menú superpuesto -->
-                <ng-container *ngIf="!player.loading">
+                <ng-container
+                  *ngIf="!player.loading && user.id === myTeam?.owner?.id"
+                >
                   <i
                     class="fa fa-exchange icon position-absolute"
                     (click)="onChangePlayer(player)"
