@@ -1,0 +1,67 @@
+<div class="container py-5">
+  <h2 class="text-info mb-3">Jugadores Inhabilitados</h2>
+  <p class="text-light mb-4">
+    Vizualiza aquellos jugadores que no estan habilitados para participar de las
+    siguientes fechas
+  </p>
+
+  <div class="table-responsive table-wrapper">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Equipo</th>
+          <th>Jugador</th>
+          <th>Tipo Inhabilitacion</th>
+          <th>Tiempo Inhabilitacion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of teams">
+          <td class="player-name">
+            <span>
+              <img
+                [src]="
+                  item?.team.logo
+                    ? item?.team.logo?.secureUrl
+                    : '../../../assets/images/player-default.png'
+                "
+                class="mb-2"
+                width="40"
+                style="border-color: #303134; margin-right: 2%"
+              />
+            </span>
+            {{ item?.team?.name }}
+          </td>
+
+          <td class="player-name">
+            <span>
+              <img
+                [src]="
+                  item?.logo
+                    ? item?.logo?.secureUrl
+                    : '../../../assets/images/player-default.png'
+                "
+                class="mb-2"
+                width="40"
+                style="border-color: #303134; margin-right: 2%"
+              />
+            </span>
+            {{ item.name }} {{ item.lastName }}
+          </td>
+
+          <td>
+            <span class="badge bg-info">
+              Lesionado
+            </span>
+          </td>
+
+          <td>
+            <span class="player-name">
+              2 Semanas
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

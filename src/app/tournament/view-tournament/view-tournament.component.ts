@@ -9,7 +9,7 @@ import { TournamentService } from '../service/tournament.service';
 })
 export class ViewTournamentComponent implements OnInit {
   tournament;
-  p: number = 0;
+  p: number = 1;
   id: number = 0;
 
   constructor(

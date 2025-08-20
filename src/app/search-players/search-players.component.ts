@@ -1,11 +1,7 @@
-import { AuthService } from './../service/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { TeamService } from '../service/team.service';
-import { UserService } from '../service/user.service';
-import { Store } from '@ngrx/store';
-import { LoadedPlayers, loadPlayers } from '../state/actions/players.actions';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { TournamentService } from '../tournament/service/tournament.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-search-players',
@@ -13,16 +9,42 @@ import { TournamentService } from '../tournament/service/tournament.service';
   styleUrls: ['./search-players.component.css'],
 })
 export class SearchPlayersComponent implements OnInit {
-  playersList: any[] = [];
+  playersList: Array<any> = [];
   columns: Array<any> = [];
+  players: Array<any> = [];
+
+  player
+
+  isVisible: boolean = false;
+  form: FormGroup;
 
   constructor(
     private teamService: TeamService,
     private spinnerService: NgxSpinnerService,
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
     this._getPlayers();
+  }
+
+  onBird(player): void {
+    this._initForm();
+    this._getPlayerMyTeam();
+    
+    this.player = player
+
+    this.isVisible = true;
+    this.form.get('playerOut').patchValue(player?.fullName)
+    this.form.get('playerOut').disable()
+  }
+
+  onSubmit(): void {
+    this.isVisible = false;
+  }
+
+  handleCancel(): void {
+    this.isVisible = false;
   }
 
   private _getPlayers() {
@@ -34,40 +56,22 @@ export class SearchPlayersComponent implements OnInit {
       },
       error: (error) => {
         this.spinnerService.hide();
-        console.error('Error fetching players:', error);
       },
     });
   }
 
-  // private _initColumns() {
-  //   this.columns = [
-  //     {
-  //       name: 'Jugador',
-  //       key: 'fullName',
-  //       columnWidth: '5%',
-  //       // rowAction: (data) => this.detalleNotificacion(data),
-  //       // filterFn: (value: string, item: any) => {
-  //       //   return item.caratula == value;
-  //       // },
-  //     },
-  //     {
-  //       name: 'Valoracion',
-  //       key: 'valoration',
-  //       style: {
-  //         'background-color': 'rgb(34, 173, 46)',
-  //         'border-radius': '3px',
-  //         color: 'black',
-  //         'padding-left': '4px',
-  //         'padding-right': '4px',
-  //       },
-  //       columnWidth: '3%',
-  //     },
-  //     {
-  //       name: 'Posicion',
-  //       key: 'position',
-  //       columnWidth: '3%',
-  //       className: (data) => this._getState(data),
-  //     },
-  //   ];
-  // }
+  private _getPlayerMyTeam(){
+    this.teamService.(id).subscribe({
+      next: (resp: any) => {
+
+      }
+    })
+  }
+
+  private _initForm() {
+    this.form = this.fb.group({
+      playerOut: [null],
+      playerIn: [null],
+    });
+  }
 }

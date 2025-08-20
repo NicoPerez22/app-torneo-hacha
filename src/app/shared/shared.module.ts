@@ -17,6 +17,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { TableComponent } from './components/table/table.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 @NgModule({
   declarations: [HeaderComponent, TableComponent],
@@ -38,6 +39,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     NzTableModule,
     NzDropDownModule,
     NgxPaginationModule,
+    NzTabsModule
   ],
   exports: [
     CommonModule,
@@ -57,6 +59,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     NzTableModule,
     NzDropDownModule,
     NgxPaginationModule,
+    NzTabsModule
   ],
 })
 export class SharedModule {}

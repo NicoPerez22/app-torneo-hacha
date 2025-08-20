@@ -39,6 +39,13 @@ const routes: Routes = [
   },
 
   {
+    path: 'inhabilitados',
+    canActivate: [UserGuard],
+    loadChildren: () =>
+      import('../app/disabled-players/disabled-players.module').then((m) => m.DisabledPlayersModule),
+  },
+
+  {
     path: 'tournament',
     canActivate: [UserGuard],
     loadChildren: () =>
@@ -52,4 +59,4 @@ const routes: Routes = [
   declarations: [],
   imports: [RouterModule.forRoot(routes), CommonModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

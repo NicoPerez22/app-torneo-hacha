@@ -1,6 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body { font-family: 'Poppins', sans-serif; }
+
+/* Header */
+.header-bg {
+  background: url('../../../assets/images/fondo1.png') no-repeat 50% 20% / cover;
+  min-height: 180px;
+  width: 100%;
+  margin-top: 2%;
+}
+
+.tournament-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.title-wrap { margin-top: 60px; }
+
 .tournament-container {
-  max-width: 650px;
-  margin: 40px auto;
+  padding-right: 15%;
+  padding-left: 15%;
   text-align: center;
 }
 
@@ -10,21 +30,12 @@
   color: #fff;
 }
 
-.tournament-container p {
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 20px;
-}
+.tournament-container p { font-size: 14px; color: #999; margin-bottom: 20px; }
 
-.match-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
+/* Fixtures */
 .match-item {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   background: #161b22;
   border: 1px solid #30363d;
@@ -32,34 +43,90 @@
   border-right: 4px solid #ff8800;
   border-radius: 6px;
   margin-bottom: 10px;
-  padding: 12px 15px;
-  font-size: 14px;
+  padding: 10px 10px;
+  font-size: 12px;
   transition: background 0.2s ease;
   color: white;
+  gap: 10px;
 }
 
-.match-item:hover {
-  background: #1c222a;
-}
+.match-item:hover { background: #1c222a; }
 
 .team {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+}
+.team.left { justify-content: flex-start; }
+.team.right { justify-content: flex-end; }
+
+.team img { width: 28px; height: 30px; flex: 0 0 auto; }
+.team span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.vs { text-align: center; font-weight: bold; color: #ccc; }
+
+/* Tables */
+.table-wrapper {
+  border: 1px solid #222;
+  border-radius: 6px;
+  overflow: auto; /* asegura scroll horizontal si hace falta */
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
 }
 
-.team img {
-  width: 28px;
-  height: 30px;
+.table thead { background-color: #1e2a38; color: #00ffc8; }
+.table tbody tr { background-color: #16212c; border-bottom: 1px solid #2b3b4e; }
+.table tbody tr:hover { background-color: #243446; }
+.table td, .table th {
+  vertical-align: middle;
+  text-align: center;
+  padding: 9px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.player-name { font-weight: bold; color: #ffffff; text-align: left; }
+.team-logo { width: 25px; height: 25px; object-fit: cover; margin-right: 8px; }
+
+/* --------- Breakpoints --------- */
+@media (max-width: 992px) {
+  .tournament-container { padding-left: 8%; padding-right: 8%; }
 }
 
-.score {
-  font-size: 18px;
-  font-weight: bold;
-  color: #007bff;
+@media (max-width: 768px) {
+  .tournament-container { padding-left: 6%; padding-right: 6%; }
+  .tournament-container h2 { font-size: 22px; }
+  .tournament-container p { font-size: 13px; }
+  .title-wrap { margin-top: 52px; }
+  .tournament-logo { width: 84px; height: 84px; }
+  .table td, .table th { font-size: 11px; padding: 8px; }
 }
 
-.separator {
-  color: #aaa;
-  font-weight: bold;
+@media (max-width: 576px) {
+  .header-bg { min-height: 130px; margin-top: 0; }
+  .tournament-container { padding-left: 14px; padding-right: 14px; }
+
+  /* Partidos: apilar en xs si el nombre del equipo es largo */
+  .match-item {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "left right"
+      "vs vs";
+    gap: 6px 10px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .team.left { grid-area: left; justify-content: flex-start; }
+  .team.right { grid-area: right; justify-content: flex-end; }
+  .vs { grid-area: vs; }
+
+  .team img { width: 24px; height: 24px; }
+  .team span { max-width: 120px; }
+
+  /* Títulos */
+  .tournament-container h2 { font-size: 20px; }
+  .title-wrap { margin-top: 46px; }
+  .tournament-logo { width: 72px; height: 72px; }
+
+  /* Tablas en xs: tipografía y padding más chico */
+  .table td, .table th { font-size: 10.5px; padding: 7px; }
 }

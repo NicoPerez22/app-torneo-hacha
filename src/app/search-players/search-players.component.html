@@ -70,10 +70,98 @@
             >
           </td>
           <td>
-            <button class="btn btn-warning">Ofertar</button>
+            <button class="btn btn-warning" (click)="onBird(player)">
+              Ofertar
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="modalTitle"
+  [nzContent]="modalContent"
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancel()"
+>
+  <ng-template #modalTitle>Oferta de transferencia</ng-template>
+
+  <ng-template #modalContent>
+    <div class="container">
+      <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
+        <div class="row">
+          <div class="col-md-6">
+            <nz-form-item>
+              <nz-form-label nzFor="manager">Jugador Entrante</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="playerOut" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-6">
+            <nz-form-item>
+              <nz-form-label nzFor="teams">Jugador Salida</nz-form-label>
+              <nz-form-control>
+                <nz-select formControlName="playerIn">
+                  <nz-option
+                    *ngFor="let item of players"
+                    [nzValue]="item.id"
+                    [nzLabel]="item.name"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="d-flex flex-column align-items-center">
+            <img
+              [src]="
+                  player?.photo
+                    ? player.photo.secureUrl
+                    : '../../../assets/images/player-default.png'
+              "
+              alt="Logo equipo"
+              width="40"
+              height="40"
+              style="object-fit: cover; margin-bottom: 5px"
+            />
+            <span>{{ player?.team?.name }}</span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="d-flex flex-column align-items-center">
+            <img
+              [src]="
+                  player?.photo
+                    ? player.photo.secureUrl
+                    : '../../../assets/images/player-default.png'
+              "
+              alt="Logo equipo"
+              width="40"
+              height="40"
+              style="object-fit: cover; margin-bottom: 5px"
+            />
+            <span>{{ player?.team?.name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row d-flex justify-content-center mt-5">
+        <div class="col-md-2">
+          <button class="btn btn-warning" (click)="onSubmit()">
+            Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</nz-modal>

@@ -1,48 +1,169 @@
+<div class="header-bg"></div>
+
 <div class="tournament-container">
-  <h2>{{ tournament?.name }}</h2>
-  <p>{{ tournament?.format?.description }}</p>
-  <ul class="match-list">
-    <li
-      class="match-item d-flex justify-content-between align-items-center"
-      *ngFor="
-        let match of tournament?.rounds
-          | paginate : { itemsPerPage: 4, currentPage: p }
-      "
-    >
-      <div class="team">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-6 text-center position-relative mb-4">
+      <div class="position-absolute top-0 start-50 translate-middle" style="z-index: 1">
         <img
-          [src]="
-            match?.homeLogo?.secureUrl
-              ? match?.homeLogo?.secureUrl
-              : '../../../assets/images/player-default.png'
-          "
-          alt="Logo"
-        /><span>{{ match.home }}</span>
-      </div>
-
-      <!-- <div class="score">0</div> -->
-      <!-- <div class="separator">VS</div> -->
-      <!-- <div class="score">0</div> -->
-
-      <div class="team">
-        <span>{{ match.away }}</span
-        ><img
-          [src]="
-            match?.awayLogo?.secureUrl
-              ? match?.awayLogo?.secureUrl
-              : '../../../assets/images/player-default.png'
-          "
-          alt="Logo"
+          [src]="tournament?.logo?.secureUrl ? tournament.logo.secureUrl : '../../../assets/images/HYT-IESA.png'"
+          class="tournament-logo"
         />
       </div>
-    </li>
 
-    <div class="mt-5">
-      <pagination-controls
-        (pageChange)="p = $event"
-        previousLabel="Anterior"
-        nextLabel="Siguiente"
-      ></pagination-controls>
+      <div class="title-wrap">
+        <h2 class="text-white fw-bold">{{ tournament?.name }}</h2>
+        <p class="text-secondary mb-1">{{ tournament?.format?.description }}</p>
+      </div>
     </div>
-  </ul>
+  </div>
+
+  <nz-tabset nzCentered style="color: white;">
+    <nz-tab nzTitle="Tabla de posiciones">
+      <div class="row mb-5 g-4">
+        <!-- Tabla -->
+        <div class="col-12 col-md-8">
+          <div class="table-responsive table-wrapper">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>POS</th>
+                  <th>Equipo</th>
+                  <th>PTS</th>
+                  <th class="d-none d-sm-table-cell">PG</th>
+                  <th class="d-none d-lg-table-cell">PE</th>
+                  <th class="d-none d-lg-table-cell">PP</th>
+                  <th class="d-none d-xl-table-cell">GF</th>
+                  <th class="d-none d-xl-table-cell">GE</th>
+                  <th class="d-none d-sm-table-cell">DIF</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let player of tournament?.teams; let i = index">
+                  <td class="text-center player-name"><span>{{ i + 1 }}</span></td>
+                  <td class="player-name text-start">
+                    <span>
+                      <img
+                        [src]="player?.logo ? player.logo.secureUrl : '../../../assets/images/player-default.png'"
+                        class="mb-2 team-logo"
+                      />
+                    </span>
+                    {{ player.name }}
+                  </td>
+                  <td class="text-center player-name"><span>12</span></td>
+                  <td class="text-center player-name d-none d-sm-table-cell">12</td>
+                  <td class="text-center player-name d-none d-lg-table-cell"><span>12</span></td>
+                  <td class="text-center player-name d-none d-lg-table-cell"><span>12</span></td>
+                  <td class="text-center player-name d-none d-xl-table-cell"><span>12</span></td>
+                  <td class="text-center player-name d-none d-xl-table-cell"><span>12</span></td>
+                  <td class="text-center player-name d-none d-sm-table-cell"><span>12</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Fixtures -->
+        <div class="col-12 col-md-4">
+          <ul>
+            <li
+              class="match-item"
+              *ngFor="let match of tournament?.rounds | paginate : { itemsPerPage: 6, currentPage: p }"
+            >
+              <div class="team left">
+                <img
+                  [src]="match?.homeLogo?.secureUrl ? match?.homeLogo?.secureUrl : '../../../assets/images/player-default.png'"
+                  alt="Logo"
+                />
+                <span>{{ match.home }}</span>
+              </div>
+
+              <div class="vs">VS</div>
+
+              <div class="team right">
+                <span>{{ match.away }}</span>
+                <img
+                  [src]="match?.awayLogo?.secureUrl ? match?.awayLogo?.secureUrl : '../../../assets/images/player-default.png'"
+                  alt="Logo"
+                />
+              </div>
+            </li>
+          </ul>
+
+          <div class="mt-4" >
+            <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+
+    <nz-tab nzTitle="Goleadores">
+      <div class="row mb-5">
+        <div class="col-12">
+          <div class="table-responsive table-wrapper">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>POS</th>
+                  <th>Jugador</th>
+                  <th>PJ</th>
+                  <th>Goles</th>
+                  <th class="d-none d-sm-table-cell">Asistencias</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let player of tournament?.teams; let i = index">
+                  <td class="text-center player-name"><span>{{ i + 1 }}</span></td>
+                  <td class="player-name text-start">
+                    <span>
+                      <img
+                        [src]="player?.logo ? player.logo.secureUrl : '../../../assets/images/player-default.png'"
+                        class="mb-2 team-logo"
+                      />
+                    </span>
+                    {{ player.name }}
+                  </td>
+                  <td class="text-center player-name"><span>12</span></td>
+                  <td class="text-center player-name">12</td>
+                  <td class="text-center player-name d-none d-sm-table-cell"><span>12</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+
+    <nz-tab nzTitle="Tarjetas">
+      <div class="row mb-5">
+        <div class="col-12">
+          <div class="table-responsive table-wrapper">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Jugador</th>
+                  <th>Motivo</th>
+                  <th class="d-none d-sm-table-cell">Sanción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let player of tournament?.teams; let i = index">
+                  <td class="player-name text-start">
+                    <span>
+                      <img
+                        [src]="player?.logo ? player.logo.secureUrl : '../../../assets/images/player-default.png'"
+                        class="mb-2 team-logo"
+                      />
+                    </span>
+                    {{ player.name }}
+                  </td>
+                  <td class="text-center player-name"><span>{{ i + 1 }}</span></td>
+                  <td class="text-center player-name d-none d-sm-table-cell"><span>12</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
 </div>
