@@ -13,7 +13,7 @@ export class SearchPlayersComponent implements OnInit {
   columns: Array<any> = [];
   players: Array<any> = [];
 
-  player
+  player;
 
   isVisible: boolean = false;
   form: FormGroup;
@@ -31,12 +31,12 @@ export class SearchPlayersComponent implements OnInit {
   onBird(player): void {
     this._initForm();
     this._getPlayerMyTeam();
-    
-    this.player = player
+
+    this.player = player;
 
     this.isVisible = true;
-    this.form.get('playerOut').patchValue(player?.fullName)
-    this.form.get('playerOut').disable()
+    this.form.get('playerOut').patchValue(player?.fullName);
+    this.form.get('playerOut').disable();
   }
 
   onSubmit(): void {
@@ -60,12 +60,11 @@ export class SearchPlayersComponent implements OnInit {
     });
   }
 
-  private _getPlayerMyTeam(){
-    this.teamService.(id).subscribe({
-      next: (resp: any) => {
-
-      }
-    })
+  private _getPlayerMyTeam() {
+    // this.teamService.(id).subscribe({
+    //   next: (resp: any) => {
+    //   }
+    // })
   }
 
   private _initForm() {
