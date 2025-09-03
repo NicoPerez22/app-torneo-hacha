@@ -81,3 +81,46 @@ p {
   text-align: left;
   padding-left: 1rem;
 }
+
+.esports-card {
+  background-color: #111;
+  color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+  margin-bottom: 30px;
+}
+
+.banner {
+  height: 120px;
+  background: url('https://via.placeholder.com/600x200') center/cover no-repeat;
+  position: relative;
+}
+
+.logo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 4px solid #111;
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+}
+
+.card-body {
+  margin-top: 50px;
+  padding: 15px;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.role {
+  color: #aaa;
+  font-size: 0.95rem;
+}
