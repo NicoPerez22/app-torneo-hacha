@@ -1,67 +1,13 @@
-.header {
-  &__logo {
-    max-width: 350px;
-    height: auto;
-    margin: 15px;
-  }
+header { /* quitá márgenes inline */
+  margin-bottom: 0 !important;
 }
 
-.footer {
-  &__logo {
-    max-width: 125px;
-    height: auto;
-    margin: 15px;
-  }
-}
-
-.back {
-  background-color: #0b4a92;
-}
-
-.mat-mdc-button {
-  border-radius: 0px !important;
-}
-
-.mat-mdc-unelevated-button {
-  border-radius: 0px !important;
-}
-
-.btnSideNav {
-  background-color: #8ee5ee !important;
-}
-
-@media (max-height: 599px) {
-  .fixed-bottom {
-    position: relative !important;
-    bottom: auto !important;
-    width: auto !important;
-  }
-}
-
-.app-body {
-  min-height: calc(100vh - 199px);
-}
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
+.content { /* ya le metemos paddingTop dinámico desde TS */
+  flex: 1;
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-.content {
-  flex: 1; /* Hace que el contenido principal ocupe el espacio restante */
-}
-
-.footer {
-  background-color: #0a1c30; /* Ajusta el color de fondo */
-  color: #fff;
-  text-align: center;
 }

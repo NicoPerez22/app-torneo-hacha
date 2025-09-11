@@ -1,9 +1,10 @@
 <div class="wrapper">
-  <header style="margin-bottom: 10%">
+  <header #hdr>
     <app-header></app-header>
   </header>
 
-  <main class="content">
+  <!-- Aplico padding-top en px calculado -->
+  <main class="content" [style.paddingTop.px]="headerH">
     <router-outlet></router-outlet>
   </main>
 
@@ -15,7 +16,6 @@
     </div>
   </footer>
 </div>
-
 <ngx-spinner
   bdColor="rgba(51,51,51,0.8)"
   size="medium"

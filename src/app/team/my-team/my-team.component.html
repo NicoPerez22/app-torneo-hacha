@@ -1,259 +1,214 @@
-<div class="header-bg" style="min-height: 265px"></div>
-<div class="container py-4">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-6 text-center position-relative mb-4">
-      <div
-        class="position-absolute top-0 start-50 translate-middle"
-        style="z-index: 1"
-      >
-        <img
-          [src]="myTeam?.logo?.secureUrl"
-          style="width: 100px; height: 100px; object-fit: contain"
-        />
-      </div>
-      <div style="margin-top: 60px">
-        <h2 class="text-white fw-bold">{{ myTeam?.name }}</h2>
-        <p class="text-secondary mb-1"></p>
-      </div>
-      <div class="mt-1">
-        <ul
-          class="d-flex justify-content-center gap-2 p-0 mb-3"
-          style="list-style: none"
-        >
-          <li><h6>Manager:</h6></li>
-          <li>
-            <h6>{{ myTeam?.owner?.name }} {{ myTeam?.owner?.lastName }}</h6>
-          </li>
-        </ul>
-        <div
-          class="d-flex gap-3 justify-content-center"
-          *ngIf="user?.idRol == 1"
-        >
-          <button class="btn btn-success" (click)="openModalSearchPlayers()">
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            Transferencia
-          </button>
+<!-- Header visual -->
+<section class="position-relative min-vh-25 bg-black">
+  <!-- Fondo visible solo en md+ -->
+  <img
+    src="../../../assets/images/fondo1.png"
+    alt="Header"
+    class="d-none d-md-block position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
+  />
+</section>
 
-          <button class="btn btn-warning" (click)="openModalAssignManager()">
-            <i class="fa fa-user" aria-hidden="true"></i>
-            Asignar Manager
-          </button>
+<!-- Sección principal -->
+<section class="position-relative py-5">
+  <!-- Fondo para que el blur tenga efecto -->
+  <img
+    src="../../../assets/images/fondo1.png"
+    alt=""
+    class="d-none d-md-block position-absolute top-0 start-0 w-100 h-100 object-fit-cover opacity-25 z-n1"
+  />
 
-          <button class="btn btn-danger" (click)="openModalSearchPlayers()">
-            <i class="fa fa-trash" aria-hidden="true"></i>
-            Eliminar jugadores
-          </button>
+  <div class="container position-relative">
+    <!-- Encabezado equipo -->
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 text-center position-relative mb-4">
+        <!-- Logo centrado -->
+        <div class="position-absolute top-0 start-50 translate-middle z-1">
+          <img
+            [src]="myTeam?.logo?.secureUrl"
+            alt="Logo equipo"
+            width="70"
+            height="70"
+            class="object-fit-contain"
+          />
+        </div>
+
+        <div class="pt-5 mt-4">
+          <h2 class="text-white fw-bold mb-1">{{ myTeam?.name }}</h2>
+          <ul class="d-flex justify-content-center gap-2 list-unstyled mb-3">
+            <li><h6 class="text-white-50 mb-0">Manager:</h6></li>
+            <li>
+              <h6 class="text-white mb-0">
+                {{ myTeam?.owner?.name }} {{ myTeam?.owner?.lastName }}
+              </h6>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <!-- <div class="col-12">
-      <hr class="border-light" />
-    </div> -->
-
-    <!-- Tabs Bootstrap -->
-    <ul
-      class="nav nav-tabs mb-4 border-0 gaming-tabs"
-      id="teamTabs"
-      role="tablist"
-    >
-      <li class="nav-item flex-fill text-center" role="presentation">
-        <a
-          class="nav-link gaming-tab-btn active"
-          id="jugadores-tab"
-          data-bs-toggle="tab"
-          href="#jugadores"
-          role="tab"
-          aria-controls="jugadores"
-          aria-selected="true"
+    <!-- Tabs -->
+    <nz-tabset nzCentered style="color: white">
+      <nz-tab nzTitle="Jugadores">
+        <div
+          class="row row-cols-2 row-cols-sm-3 row-cols-md-3 row-cols-lg-6 g-3 mb-5"
         >
-          <i class="fa fa-users me-2"></i>Jugadores
-        </a>
-      </li>
-      <li class="nav-item flex-fill text-center" role="presentation">
-        <a
-          class="nav-link gaming-tab-btn"
-          id="estadisticas-tab"
-          data-bs-toggle="tab"
-          href="#estadisticas"
-          role="tab"
-          aria-controls="estadisticas"
-          aria-selected="false"
-        >
-          <i class="fa fa-calendar me-2"></i>Proximas Fechas
-        </a>
-      </li>
-    </ul>
-
-    <div class="tab-content">
-      <div
-        class="tab-pane fade show active"
-        id="jugadores"
-        role="tabpanel"
-        aria-labelledby="jugadores-tab"
-      >
-        <div class="col-12">
-          <div class="row g-3 justify-content-center mb-5">
+          <div class="col" *ngFor="let player of playersTeamsList">
+            <!-- Card glass -->
             <div
-              class="col-6 col-sm-4 col-md-2 col-lg-2 text-center mb-2"
-              *ngFor="let player of playersTeamsList"
+              class="glass p-3 position-relative text-center h-100 text-white"
             >
-              <!-- Contenedor relativo -->
-              <div class="player-card position-relative p-2">
-                <!-- Ícono menú superpuesto -->
-                <ng-container
-                  *ngIf="!player.loading && user.id === myTeam?.owner?.id"
+              <!-- Acción (cambiar) -->
+              <ng-container
+                *ngIf="!player.loading && user.id === myTeam?.owner?.id"
+              >
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2"
+                  (click)="onChangePlayer(player)"
                 >
-                  <i
-                    class="fa fa-exchange icon position-absolute"
-                    (click)="onChangePlayer(player)"
-                    style="
-                      top: 8px;
-                      right: 47px;
-                      font-size: 18px;
-                      cursor: pointer;
-                      color: #ccc;
-                    "
-                  >
-                  </i>
-                </ng-container>
+                  <i class="fa fa-exchange"></i>
+                </button>
+              </ng-container>
 
-                <ng-container *ngIf="player.loading">
-                  <div>
-                    <div class="spinner"></div>
-                  </div>
-                </ng-container>
-
-                <!-- Imagen jugador -->
-                <img
-                  [src]="
-                    player?.photo
-                      ? player.photo.secureUrl
-                      : '../../../assets/images/player-default.png'
-                  "
-                  class="mb-2"
-                  width="60"
-                  height="60"
-                  style="object-fit: cover; border-radius: 6px"
-                />
-
-                <!-- Estado -->
-                <div
-                  [ngClass]="
-                    player.isHabilitado ? 'state-confirmation' : 'state-red'
-                  "
-                ></div>
-
-                <!-- Nombre -->
-                <div>
-                  <h6 class="mb-0">
-                    {{ player?.name }} {{ player?.lastName }}
-                  </h6>
+              <!-- Spinner -->
+              <ng-container *ngIf="player.loading">
+                <div class="position-absolute top-0 end-0 m-2">
+                  <div class="spinner-border spinner-border-sm text-info"></div>
                 </div>
+              </ng-container>
 
-                <!-- Posición y valoración -->
-                <div>
-                  <h6 class="mt-1">
-                    <span
-                      [ngClass]="{
-                        gk: player?.position == 'POR',
-                        defence:
-                          player?.position == 'LD' ||
-                          player?.position == 'DFC' ||
-                          player?.position == 'LI',
-                        medio:
-                          player?.position == 'MCO' ||
-                          player?.position == 'MCD' ||
-                          player?.position == 'MC' ||
-                          player?.position == 'MI' ||
-                          player?.position == 'MD',
-                        attack:
-                          player?.position == 'DC' ||
-                          player?.position == 'ED' ||
-                          player?.position == 'EI'
-                      }"
-                    >
-                      {{ player?.position }}
-                    </span>
-                    -
-                    <span
-                      class="overball"
-                      [ngClass]="{
-                        'valoration-yellow': player?.valoration < 70,
-                        'valoration-green-clarito':
-                          player?.valoration >= 70 && player?.valoration < 85,
-                        'valoration-green-dark': player?.valoration >= 85
-                      }"
-                    >
-                      {{ player?.valoration }}
-                    </span>
-                  </h6>
-                </div>
+              <!-- Foto -->
+              <img
+                [src]="
+                  player?.photo
+                    ? player.photo.secureUrl
+                    : '../../../assets/images/player-default.png'
+                "
+                alt="Jugador"
+                width="60"
+                height="60"
+                class="rounded object-fit-cover mb-2"
+              />
 
-                <div *ngIf="player?.isTransfer">
-                  <h6>En Transferencias</h6>
-                </div>
+              <!-- Estado -->
+              <div class="mb-1">
+                <span
+                  class="badge w-50"
+                  [ngClass]="player.isHabilitado ? 'bg-success' : 'bg-danger'"
+                >
+                  {{ player.isHabilitado ? 'Habilitado' : 'Inhabilitado' }}
+                </span>
+              </div>
+
+              <!-- Nombre -->
+              <h6 class="mb-1 text-white">
+                {{ player?.name }} {{ player?.lastName }}
+              </h6>
+
+              <!-- Posición + valoración -->
+              <div>
+                <span
+                  class="badge me-1"
+                  [ngClass]="{
+                    'text-bg-danger': player?.position == 'POR',
+                    'text-bg-warning': ['LD', 'DFC', 'LI'].includes(
+                      player?.position
+                    ),
+                    'text-bg-success': [
+                      'MCO',
+                      'MCD',
+                      'MC',
+                      'MI',
+                      'MD'
+                    ].includes(player?.position),
+                    'text-bg-primary': ['DC', 'ED', 'EI'].includes(
+                      player?.position
+                    )
+                  }"
+                >
+                  {{ player?.position }}
+                </span>
+                <span
+                  class="badge text-white"
+                  [ngClass]="{
+                    'text-bg-warning': player?.valoration < 70,
+                    'bg-success-subtle':
+                      player?.valoration >= 70 && player?.valoration < 85,
+                    'text-bg-success': player?.valoration >= 85
+                  }"
+                >
+                  {{ player?.valoration }}
+                </span>
+              </div>
+
+              <!-- Transferencia -->
+              <div *ngIf="player?.isTransfer" class="mt-2">
+                <span class="badge text-bg-info">En transferencias</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </nz-tab>
 
-      <div
-        class="tab-pane fade"
-        id="estadisticas"
-        role="tabpanel"
-        aria-labelledby="estadisticas-tab"
-      >
-        <div class="text-center py-5">
+      <nz-tab nzTitle="Proximas Fechas">
+        <div class="text-center py-4">
           <div class="row justify-content-center">
-            <div class="col-12 col-md-6 col-lg-8 mt-4 mt-md-4">
-              <ul class="match-list">
+            <div class="col-12 col-md-8 col-lg-7">
+              <ul class="list-group list-group-flush">
                 <li
-                  class="match-item d-flex justify-content-between align-items-center"
+                  class="list-group-item bg-dark text-white d-flex align-items-center justify-content-between rounded-3 my-2"
                   *ngFor="
                     let match of myTeam?.rounds
                       | paginate : { itemsPerPage: 6, currentPage: p }
                   "
                 >
-                  <div class="team">
+                  <!-- Local -->
+                  <div class="d-flex align-items-center gap-2">
                     <img
                       [src]="
                         match?.homeLogo?.secureUrl
                           ? match?.homeLogo?.secureUrl
                           : '../../../assets/images/player-default.png'
                       "
-                      alt="Logo"
-                    /><span>{{ match.home }}</span>
+                      alt="Logo local"
+                      width="28"
+                      height="30"
+                      class="object-fit-contain"
+                    />
+                    <span class="fw-semibold">{{ match.home }}</span>
                   </div>
 
-                  <div>VS</div>
+                  <div class="text-white-50 fw-bold">VS</div>
 
-                  <div class="team">
-                    <span>{{ match.away }}</span
-                    ><img
+                  <!-- Visitante -->
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-semibold">{{ match.away }}</span>
+                    <img
                       [src]="
                         match?.awayLogo?.secureUrl
                           ? match?.awayLogo?.secureUrl
                           : '../../../assets/images/player-default.png'
                       "
-                      alt="Logo"
+                      alt="Logo visitante"
+                      width="28"
+                      height="30"
+                      class="object-fit-contain"
                     />
                   </div>
                 </li>
-
-                <div class="mt-5">
-                  <pagination-controls
-                    (pageChange)="p = $event"
-                    previousLabel="Anterior"
-                    nextLabel="Siguiente"
-                  ></pagination-controls>
-                </div>
               </ul>
+
+              <div class="mt-4">
+                <pagination-controls
+                  (pageChange)="p = $event"
+                  previousLabel="Anterior"
+                  nextLabel="Siguiente"
+                ></pagination-controls>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </nz-tab>
+    </nz-tabset>
   </div>
-</div>
+</section>
