@@ -17,12 +17,12 @@ export class AuthService {
 
   register(userRegister): Observable<any> {
     const url = this.API_URL + `users/register`;
-    return this.http.post<any>(url, userRegister).pipe(map((res) => res));
+    return this.http.post<any>(url, userRegister);
   }
 
   login(userLogin): Observable<any> {
     const url = this.API_URL + `auth/login`;
-    return this.http.post<any>(url, userLogin).pipe(map((res) => res));
+    return this.http.post<any>(url, userLogin);
   }
 
   clean(): void {
@@ -68,4 +68,12 @@ export class AuthService {
   set setUserObservable(data) {
     this.userObservable.next(data);
   }
+
+  // getRole(): string {
+  //   return this.getUser().role;
+  // }
+
+  // isAuthorized(roles: string[]): boolean {
+  //   return roles.includes(this.getUser().role);
+  // }
 }

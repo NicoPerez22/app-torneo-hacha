@@ -4,6 +4,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+  // {
+  //   path: '**',
+  //   redirectTo: 'auth/login',
+  //   pathMatch: 'full',
+  // },
   {
     canActivate: [UserGuard],
     path: 'home',
@@ -42,7 +47,9 @@ const routes: Routes = [
     path: 'inhabilitados',
     canActivate: [UserGuard],
     loadChildren: () =>
-      import('../app/disabled-players/disabled-players.module').then((m) => m.DisabledPlayersModule),
+      import('../app/disabled-players/disabled-players.module').then(
+        (m) => m.DisabledPlayersModule,
+      ),
   },
 
   {
@@ -59,4 +66,4 @@ const routes: Routes = [
   declarations: [],
   imports: [RouterModule.forRoot(routes), CommonModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

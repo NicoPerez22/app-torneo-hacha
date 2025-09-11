@@ -14,14 +14,7 @@ import { Observable } from 'rxjs';
 export class UserGuard {
   constructor(private router: Router) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  canActivate() {
     const token = sessionStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/auth/login']);
@@ -29,5 +22,12 @@ export class UserGuard {
     } else {
       return true;
     }
+
+    // const expectedRoles = route.data['roles'] as string[];
+    // if (this.auth.isAuthorized(expectedRoles)) {
+    //   return true;
+    // }
+    // this.router.navigate(['/unauthorized']);
+    // return false;
   }
 }
