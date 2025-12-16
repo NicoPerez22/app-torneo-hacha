@@ -1,40 +1,73 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-black sticky-top"
-     [ngClass]="{ 'shadow-sm': isScrolled }">
+<nav
+  class="navbar navbar-expand-lg navbar-dark bg-black sticky-top"
+  [ngClass]="{ 'shadow-sm': isScrolled }"
+>
   <div class="container">
-
     <!-- Logo / Brand -->
     <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/home">
-      <img src="../../../../assets/images/seaneternos.png" alt="Sean Eternos" width="48" height="40">
+      <img
+        src="../../../../assets/images/seaneternos.png"
+        alt="Sean Eternos"
+        width="48"
+        height="40"
+      />
       <span class="fw-semibold d-none d-sm-inline">Sean Eternos</span>
     </a>
 
     <!-- Perfil + Dropdown (alineado a la derecha en desktop) -->
     <div class="d-flex align-items-center gap-3 order-lg-3">
       <!-- Icono (ejemplo) -->
-      <a class="text-light d-none d-md-inline-flex" href="#" aria-label="Mensajes">
+      <a
+        class="text-light d-none d-md-inline-flex"
+        href="#"
+        aria-label="Mensajes"
+      >
         <i class="bi bi-envelope-fill fs-5"></i>
       </a>
 
       <!-- Avatar + nombre + dropdown -->
       <div class="dropdown">
-        <a class="d-flex align-items-center text-decoration-none text-white dropdown-toggle"
-           href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="../../../assets/images/Nicp.png" alt="Perfil"
-               width="40" height="40" class="rounded-circle me-2">
-          <span class="d-none d-sm-inline">{{ loginService?.user?.nombre }}</span>
+        <a
+          class="d-flex align-items-center text-decoration-none text-white dropdown-toggle"
+          href="#"
+          id="userDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <img
+            src="../../../assets/images/Nicp.png"
+            alt="Perfil"
+            width="40"
+            height="40"
+            class="rounded-circle me-2"
+          />
+          <span class="d-none d-sm-inline">{{
+            loginService?.user?.nombre
+          }}</span>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="userDropdown"
+        >
           <li>
-            <button class="dropdown-item" (click)="logout()">Cerrar sesión</button>
+            <button class="dropdown-item" (click)="logout()">
+              Cerrar sesión
+            </button>
           </li>
         </ul>
       </div>
     </div>
 
     <!-- Toggler -->
-    <button class="navbar-toggler ms-2 order-lg-2" type="button"
-            data-bs-toggle="collapse" data-bs-target="#mainNav"
-            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler ms-2 order-lg-2"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNav"
+      aria-controls="mainNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -42,47 +75,53 @@
     <div class="collapse navbar-collapse order-lg-2" id="mainNav">
       <ul class="navbar-nav mx-lg-auto text-center gap-lg-2">
         <li class="nav-item">
-          <a class="nav-link"
-             routerLink="/home"
-             routerLinkActive="active"
-             [routerLinkActiveOptions]="{ exact: true }">
+          <a
+            class="nav-link"
+            routerLink="/home"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
             <i class="fa fa-home me-1" aria-hidden="true"></i> Inicio
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link"
-             routerLink="/tournament"
-             routerLinkActive="active">
+          <a
+            class="nav-link"
+            routerLink="/tournament"
+            routerLinkActive="active"
+          >
             <i class="fa fa-trophy me-1" aria-hidden="true"></i> Torneos
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link"
-             routerLink="/equipos"
-             routerLinkActive="active">
+          <a class="nav-link" routerLink="/equipos" routerLinkActive="active">
             <i class="fa fa-shield me-1" aria-hidden="true"></i> Equipos
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link"
-             routerLink="/mercado-transferencias"
-             routerLinkActive="active">
-            <i class="fa fa-users me-1" aria-hidden="true"></i> Mercado Transferencias
+          <a
+            class="nav-link"
+            routerLink="/mercado-transferencias"
+            routerLinkActive="active"
+          >
+            <i class="fa fa-users me-1" aria-hidden="true"></i> Mercado
+            Transferencias
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link"
-             routerLink="/inhabilitados"
-             routerLinkActive="active">
+          <a
+            class="nav-link"
+            routerLink="/inhabilitados"
+            routerLinkActive="active"
+          >
             <i class="fa fa-ban me-1" aria-hidden="true"></i> Inhabilitados
           </a>
         </li>
       </ul>
     </div>
-
   </div>
 </nav>

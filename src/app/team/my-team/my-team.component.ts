@@ -91,6 +91,12 @@ export class MyTeamComponent implements OnInit {
 
     setTimeout(() => {
       player.loading = false;
+
+      if (player.isTransfer) {
+        this._assignTransferPlayer(player.id, false);
+        return;
+      }
+
       this._assignTransferPlayer(player.id, true);
     }, 1000);
   }

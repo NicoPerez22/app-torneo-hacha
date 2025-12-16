@@ -1,33 +1,14 @@
-import { CookieService } from 'ngx-cookie-service';
-import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class UserGuard {
-  constructor(private router: Router) {}
+export const userGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const token = sessionStorage.getItem('token');
 
-  canActivate() {
-    const token = sessionStorage.getItem('token');
-    if (!token) {
-      this.router.navigate(['/auth/login']);
-      return false;
-    } else {
-      return true;
-    }
-
-    // const expectedRoles = route.data['roles'] as string[];
-    // if (this.auth.isAuthorized(expectedRoles)) {
-    //   return true;
-    // }
-    // this.router.navigate(['/unauthorized']);
-    // return false;
+  if (!token) {
+    router.navigate(['/auth/login']);
+    return false;
   }
-}
+
+  return true;
+};

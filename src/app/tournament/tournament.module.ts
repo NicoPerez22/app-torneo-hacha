@@ -14,6 +14,8 @@ import { SharedModule } from '../shared/shared.module';
 import { FiltersComponent } from './filters/filters.component';
 import { InputComponent } from './filters/input/input.component';
 import { SelectComponent } from './filters/select/select.component';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 
 @NgModule({
@@ -28,7 +30,9 @@ import { SelectComponent } from './filters/select/select.component';
     NzTableModule,
     NzInputModule,
     NzSelectModule,
-    NzFormModule
+    NzFormModule,
+    NzSwitchModule,
+    NzDropDownModule
   ]
 })
 export class TournamentModule { }

@@ -36,8 +36,13 @@ export class TournamentService {
     return this.http.post<any>(url, tournament).pipe(map((res) => res));
   }
 
-  getGames(): Observable<any> {
-    const url = 'https://pokeapi.co/api/v2/pokemon';
-    return this.http.get<any>(url).pipe(map((res) => res));
+  getRoundsPagination(id, page, limit): Observable<any> {
+    const url = this.API_URL + `tournament/${id}/${page}/${limit}`;
+    return this.http.get<any>(url);
+  }
+
+  getRanking(id): Observable<any> {
+    const url = this.API_URL + `tournament/${id}/ranking`;
+    return this.http.get<any>(url);
   }
 }

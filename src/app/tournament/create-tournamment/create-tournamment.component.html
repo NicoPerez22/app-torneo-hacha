@@ -4,7 +4,6 @@
       <nz-steps [nzCurrent]="current">
         <nz-step nzTitle="Datos del torneo"></nz-step>
         <nz-step nzTitle="Equipos"></nz-step>
-        <nz-step nzTitle="Draft"></nz-step>
       </nz-steps>
 
       <div class="steps-content">
@@ -122,22 +121,33 @@
           </div>
 
           <div *ngIf="index == 1">
-            <div class="col-md-4">
-              <nz-form-item>
-                <nz-form-label nzFor="teams">Equipos</nz-form-label>
-                <nz-form-control>
-                  <nz-select
-                    formControlName="teams"
-                    (ngModelChange)="onSelectTeam($event)"
-                  >
-                    <nz-option
-                      *ngFor="let item of teams"
-                      [nzValue]="item.id"
-                      [nzLabel]="item.name"
-                    ></nz-option>
-                  </nz-select>
-                </nz-form-control>
-              </nz-form-item>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-item>
+                  <nz-form-label nzFor="teams">Equipos</nz-form-label>
+                  <nz-form-control>
+                    <nz-select
+                      formControlName="teams"
+                      (ngModelChange)="onSelectTeam($event)"
+                    >
+                      <nz-option
+                        *ngFor="let item of teams"
+                        [nzValue]="item.id"
+                        [nzLabel]="item.name"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div class="col-md-4">
+                <nz-form-item>
+                  <nz-form-label nzFor="teams">Torneo con Draft (No/Si)</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch formControlName="draft"></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
             </div>
 
             <div class="row mt-2">
@@ -152,7 +162,7 @@
                   <img
                     [src]="item.logo.secureUrl"
                     width="40"
-                    height="60"
+                    height="40"
                     alt=""
                   />
                   <span

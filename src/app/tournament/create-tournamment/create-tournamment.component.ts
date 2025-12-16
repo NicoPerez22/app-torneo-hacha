@@ -50,6 +50,7 @@ export class CreateTournammentComponent implements OnInit {
     const obj = {
       name: this.form.get('name').value,
       teamsIds: this.teamsApi,
+      draft: this.form.get('draft').value
     };
 
     this.tournamentService.createTournament(obj).subscribe({
@@ -135,6 +136,7 @@ export class CreateTournammentComponent implements OnInit {
       description: [null, Validators.required],
       countTeams: [null, Validators.required],
       teams: [null, Validators.required],
+      draft: [null, Validators.required]
     });
   }
 

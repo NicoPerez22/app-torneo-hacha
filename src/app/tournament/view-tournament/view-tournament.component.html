@@ -3,9 +3,16 @@
 <div class="tournament-container">
   <div class="row justify-content-center">
     <div class="col-12 col-md-6 text-center position-relative mb-4">
-      <div class="position-absolute top-0 start-50 translate-middle" style="z-index: 1">
+      <div
+        class="position-absolute top-0 start-50 translate-middle"
+        style="z-index: 1"
+      >
         <img
-          [src]="tournament?.logo?.secureUrl ? tournament.logo.secureUrl : '../../../assets/images/HYT-IESA.png'"
+          [src]="
+            tournament?.logo?.secureUrl
+              ? tournament.logo.secureUrl
+              : '../../../assets/images/HYT-IESA.png'
+          "
           class="tournament-logo"
         />
       </div>
@@ -17,7 +24,7 @@
     </div>
   </div>
 
-  <nz-tabset nzCentered style="color: white;">
+  <nz-tabset nzCentered style="color: white">
     <nz-tab nzTitle="Tabla de posiciones">
       <div class="row mb-5 g-4">
         <!-- Tabla -->
@@ -38,24 +45,42 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let player of tournament?.teams; let i = index">
-                  <td class="text-center player-name"><span>{{ i + 1 }}</span></td>
+                <tr *ngFor="let rank of ranking; let i = index">
+                  <td class="text-center player-name">
+                    <span>{{ i + 1 }}</span>
+                  </td>
                   <td class="player-name text-start">
                     <span>
                       <img
-                        [src]="player?.logo ? player.logo.secureUrl : '../../../assets/images/player-default.png'"
+                        [src]="
+                          rank?.logo
+                            ? rank.logo
+                            : '../../../assets/images/player-default.png'
+                        "
                         class="mb-2 team-logo"
                       />
                     </span>
-                    {{ player.name }}
+                    {{ rank.teamName }}
                   </td>
-                  <td class="text-center player-name"><span>12</span></td>
-                  <td class="text-center player-name d-none d-sm-table-cell">12</td>
-                  <td class="text-center player-name d-none d-lg-table-cell"><span>12</span></td>
-                  <td class="text-center player-name d-none d-lg-table-cell"><span>12</span></td>
-                  <td class="text-center player-name d-none d-xl-table-cell"><span>12</span></td>
-                  <td class="text-center player-name d-none d-xl-table-cell"><span>12</span></td>
-                  <td class="text-center player-name d-none d-sm-table-cell"><span>12</span></td>
+                  <td class="text-center player-name"><span>{{ rank.points }}</span></td>
+                  <td class="text-center player-name d-none d-sm-table-cell">
+                    {{ rank.wins }}
+                  </td>
+                  <td class="text-center player-name d-none d-lg-table-cell">
+                    <span>{{ rank.draws }}</span>
+                  </td>
+                  <td class="text-center player-name d-none d-lg-table-cell">
+                    <span>{{ rank.losses }}</span>
+                  </td>
+                  <td class="text-center player-name d-none d-xl-table-cell">
+                    <span>{{ rank.goalsFor }}</span>
+                  </td>
+                  <td class="text-center player-name d-none d-xl-table-cell">
+                    <span>{{ rank.goalsAgainst }}</span>
+                  </td>
+                  <td class="text-center player-name d-none d-sm-table-cell">
+                    <span>{{ rank.goalDifference }}</span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -65,33 +90,44 @@
         <!-- Fixtures -->
         <div class="col-12 col-md-4">
           <ul>
-            <li
-              class="match-item"
-              *ngFor="let match of tournament?.rounds | paginate : { itemsPerPage: 6, currentPage: p }"
-            >
+            <li class="match-item" *ngFor="let match of rounds">
               <div class="team left">
                 <img
-                  [src]="match?.homeLogo?.secureUrl ? match?.homeLogo?.secureUrl : '../../../assets/images/player-default.png'"
+                  [src]="
+                    match?.homeLogoUrl
+                      ? match?.homeLogoUrl
+                      : '../../../assets/images/player-default.png'
+                  "
                   alt="Logo"
                 />
-                <span>{{ match.home }}</span>
+                <span>{{ match.homeTeamName }}</span>
+                
               </div>
 
-              <div class="vs">VS</div>
+              <div class="vs">
+                <span>{{ match.homeGoals }}</span>
+                VS
+                <span>{{ match.awayGoals }}</span>
+              </div>
 
               <div class="team right">
-                <span>{{ match.away }}</span>
+                
+                <span>{{ match.awayTeamName }}</span>
                 <img
-                  [src]="match?.awayLogo?.secureUrl ? match?.awayLogo?.secureUrl : '../../../assets/images/player-default.png'"
+                  [src]="
+                    match?.awayLogoUrl
+                      ? match?.awayLogoUrl
+                      : '../../../assets/images/player-default.png'
+                  "
                   alt="Logo"
                 />
               </div>
             </li>
           </ul>
 
-          <div class="mt-4" >
+          <!-- <div class="mt-4" >
             <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
-          </div>
+          </div> -->
         </div>
       </div>
     </nz-tab>
@@ -112,11 +148,17 @@
               </thead>
               <tbody>
                 <tr *ngFor="let player of tournament?.teams; let i = index">
-                  <td class="text-center player-name"><span>{{ i + 1 }}</span></td>
+                  <td class="text-center player-name">
+                    <span>{{ i + 1 }}</span>
+                  </td>
                   <td class="player-name text-start">
                     <span>
                       <img
-                        [src]="player?.logo ? player.logo.secureUrl : '../../../assets/images/player-default.png'"
+                        [src]="
+                          player?.logo
+                            ? player.logo.secureUrl
+                            : '../../../assets/images/player-default.png'
+                        "
                         class="mb-2 team-logo"
                       />
                     </span>
@@ -124,7 +166,9 @@
                   </td>
                   <td class="text-center player-name"><span>12</span></td>
                   <td class="text-center player-name">12</td>
-                  <td class="text-center player-name d-none d-sm-table-cell"><span>12</span></td>
+                  <td class="text-center player-name d-none d-sm-table-cell">
+                    <span>12</span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -150,14 +194,22 @@
                   <td class="player-name text-start">
                     <span>
                       <img
-                        [src]="player?.logo ? player.logo.secureUrl : '../../../assets/images/player-default.png'"
+                        [src]="
+                          player?.logo
+                            ? player.logo.secureUrl
+                            : '../../../assets/images/player-default.png'
+                        "
                         class="mb-2 team-logo"
                       />
                     </span>
                     {{ player.name }}
                   </td>
-                  <td class="text-center player-name"><span>{{ i + 1 }}</span></td>
-                  <td class="text-center player-name d-none d-sm-table-cell"><span>12</span></td>
+                  <td class="text-center player-name">
+                    <span>{{ i + 1 }}</span>
+                  </td>
+                  <td class="text-center player-name d-none d-sm-table-cell">
+                    <span>12</span>
+                  </td>
                 </tr>
               </tbody>
             </table>

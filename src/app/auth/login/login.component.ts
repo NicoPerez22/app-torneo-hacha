@@ -1,8 +1,12 @@
 import { LoginService } from 'src/app/service/login.service';
-import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 import { AuthService } from 'src/app/service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -12,7 +16,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  formLoginUser: any;
+  form: FormGroup;
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -23,48 +27,31 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.createformLoginUser();
+    this._initForm();
   }
 
   onLogin() {
-    if (this.formLoginUser.valid) {
-      const loginForm: any = {
-        email: this.formLoginUser.value.email,
-        password: this.formLoginUser.value.password,
-      };
+    this.authService.login(this.form.getRawValue()).subscribe({
+      next: (resp) => {
+        if (resp.httpCode == 200) {
+          this.toastrService.success('Bienvenido');
+          this.loginService.login(resp.data);
 
-      this.authService.login(loginForm).subscribe({
-        next: (resp) => {
-          if (resp.httpCode == 200) {
-            this.toastrService.success('Bienvenido');
-            this.loginService.login(resp.data);
-
-            this.router.navigate(['/home']);
-          } else {
-            this.toastrService.error('Usuario o contraseña incorrectos');
-          }
-        },
-        error: () => {
-          this.toastrService.error('No se pudo ingresar, la conexión falló');
-        },
-      });
-    } else {
-      this.toastrService.error('El formulario es inválido');
-    }
-  }
-
-  createformLoginUser() {
-    this.formLoginUser = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required],
+          this.router.navigate(['/home']);
+        } else {
+          this.toastrService.error('Usuario o contraseña incorrectos');
+        }
+      },
+      error: () => {
+        this.toastrService.error('No se pudo ingresar, la conexión falló');
+      },
     });
   }
 
-  get username(): FormControl {
-    return this.formLoginUser.get('username');
-  }
-
-  get password(): FormControl {
-    return this.formLoginUser.get('password');
+  private _initForm() {
+    this.form = this.fb.group({
+      email: ['', Validators.required],
+      password: ['', Validators.required],
+    });
   }
 }

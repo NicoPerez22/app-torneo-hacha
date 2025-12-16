@@ -17,7 +17,7 @@ p {
   border-bottom: 1px solid #2b3b4e;
 }
 .table tbody tr:hover {
-  background-color: #243446;
+  background-color: #00ffc8;
 }
 .table td,
 .table th {

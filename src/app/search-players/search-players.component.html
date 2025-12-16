@@ -84,7 +84,8 @@
   [(nzVisible)]="isVisible"
   [nzTitle]="modalTitle"
   [nzContent]="modalContent"
-  [nzFooter]="null"
+  [nzFooter]="modalFooter"
+  [nzWidth]="1200"
   (nzOnCancel)="handleCancel()"
 >
   <ng-template #modalTitle>Oferta de transferencia</ng-template>
@@ -108,9 +109,9 @@
               <nz-form-control>
                 <nz-select formControlName="playerIn">
                   <nz-option
-                    *ngFor="let item of players"
+                    *ngFor="let item of myPlayers"
                     [nzValue]="item.id"
-                    [nzLabel]="item.name"
+                    [nzLabel]="item.name + ' ' + item.lastName"
                   ></nz-option>
                 </nz-select>
               </nz-form-control>
@@ -124,9 +125,9 @@
           <div class="d-flex flex-column align-items-center">
             <img
               [src]="
-                  player?.photo
-                    ? player.photo.secureUrl
-                    : '../../../assets/images/player-default.png'
+                player?.photo
+                  ? player.photo.secureUrl
+                  : '../../../assets/images/player-default.png'
               "
               alt="Logo equipo"
               width="40"
@@ -141,9 +142,9 @@
           <div class="d-flex flex-column align-items-center">
             <img
               [src]="
-                  player?.photo
-                    ? player.photo.secureUrl
-                    : '../../../assets/images/player-default.png'
+                player?.photo
+                  ? player.photo.secureUrl
+                  : '../../../assets/images/player-default.png'
               "
               alt="Logo equipo"
               width="40"
@@ -154,13 +155,13 @@
           </div>
         </div>
       </div>
+    </div>
+  </ng-template>
 
-      <div class="row d-flex justify-content-center mt-5">
-        <div class="col-md-2">
-          <button class="btn btn-warning" (click)="onSubmit()">
-            Confirmar
-          </button>
-        </div>
+  <ng-template #modalFooter>
+    <div class="row text-center">
+      <div class="col-md-2">
+        <button class="btn btn-warning" (click)="onSubmit()">Confirmar</button>
       </div>
     </div>
   </ng-template>

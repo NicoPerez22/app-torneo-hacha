@@ -2,6 +2,8 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { TeamService } from '../service/team.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { UserService } from '../service/user.service';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-search-players',
@@ -12,6 +14,7 @@ export class SearchPlayersComponent implements OnInit {
   playersList: Array<any> = [];
   columns: Array<any> = [];
   players: Array<any> = [];
+  myPlayers: Array<any> = [];
 
   player;
 
@@ -22,6 +25,7 @@ export class SearchPlayersComponent implements OnInit {
     private teamService: TeamService,
     private spinnerService: NgxSpinnerService,
     private fb: FormBuilder,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -30,7 +34,9 @@ export class SearchPlayersComponent implements OnInit {
 
   onBird(player): void {
     this._initForm();
-    this._getPlayerMyTeam();
+    const user = this.authService.getUser();
+
+    this._getPlayerMyTeam(user.idTeam);
 
     this.player = player;
 
@@ -60,11 +66,12 @@ export class SearchPlayersComponent implements OnInit {
     });
   }
 
-  private _getPlayerMyTeam() {
-    // this.teamService.(id).subscribe({
-    //   next: (resp: any) => {
-    //   }
-    // })
+  private _getPlayerMyTeam(id) {
+    this.teamService.getTeamByID(id).subscribe({
+      next: (resp: any) => {
+        this.myPlayers = resp.data.players;
+      }
+    })
   }
 
   private _initForm() {

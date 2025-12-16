@@ -1,83 +1,76 @@
+// auth.service.ts
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  EMPTY,
+  timer,
+  throwError,
+} from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  retry,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
+
+const LS_USER_KEY = 'user';
+const SS_TOKEN_KEY = 'token';
+const CLOCK_SKEW_MS = 30 * 1000; // 30s de margen por reloj/latencia
+
+export interface AuthUser {
+  id: string | number;
+  name?: string;
+  email?: string;
+  /** Token para autorización en headers (Bearer ...) */
+  token: string;
+  /** Epoch en milisegundos en que expira el token */
+  expiryToken: number;
+  /** Campos extra que quieras persistir */
+  [k: string]: unknown;
+}
+
+export interface RefreshResponse {
+  data?: {
+    token: string;
+    expiryToken: number; // epoch ms
+  };
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
-  _user: any = null;
-  private readonly renewalInterval: any;
-  private readonly timeToRenew = 5 * 60 * 1000;
+  constructor(private router: Router) {}
 
-  constructor(private http: HttpClient) {
-    const userLocalStorage = localStorage.getItem('user');
-    if (userLocalStorage) {
-      try {
-        const userParsed: any = JSON.parse(userLocalStorage);
-        if (9000 < userParsed.expiryToken) {
-          this._user = userParsed;
-          if (userParsed.token && !sessionStorage.getItem('token')) {
-            sessionStorage.setItem('token', userParsed.token);
-          }
-        } else {
-          console.warn('Token expirado, borrando usuario');
-        }
-      } catch (error) {
-        console.error('Error parsing user from localStorage', error);
-      }
-    }
-    // Autorrenuevo cada 5 minutos
-    this.renewalInterval = setInterval(() => {
-      if (this.isAuthenticated()) {
-        this.renewJwt();
-      }
-    }, this.timeToRenew);
-  }
-
-  get user(): any {
-    return this._user;
-  }
-
-  isAuthenticated(): boolean {
-    return this._user !== null;
-  }
-
-  login(user: any): void {
-    this._user = user;
+  login(user): boolean {
+    sessionStorage.setItem('token', user.token);
     localStorage.setItem('user', JSON.stringify(user));
 
-    if (user.token) {
-      sessionStorage.setItem('token', user.token);
-    }
+    return true;
   }
 
-  logout(): void {
-    this._user = null;
-    localStorage.removeItem('user');
+  logout() {
     sessionStorage.removeItem('token');
-    clearInterval(this.renewalInterval);
+    localStorage.removeItem('user');
+
+    this.router.navigate(['/auth/login']);
   }
 
-  private renewJwt(): void {
-    // this.http
-    //   .post(`${environment.API_URL}auth/refresh`, {
-    //     token: this._user?.bearerToken,
-    //   })
-    //   .subscribe({
-    //     next: (response: any) => {
-    //       if (response.data) {
-    //         const updatedUser: any = {
-    //           ...this._user,
-    //           bearerToken: response.data.bearerToken,
-    //           expiryToken: response.data.expiryToken,
-    //         };
-    //         this.login(updatedUser);
-    //       }
-    //     },
-    //     error: (error) => {
-    //       console.error('Error renewing JWT', error);
-    //     },
-    //   });
+  isLogged(): boolean {
+    return !!sessionStorage.getItem('token');
+  }
+
+  get user(){
+    const u = JSON.parse(localStorage.getItem('user'));
+    return u ? u : null;
   }
 }
