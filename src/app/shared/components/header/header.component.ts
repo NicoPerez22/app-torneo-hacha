@@ -16,17 +16,7 @@ export class HeaderComponent implements OnInit {
 
   isScrolled = false;
 
-  teamsList: Array<any> = [];
-  playerList: Array<User> = [];
-  myUser: any;
-  myTeam: any;
-  teamExiste: boolean = false;
-
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    public loginService: LoginService,
-  ) {}
+  constructor(private router: Router, public loginService: LoginService) {}
 
   ngOnInit(): void {}
 
@@ -37,5 +27,13 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.loginService.logout();
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['/profile']);
+  }
+
+  navigateToTeam() {
+    this.router.navigate(['/equipos/' + this.user.idTeam]);
   }
 }

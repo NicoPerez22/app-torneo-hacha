@@ -50,7 +50,7 @@ export class CreateTournammentComponent implements OnInit {
     const obj = {
       name: this.form.get('name').value,
       teamsIds: this.teamsApi,
-      draft: this.form.get('draft').value
+      draft: this.form.get('draft').value,
     };
 
     this.tournamentService.createTournament(obj).subscribe({
@@ -92,11 +92,20 @@ export class CreateTournammentComponent implements OnInit {
   }
 
   onSelectTeam(id) {
-    const team = this.teams.find((elem) => elem.id === id);
+    if (this.teamsApi.length >= this.form.get('countTeams').value) {
+      this.toastrService.warning(
+        'Ya seleccionaste el maximo de equipos',
+        'Atencion',
+      );
+      return;
+    }
+
+    const index = this.teams.findIndex((t) => t.id === id);
+    if (index === -1) return;
+
+    const [team] = this.teams.splice(index, 1);
     this.teamsSelected.push(team);
     this.teamsApi.push(id);
-
-    console.log(this.teamsApi);
   }
 
   pre(): void {
@@ -136,7 +145,7 @@ export class CreateTournammentComponent implements OnInit {
       description: [null, Validators.required],
       countTeams: [null, Validators.required],
       teams: [null, Validators.required],
-      draft: [null, Validators.required]
+      draft: [null, Validators.required],
     });
   }
 

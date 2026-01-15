@@ -50,6 +50,20 @@
           aria-labelledby="userDropdown"
         >
           <li>
+            <button class="dropdown-item" (click)="navigateToProfile()">
+              <i class="fa fa-user" aria-hidden="true"></i>
+              Mi Perfil
+            </button>
+          </li>
+
+          <li>
+            <button class="dropdown-item" (click)="navigateToTeam()">
+              <i class="fa fa-shield me-1" aria-hidden="true"></i> Mi Equipo
+            </button>
+          </li>
+
+          <hr />
+          <li>
             <button class="dropdown-item" (click)="logout()">
               Cerrar sesión
             </button>

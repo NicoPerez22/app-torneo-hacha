@@ -1,21 +1,21 @@
 <!-- Header visual -->
 <section class="position-relative min-vh-25 bg-black">
   <!-- Fondo visible solo en md+ -->
-  <img
+  <!-- <img
     src="../../../assets/images/fondo1.png"
     alt="Header"
     class="d-none d-md-block position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
-  />
+  /> -->
 </section>
 
 <!-- Sección principal -->
 <section class="position-relative py-5">
   <!-- Fondo para que el blur tenga efecto -->
-  <img
+  <!-- <img
     src="../../../assets/images/fondo1.png"
     alt=""
     class="d-none d-md-block position-absolute top-0 start-0 w-100 h-100 object-fit-cover opacity-25 z-n1"
-  />
+  /> -->
 
   <div class="container position-relative">
     <!-- Encabezado equipo -->
@@ -153,10 +153,10 @@
       <nz-tab nzTitle="Proximas Fechas">
         <div class="text-center py-4">
           <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-7">
+            <div class="col-12 col-md-4 col-lg-10">
               <ul class="list-group list-group-flush">
                 <li
-                  class="list-group-item bg-dark text-white d-flex align-items-center justify-content-between rounded-3 my-2"
+                  class="list-group-item bg-dark text-white d-flex align-items-center justify-content-start rounded-3 my-2 gap-5"
                   *ngFor="
                     let match of myTeam?.rounds
                       | paginate : { itemsPerPage: 6, currentPage: p }
