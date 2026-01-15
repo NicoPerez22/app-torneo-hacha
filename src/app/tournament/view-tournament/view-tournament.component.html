@@ -62,7 +62,9 @@
                     </span>
                     {{ rank.teamName }}
                   </td>
-                  <td class="text-center player-name"><span>{{ rank.points }}</span></td>
+                  <td class="text-center player-name">
+                    <span>{{ rank.points }}</span>
+                  </td>
                   <td class="text-center player-name d-none d-sm-table-cell">
                     {{ rank.wins }}
                   </td>
@@ -101,7 +103,6 @@
                   alt="Logo"
                 />
                 <span>{{ match.homeTeamName }}</span>
-                
               </div>
 
               <div class="vs">
@@ -111,7 +112,6 @@
               </div>
 
               <div class="team right">
-                
                 <span>{{ match.awayTeamName }}</span>
                 <img
                   [src]="
