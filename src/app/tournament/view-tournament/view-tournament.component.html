@@ -1,4 +1,11 @@
-<div class="header-bg"></div>
+<div
+  class="bg-dark py-4"
+  style="
+    background: url('../../assets/images/fondo1.png') no-repeat center center /
+      cover;
+    min-height: 290px;
+  "
+></div>
 
 <div class="tournament-container">
   <div class="row justify-content-center">
@@ -91,43 +98,55 @@
 
         <!-- Fixtures -->
         <div class="col-12 col-md-4">
-          <ul>
-            <li class="match-item" *ngFor="let match of rounds">
-              <div class="team left">
-                <img
-                  [src]="
-                    match?.homeLogoUrl
-                      ? match?.homeLogoUrl
-                      : '../../../assets/images/player-default.png'
-                  "
-                  alt="Logo"
-                />
-                <span>{{ match.homeTeamName }}</span>
-              </div>
+          <div class="row">
+            <!-- GRUPOS de esa FECHA -->
+            <div *ngFor="let group of rounds; let i = index">
+              <div class="group-card p-2">
+                <h6 class="mb-2 text-white">Grupo {{ group.groupNumber }}</h6>
 
-              <div class="vs">
-                <span>{{ match.homeGoals }}</span>
-                VS
-                <span>{{ match.awayGoals }}</span>
-              </div>
+                <ul class="p-0 m-0">
+                  <li class="match-item" *ngFor="let match of group.rounds">
+                    <div class="team left">
+                      <img
+                        [src]="
+                          match?.homeLogoUrl ||
+                          '../../../assets/images/player-default.png'
+                        "
+                        alt="Logo"
+                      />
+                      <span>{{ match.homeTeamName }}</span>
+                    </div>
 
-              <div class="team right">
-                <span>{{ match.awayTeamName }}</span>
-                <img
-                  [src]="
-                    match?.awayLogoUrl
-                      ? match?.awayLogoUrl
-                      : '../../../assets/images/player-default.png'
-                  "
-                  alt="Logo"
-                />
-              </div>
-            </li>
-          </ul>
+                    <div class="vs">
+                      <span>{{ match.homeGoals ?? '-' }}</span>
+                      VS
+                      <span>{{ match.awayGoals ?? '-' }}</span>
+                    </div>
 
-          <!-- <div class="mt-4" >
-            <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
-          </div> -->
+                    <div class="team right">
+                      <span>{{ match.awayTeamName }}</span>
+                      <img
+                        [src]="
+                          match?.awayLogoUrl ||
+                          '../../../assets/images/player-default.png'
+                        "
+                        alt="Logo"
+                      />
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4" *ngIf="pagination && pagination.totalPages > 1">
+            <pagination-controls
+              (pageChange)="onPageChange($event)"
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+              [maxSize]="pagination?.totalPages"
+            ></pagination-controls>
+          </div>
         </div>
       </div>
     </nz-tab>

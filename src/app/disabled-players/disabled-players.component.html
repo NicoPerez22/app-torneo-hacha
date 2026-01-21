@@ -1,67 +1,71 @@
-<div class="container py-5">
-  <h2 class="text-info mb-3">Jugadores Inhabilitados</h2>
-  <p class="text-light mb-4">
-    Vizualiza aquellos jugadores que no estan habilitados para participar de las
-    siguientes fechas
-  </p>
+<div class="container">
+  <!-- Header Section -->
+  <div class="disabled-header">
+    <div class="header-content">
+      <h1 class="disabled-title text-info">
+        <i class="bi bi-person-x-fill me-2"></i>
+        Jugadores Inhabilitados
+      </h1>
+      <p class="disabled-subtitle">
+        Visualiza aquellos jugadores que no están habilitados para participar de las siguientes fechas
+      </p>
+    </div>
+  </div>
 
-  <div class="table-responsive table-wrapper">
-    <table class="table table-hover mb-0">
-      <thead>
-        <tr>
-          <th>Equipo</th>
-          <th>Jugador</th>
-          <th>Tipo Inhabilitacion</th>
-          <th>Tiempo Inhabilitacion</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of teams">
-          <td class="player-name">
-            <span>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="teams.length === 0">
+    <i class="bi bi-check-circle empty-icon"></i>
+    <h3>No hay jugadores inhabilitados</h3>
+    <p>Todos los jugadores están disponibles</p>
+  </div>
+
+  <!-- Grid de cards -->
+  <div class="disabled-grid" *ngIf="teams.length > 0">
+    <div class="disabled-card" *ngFor="let item of teams">
+      <div class="disabled-card-inner">
+        <!-- Glow effect -->
+        <div class="card-glow"></div>
+        
+        <!-- Player Photo Container -->
+        <div class="disabled-photo-container">
+          <div class="photo-wrapper">
+            <img
+              [src]="item?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+              [alt]="item.name + ' ' + item.lastName"
+              class="disabled-photo"
+            />
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="disabled-content">
+          <h3 class="disabled-name">{{ item.name }} {{ item.lastName }}</h3>
+          
+          <!-- Team Info -->
+          <div class="disabled-team">
+            <div class="team-logo-wrapper">
               <img
-                [src]="
-                  item?.team.logo
-                    ? item?.team.logo?.secureUrl
-                    : '../../../assets/images/player-default.png'
-                "
-                class="mb-2"
-                width="40"
-                style="border-color: #303134; margin-right: 2%"
+                [src]="item?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                [alt]="item.team?.name"
+                class="team-logo"
               />
-            </span>
-            {{ item?.team?.name }}
-          </td>
+            </div>
+            <span class="team-name">{{ item?.team?.name }}</span>
+          </div>
 
-          <td class="player-name">
-            <span>
-              <img
-                [src]="
-                  item?.logo
-                    ? item?.logo?.secureUrl
-                    : '../../../assets/images/player-default.png'
-                "
-                class="mb-2"
-                width="40"
-                style="border-color: #303134; margin-right: 2%"
-              />
-            </span>
-            {{ item.name }} {{ item.lastName }}
-          </td>
-
-          <td>
-            <span class="badge bg-info">
-              Lesionado
-            </span>
-          </td>
-
-          <td>
-            <span class="player-name">
-              2 Semanas
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          <!-- Status Info -->
+          <div class="disabled-status">
+            <div class="status-item">
+              <span class="status-label">Tipo</span>
+              <span class="status-badge status-injury">Lesionado</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Tiempo</span>
+              <span class="status-time">2 Semanas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

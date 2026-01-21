@@ -1,82 +1,90 @@
-<div class="container py-5">
-  <h2 class="text-info mb-3">Jugadores Transferibles</h2>
-  <p class="text-light mb-4">
-    Transferencias abiertas. ¿A quién fichás para tu equipo campeón?
-  </p>
+<div class="container">
+  <!-- Header Section -->
+  <div class="players-header">
+    <div class="header-content">
+      <h1 class="players-title text-info">
+        <i class="bi bi-people-fill me-2"></i>
+        Jugadores Transferibles
+      </h1>
+      <p class="players-subtitle">
+        Transferencias abiertas. ¿A quién fichás para tu equipo campeón?
+      </p>
+    </div>
+  </div>
 
-  <div class="table-responsive table-wrapper">
-    <table class="table table-hover mb-0">
-      <thead>
-        <tr>
-          <th>Jugador</th>
-          <th>Equipo Actual</th>
-          <th>Valoración</th>
-          <th>Posición</th>
-          <th>Accion</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let player of playersList">
-          <td class="player-name">
-            <span>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="playersList.length === 0">
+    <i class="bi bi-person-x empty-icon"></i>
+    <h3>No hay jugadores disponibles</h3>
+    <p>No hay jugadores transferibles en este momento</p>
+  </div>
+
+  <!-- Grid de cards -->
+  <div class="players-grid" *ngIf="playersList.length > 0">
+    <div class="player-card" *ngFor="let player of playersList">
+      <div class="player-card-inner">
+        <!-- Glow effect -->
+        <div class="card-glow"></div>
+        
+        <!-- Player Photo Container -->
+        <div class="player-photo-container">
+          <div class="photo-wrapper">
+            <img
+              [src]="player?.photo?.secureUrl || '../../../assets/images/player-default.png'"
+              [alt]="player.fullName"
+              class="player-photo"
+            />
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="player-content">
+          <h3 class="player-name">{{ player.fullName }}</h3>
+          
+          <!-- Team Info -->
+          <div class="player-team" *ngIf="player?.team">
+            <div class="team-logo-wrapper">
               <img
-                [src]="
-                  player?.photo
-                    ? player.photo.secureUrl
-                    : '../../../assets/images/player-default.png'
-                "
-                class="mb-2"
-                width="60"
-                height="60"
-                style="
-                  object-fit: cover;
-                  background-color: #303134;
-                  border-color: #303134;
-                  margin-right: 2%;
-                "
+                [src]="player?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                [alt]="player.team.name"
+                class="team-logo"
               />
-            </span>
-            {{ player.fullName }}
-          </td>
-          <td class="text-center player-name">
-            <div class="d-flex flex-column align-items-center">
-              <img
-                [src]="
-                  player?.team?.logo?.secureUrl
-                    ? player?.team?.logo?.secureUrl
-                    : ''
-                "
-                alt="Logo equipo"
-                width="40"
-                height="40"
-                style="object-fit: cover; margin-bottom: 5px"
-              />
-              <span>{{ player?.team?.name }}</span>
             </div>
-          </td>
-          <td>
-            <span class="rating-badge">{{ player.valoration }}</span>
-          </td>
-          <td>
-            <span
-              class="tag"
-              [ngClass]="{
-                gk: player.position == 'GK',
-                defence: player.position == 'DFI' || 'DFC' || 'DFD',
-                medio: player.position == 'MCO',
-                attack: player.position == 'DC'
-              }"
-              >{{ player?.position }}</span
-            >
-          </td>
-          <td>
-            <button class="btn btn-warning" (click)="onBird(player)">
+            <span class="team-name">{{ player.team.name }}</span>
+          </div>
+
+          <!-- Stats -->
+          <div class="player-stats">
+            <div class="stat-item">
+              <span class="stat-label">Valoración</span>
+              <span class="rating-badge">{{ player.valoration }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Posición</span>
+              <span
+                class="position-tag"
+                [ngClass]="{
+                  gk: player.position == 'GK',
+                  defence: player.position == 'DFI' || player.position == 'DFC' || player.position == 'DFD',
+                  medio: player.position == 'MCO',
+                  attack: player.position == 'DC'
+                }"
+              >
+                {{ player?.position }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="player-footer">
+            <button class="btn-offer" (click)="onBird(player)">
+              <i class="bi bi-hand-thumbs-up me-2"></i>
               Ofertar
             </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

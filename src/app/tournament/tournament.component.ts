@@ -1,18 +1,23 @@
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TournamentService } from './service/tournament.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { CreateTournammentComponent } from './create-tournamment/create-tournamment.component';
+import { Tournament } from './models/tournament.interface';
+import { TOURNAMENT_CONSTANTS } from './constants/tournament.constants';
+import { finalize, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tournament',
   templateUrl: './tournament.component.html',
   styleUrls: ['./tournament.component.css'],
 })
-export class TournamentComponent implements OnInit {
-  tournament: Array<any> = [];
+export class TournamentComponent implements OnInit, OnDestroy {
+  tournaments: Tournament[] = [];
+  modalRef?: NzModalRef;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private router: Router,
@@ -23,44 +28,55 @@ export class TournamentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._getTournaments();
+    this.loadTournaments();
   }
 
-  viewTournament(id) {
-    this.router.navigate(['/tournament/view/' + id]);
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
-  createTournament() {
-    this.router.navigate(['tournament/create']);
+  onViewTournament(id: number): void {
+    this.router.navigate(['/tournament/view', id]);
   }
 
   onCreate(): void {
-    this.modalService.create({
+    this.modalRef = this.modalService.create({
       nzTitle: 'Crear torneo',
       nzContent: CreateTournammentComponent,
       nzWidth: 1200,
       nzFooter: null,
     });
+
+    const afterCloseSub = this.modalRef.afterClose.subscribe(() => {
+      this.loadTournaments();
+    });
+    this.subscriptions.add(afterCloseSub);
   }
 
-  private _getTournaments() {
+  private loadTournaments(): void {
     this.spinnerService.show();
 
-    this.tournamentService.getTournament().subscribe({
-      next: (res) => {
-        this.tournament = res.data;
+    const tournamentSub = this.tournamentService
+      .getTournament()
+      .pipe(
+        finalize(() => {
+          setTimeout(() => {
+            this.spinnerService.hide();
+          }, TOURNAMENT_CONSTANTS.SPINNER_DELAY_MS);
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          this.tournaments = response.data || [];
+        },
+        error: () => {
+          this.toastrService.error(
+            TOURNAMENT_CONSTANTS.TOURNAMENTS_LOAD_ERROR,
+            TOURNAMENT_CONSTANTS.ERROR_OCCURRED,
+          );
+        },
+      });
 
-        setTimeout(() => {
-          this.spinnerService.hide();
-        }, 1000);
-      },
-      error: () => {
-        this.spinnerService.hide();
-        this.toastrService.error(
-          'No se pudo cargar los torneos',
-          'Ocurrio un error',
-        );
-      },
-    });
+    this.subscriptions.add(tournamentSub);
   }
 }

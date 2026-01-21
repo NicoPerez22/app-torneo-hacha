@@ -21,7 +21,7 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._getProfile(this.loginService.user);
+    this._getProfile(this.loginService.user.id);
   }
 
   private _getProfile(id) {

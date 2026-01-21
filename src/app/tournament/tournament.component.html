@@ -1,47 +1,66 @@
-<div class="container py-4">
-  <!-- Acciones -->
-  <div
-    class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2"
-  >
-    <h4 class="text-white m-0">Listado de torneos</h4>
-
-    <div class="d-flex align-items-center gap-3 flex-wrap">
-      <!-- Botón crear -->
-      <button class="btn btn-primary" (click)="onCreate()">Crear Torneo</button>
+<div class="container">
+  <!-- Header Section -->
+  <div class="tournaments-header">
+    <div class="header-content">
+      <h1 class="tournaments-title text-info">
+        <i class="bi bi-trophy-fill me-2"></i>
+        Torneos
+      </h1>
+      <p class="tournaments-subtitle">Descubre y participa en los mejores torneos</p>
     </div>
+    <button class="btn-create-tournament" (click)="onCreate()">
+      <i class="bi bi-plus-circle me-2"></i>
+      Crear Torneo
+    </button>
   </div>
 
-  <hr class="border-secondary opacity-50" />
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="tournaments.length === 0">
+    <i class="bi bi-trophy empty-icon"></i>
+    <h3>No hay torneos disponibles</h3>
+    <p>Crea tu primer torneo para comenzar</p>
+    <button class="btn-create-tournament" (click)="onCreate()">
+      <i class="bi bi-plus-circle me-2"></i>
+      Crear Torneo
+    </button>
+  </div>
 
   <!-- Grid de cards -->
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-    <div class="col" *ngFor="let item of tournament">
-      <div class="card h-100 bg-dark text-white border-0 rounded-4 shadow-sm">
-        <div
-          class="card-body d-flex flex-column align-items-center text-center p-4"
-        >
-          <!-- Logo -->
-          <img
-            src="../../assets/images/HYT-IESA.png"
-            alt="Logo torneo"
-            class="rounded-3 mb-3"
-            width="96"
-            height="96"
-          />
+  <div class="tournaments-grid" *ngIf="tournaments.length > 0">
+    <div class="tournament-card" *ngFor="let tournament of tournaments" (click)="onViewTournament(tournament.id)">
+      <div class="tournament-card-inner">
+        <!-- Glow effect -->
+        <div class="card-glow"></div>
+        
+        <!-- Logo Container -->
+        <div class="tournament-logo-container">
+          <div class="logo-wrapper">
+            <img
+              [src]="tournament.logo?.secureUrl || tournament.logo?.url || '../../assets/images/HYT-IESA.png'"
+              [alt]="'Logo ' + tournament.name"
+              class="tournament-logo"
+            />
+          </div>
+        </div>
 
-          <!-- Título -->
-          <h5 class="mb-2">{{ item.name }}</h5>
-
-          <!-- Sub / fecha -->
-          <div class="small text-white-50 mb-4">
-            <i class="bi bi-calendar-event me-1"></i>
-            26 de Julio, 2025
+        <!-- Content -->
+        <div class="tournament-content">
+          <h3 class="tournament-name">{{ tournament.name }}</h3>
+          
+          <div class="tournament-badge" *ngIf="tournament.format">
+            <i class="bi bi-trophy-fill"></i>
+            <span>{{ tournament.format.description }}</span>
           </div>
 
-          <!-- Botón -->
-          <div class="mt-auto">
-            <button class="btn btn-warning" (click)="viewTournament(item.id)">
-              Ver
+          <div class="team-actions">
+            <button class="btn-action btn-view" (click)="onViewTournament(tournament.id); $event.stopPropagation()">
+              <i class="fa fa-eye"></i>
+            </button>
+            <!-- <button class="btn-action btn-edit" >
+              <i class="fa fa-pencil"></i>
+            </button> -->
+            <button class="btn-action btn-delete">
+              <i class="fa fa-trash"></i>
             </button>
           </div>
         </div>

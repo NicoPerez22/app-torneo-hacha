@@ -1,8 +1,328 @@
-.glass {
-  background: rgba(255, 255, 255, 0.08);           /* transparencia */
-  backdrop-filter: blur(10px) saturate(120%);      /* blur real */
-  -webkit-backdrop-filter: blur(10px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.18);     /* borde “escarchado” */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .3);       /* levanta del fondo */
-  border-radius: .75rem;
+/* ============================================
+   COMPACT PLAYERS GRID
+   ============================================ */
+.players-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  padding: 0;
+  margin-bottom: 3rem;
+}
+
+/* ============================================
+   COMPACT PLAYER CARD
+   ============================================ */
+.player-card-compact {
+  position: relative;
+  cursor: pointer;
+  min-height: 260px;
+}
+
+.player-card-compact-inner {
+  position: relative;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(22, 33, 44, 0.95) 0%,
+    rgba(30, 42, 56, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.player-card-compact-inner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(25, 38, 133, 0.1) 0%,
+    rgba(29, 101, 253, 0.05) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 16px;
+}
+
+.player-card-compact:hover .player-card-compact-inner {
+  transform: translateY(-4px);
+  border-color: rgba(29, 101, 253, 0.5);
+  box-shadow: 0 8px 25px rgba(25, 38, 133, 0.3);
+}
+
+.player-card-compact:hover .player-card-compact-inner::before {
+  opacity: 1;
+}
+
+.player-card-compact:hover .card-glow-compact {
+  opacity: 1;
+}
+
+.card-glow-compact {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(29, 101, 253, 0.12) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* ============================================
+   EXCHANGE BUTTON
+   ============================================ */
+.btn-exchange {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+  font-size: 0.75rem;
+  padding: 0;
+}
+
+.btn-exchange:hover {
+  background: rgba(29, 101, 253, 0.3);
+  border-color: rgba(29, 101, 253, 0.5);
+  transform: scale(1.1);
+}
+
+.spinner-container {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+}
+
+/* ============================================
+   PLAYER PHOTO
+   ============================================ */
+.player-photo-compact {
+  width: 70px;
+  height: 70px;
+  margin: 0.5rem 0 0.75rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.player-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.player-card-compact:hover .player-image {
+  border-color: rgba(29, 101, 253, 0.5);
+  transform: scale(1.05);
+}
+
+/* ============================================
+   STATUS
+   ============================================ */
+.player-status {
+  margin-bottom: 0.5rem;
+}
+
+.status-badge-compact {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.status-enabled {
+  background: linear-gradient(135deg, #2b8a3e 0%, #51cf66 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(43, 138, 62, 0.3);
+}
+
+.status-disabled {
+  background: linear-gradient(135deg, #c92a2a 0%, #e03131 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(201, 42, 42, 0.3);
+}
+
+/* ============================================
+   PLAYER NAME
+   ============================================ */
+.player-name-compact {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.2;
+  min-height: 2.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================
+   STATS
+   ============================================ */
+.player-stats-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.position-badge-compact,
+.rating-badge-compact {
+  padding: 0.3rem 0.6rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-align: center;
+  width: 100%;
+  display: inline-block;
+}
+
+.position-badge-compact {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pos-gk {
+  background: linear-gradient(135deg, #c92a2a 0%, #e03131 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(201, 42, 42, 0.3);
+}
+
+.pos-defence {
+  background: linear-gradient(135deg, #e67700 0%, #fd7e14 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(230, 119, 0, 0.3);
+}
+
+.pos-midfield {
+  background: linear-gradient(135deg, #5c940d 0%, #74b816 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(92, 148, 13, 0.3);
+}
+
+.pos-attack {
+  background: linear-gradient(135deg, #1c7ed6 0%, #339af0 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(28, 126, 214, 0.3);
+}
+
+.rating-badge-compact {
+  color: white;
+}
+
+.rating-low {
+  background: linear-gradient(135deg, #e67700 0%, #fd7e14 100%);
+  box-shadow: 0 2px 6px rgba(230, 119, 0, 0.3);
+}
+
+.rating-medium {
+  background: linear-gradient(135deg, #5c940d 0%, #74b816 100%);
+  box-shadow: 0 2px 6px rgba(92, 148, 13, 0.3);
+}
+
+.rating-high {
+  background: linear-gradient(135deg, #2b8a3e 0%, #51cf66 100%);
+  box-shadow: 0 2px 6px rgba(43, 138, 62, 0.3);
+}
+
+/* ============================================
+   TRANSFER BADGE
+   ============================================ */
+.transfer-badge-compact {
+  margin-top: 0.25rem;
+}
+
+.badge-transfer {
+  padding: 0.25rem 0.6rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  background: linear-gradient(135deg, rgba(25, 38, 133, 1) 0%, rgba(29, 101, 253, 1) 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(25, 38, 133, 0.3);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1200px) {
+  .players-grid-compact {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .players-grid-compact {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .player-card-compact-inner {
+    padding: 0.75rem;
+  }
+
+  .player-photo-compact {
+    width: 60px;
+    height: 60px;
+  }
+
+  .player-name-compact {
+    font-size: 0.8rem;
+    min-height: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .players-grid-compact {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .player-card-compact-inner {
+    padding: 0.5rem;
+  }
+
+  .player-photo-compact {
+    width: 50px;
+    height: 50px;
+  }
+
+  .player-name-compact {
+    font-size: 0.75rem;
+  }
 }

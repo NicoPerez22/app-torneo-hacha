@@ -1,45 +1,47 @@
-import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { InputComponent } from './input/input.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.component.html',
-  styleUrls: ['./filters.component.css']
+  styleUrls: ['./filters.component.css'],
 })
-export class FiltersComponent implements OnInit {
-
+export class FiltersComponent implements OnInit, OnDestroy {
   @ViewChild('container', { read: ViewContainerRef, static: true })
   container!: ViewContainerRef;
 
-  form: FormGroup
+  form!: FormGroup;
 
-  constructor(
-    private fb: FormBuilder
-  ){}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    
+    this.initForm();
   }
 
-  createComponent(){    
-    // Crear el componente directamente con createComponent
-    const componenteRef = this.container.createComponent(InputComponent);
-    
-    this._initForm();
-    // Pasar el valor a la propiedad @Input() del componente hijo
-    componenteRef.instance.label = 'Pokemon';
-    componenteRef.instance.control = 'name';
+  ngOnDestroy(): void {
+    this.clearComponents();
   }
 
-  deleteComponent(){
-    this.container.clear();
+  onCreateComponent(): void {
+    const componentRef = this.container.createComponent(InputComponent);
+    componentRef.instance.label = 'Pokemon';
+    componentRef.instance.control = 'name';
   }
 
-  private _initForm(){
+  onDeleteComponent(): void {
+    this.clearComponents();
+  }
+
+  private initForm(): void {
     this.form = this.fb.group({
-      name: [null]
-    })
+      name: [null],
+    });
   }
 
+  private clearComponents(): void {
+    if (this.container) {
+      this.container.clear();
+    }
+  }
 }

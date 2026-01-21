@@ -1,78 +1,73 @@
-<div
-  class="bg-dark py-4"
-  style="
-    background: url('../../assets/images/fondoKylian.jpg') no-repeat center
-      center / cover;
-    min-height: 220px;
-  "
-></div>
-<div class="container">
-  <div class="row justify-content-center">
-    <!-- Perfil izquierdo -->
-    <div
-      class="col-12 col-md-4 col-lg-3 d-flex flex-column align-items-center position-relative"
-      style="margin-top: -80px"
-    >
-      <div class="position-relative mb-3">
-        <!-- <img
-          *ngIf="!myUser.image"
-          [src]="
-            myUser?.photo
-              ? myUser.photo.secureUrl
-              : '../../assets/images/profile.png'
-          "
-          class="rounded-circle border border-3 border-white shadow"
-          style="width: 120px; height: 120px; object-fit: cover"
-        /> -->
-        <img
-          src="../../assets/images/Nicp.png"
-          class="rounded-circle border border-3 border-white shadow"
-          style="width: 120px; height: 120px; object-fit: cover"
-        />
-        <span
-          class="position-absolute bottom-0 end-0 translate-middle p-1 bg-success border border-white rounded-circle"
-          style="width: 16px; height: 16px"
-        ></span>
-      </div>
-      <h3 class="fw-bold text-white text-center">{{ user?.email }}</h3>
-      <ul
-        class="d-flex justify-content-center gap-3 p-0 mb-3"
-        style="list-style: none"
-      >
-        <li><i class="fa fa-twitter text-white fs-4"></i></li>
-        <li><i class="fa fa-youtube text-white fs-4"></i></li>
-        <li><i class="fa fa-facebook text-white fs-4"></i></li>
-        <li><i class="fa fa-instagram text-white fs-4"></i></li>
-      </ul>
-      <div class="mt-3 w-100 d-flex justify-content-center">
-        <button class="btn btn-success">
-          <i class="fa fa-pencil"></i>
-          Editar perfil
-        </button>
-      </div>
-    </div>
+<div class="profile-container">
+  <!-- Header Background -->
+  <div class="profile-header-bg"></div>
 
-    <!-- Panel derecho -->
-    <div class="col-12 col-md-8 col-lg-7 mt-4 mt-md-4">
-      <div class="card bg-dark text-white shadow mb-4">
-        <div class="card-body">
-          <div class="row text-center">
-            <div class="">
-              <div class="col-12 col-md-6 col-lg-4 mb-0">
-                <h6 class="fw-bold mb-0">{{ team?.name }}</h6>
-                <img [src]="team?.logo?.secureUrl" width="100" />
-              </div>
-            </div>
+  <!-- Profile Content -->
+  <div class="container">
+    <div class="profile-content">
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <!-- Profile Photo -->
+        <div class="profile-photo-container">
+          <div class="photo-wrapper">
+            <img
+              src="../../assets/images/Nicp.png"
+              [alt]="user?.name + ' ' + user?.lastName"
+              class="profile-photo"
+            />
+            <span class="online-status"></span>
+          </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info">
+          <h1 class="profile-name">{{ user?.name }} {{ user?.lastName }}</h1>
+          
+          <!-- Social Links -->
+          <div class="social-links">
+            <a href="#" class="social-link">
+              <i class="fa fa-twitch"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i class="fa fa-youtube"></i>
+            </a>
           </div>
 
-          <div class="row text-center">
-            <div class="">
-              <div class="col-12 col-md-6 col-lg-4 mb-0">
-                <button class="btn btn-warning">
-                  <i class="fa fa-pencil"></i>
-                  Mi equipo
-                </button>
+          <!-- Edit Button -->
+          <button class="btn-edit-profile">
+            <i class="fa fa-pencil me-2"></i>
+            Editar perfil
+          </button>
+        </div>
+      </div>
+
+      <!-- Team Card -->
+      <div class="team-info-card" *ngIf="team">
+        <div class="card-inner">
+          <div class="card-glow"></div>
+          
+          <div class="team-content">
+            <h3 class="team-card-title">
+              <i class="bi bi-people-fill me-2"></i>
+              Mi Equipo
+            </h3>
+
+            <div class="team-info">
+              <div class="team-logo-section">
+                <div class="team-logo-wrapper">
+                  <img
+                    [src]="team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                    [alt]="team?.name"
+                    class="team-logo-image"
+                  />
+                </div>
+                <h4 class="team-name">{{ team?.name }}</h4>
               </div>
+
+              <button class="btn-edit-team">
+                <i class="fa fa-pencil me-2"></i>
+                Editar equipo
+              </button>
             </div>
           </div>
         </div>

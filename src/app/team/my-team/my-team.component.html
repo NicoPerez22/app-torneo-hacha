@@ -1,21 +1,14 @@
-<!-- Header visual -->
-<section class="position-relative min-vh-25 bg-black">
-  <!-- Fondo visible solo en md+ -->
-  <!-- <img
-    src="../../../assets/images/fondo1.png"
-    alt="Header"
-    class="d-none d-md-block position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
-  /> -->
-</section>
-
 <!-- Sección principal -->
-<section class="position-relative py-5">
+<section class="position-relative">
   <!-- Fondo para que el blur tenga efecto -->
-  <!-- <img
-    src="../../../assets/images/fondo1.png"
-    alt=""
-    class="d-none d-md-block position-absolute top-0 start-0 w-100 h-100 object-fit-cover opacity-25 z-n1"
-  /> -->
+<div
+  class="bg-dark py-4"
+  style="
+    background: url('../../assets/images/fondo1.png') no-repeat center center /
+      cover;
+    min-height: 290px;
+  "
+></div>
 
   <div class="container position-relative">
     <!-- Encabezado equipo -->
@@ -49,21 +42,19 @@
     <!-- Tabs -->
     <nz-tabset nzCentered style="color: white">
       <nz-tab nzTitle="Jugadores">
-        <div
-          class="row row-cols-2 row-cols-sm-3 row-cols-md-3 row-cols-lg-6 g-3 mb-5"
-        >
-          <div class="col" *ngFor="let player of playersTeamsList">
-            <!-- Card glass -->
-            <div
-              class="glass p-3 position-relative text-center h-100 text-white"
-            >
+        <div class="players-grid-compact">
+          <div class="player-card-compact" *ngFor="let player of playersTeamsList">
+            <div class="player-card-compact-inner">
+              <!-- Glow effect -->
+              <div class="card-glow-compact"></div>
+
               <!-- Acción (cambiar) -->
               <ng-container
                 *ngIf="!player.loading && user.id === myTeam?.owner?.id"
               >
                 <button
                   type="button"
-                  class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2"
+                  class="btn-exchange"
                   (click)="onChangePlayer(player)"
                 >
                   <i class="fa fa-exchange"></i>
@@ -72,69 +63,58 @@
 
               <!-- Spinner -->
               <ng-container *ngIf="player.loading">
-                <div class="position-absolute top-0 end-0 m-2">
+                <div class="spinner-container">
                   <div class="spinner-border spinner-border-sm text-info"></div>
                 </div>
               </ng-container>
 
               <!-- Foto -->
-              <img
-                [src]="
-                  player?.photo
-                    ? player.photo.secureUrl
-                    : '../../../assets/images/player-default.png'
-                "
-                alt="Jugador"
-                width="60"
-                height="60"
-                class="rounded object-fit-cover mb-2"
-              />
+              <div class="player-photo-compact">
+                <img
+                  [src]="
+                    player?.photo?.secureUrl
+                      ? player.photo.secureUrl
+                      : '../../../assets/images/player-default.png'
+                  "
+                  [alt]="player?.name + ' ' + player?.lastName"
+                  class="player-image"
+                />
+              </div>
 
               <!-- Estado -->
-              <div class="mb-1">
+              <div class="player-status">
                 <span
-                  class="badge w-50"
-                  [ngClass]="player.isHabilitado ? 'bg-success' : 'bg-danger'"
+                  class="status-badge-compact"
+                  [ngClass]="player.isHabilitado ? 'status-enabled' : 'status-disabled'"
                 >
-                  {{ player.isHabilitado ? 'Habilitado' : 'Inhabilitado' }}
+                  {{ player.isHabilitado ? 'Activo' : 'Inactivo' }}
                 </span>
               </div>
 
               <!-- Nombre -->
-              <h6 class="mb-1 text-white">
+              <h6 class="player-name-compact">
                 {{ player?.name }} {{ player?.lastName }}
               </h6>
 
               <!-- Posición + valoración -->
-              <div>
+              <div class="player-stats-compact">
                 <span
-                  class="badge me-1"
+                  class="position-badge-compact"
                   [ngClass]="{
-                    'text-bg-danger': player?.position == 'POR',
-                    'text-bg-warning': ['LD', 'DFC', 'LI'].includes(
-                      player?.position
-                    ),
-                    'text-bg-success': [
-                      'MCO',
-                      'MCD',
-                      'MC',
-                      'MI',
-                      'MD'
-                    ].includes(player?.position),
-                    'text-bg-primary': ['DC', 'ED', 'EI'].includes(
-                      player?.position
-                    )
+                    'pos-gk': player?.position == 'POR',
+                    'pos-defence': ['LD', 'DFC', 'LI'].includes(player?.position),
+                    'pos-midfield': ['MCO', 'MCD', 'MC', 'MI', 'MD'].includes(player?.position),
+                    'pos-attack': ['DC', 'ED', 'EI'].includes(player?.position)
                   }"
                 >
                   {{ player?.position }}
                 </span>
                 <span
-                  class="badge text-white"
+                  class="rating-badge-compact"
                   [ngClass]="{
-                    'text-bg-warning': player?.valoration < 70,
-                    'bg-success-subtle':
-                      player?.valoration >= 70 && player?.valoration < 85,
-                    'text-bg-success': player?.valoration >= 85
+                    'rating-low': player?.valoration < 70,
+                    'rating-medium': player?.valoration >= 70 && player?.valoration < 85,
+                    'rating-high': player?.valoration >= 85
                   }"
                 >
                   {{ player?.valoration }}
@@ -142,8 +122,8 @@
               </div>
 
               <!-- Transferencia -->
-              <div *ngIf="player?.isTransfer" class="mt-2">
-                <span class="badge text-bg-info">En transferencias</span>
+              <div *ngIf="player?.isTransfer" class="transfer-badge-compact">
+                <span class="badge-transfer">En transferencias</span>
               </div>
             </div>
           </div>

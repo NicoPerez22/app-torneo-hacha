@@ -1,20 +1,17 @@
 <div class="row" style="background-color: white;">
-    <div class="col-md-4">
-        <form
-            nz-form
-            [nzLayout]="'vertical'"
-            [formGroup]="form"
-        >
-        <ng-container #container ></ng-container>
-        </form>
-    </div>
+  <div class="col-md-4">
+    <form nz-form [nzLayout]="'vertical'" [formGroup]="form">
+      <ng-container #container></ng-container>
+    </form>
+  </div>
 </div>
 
-
-<button (click)="createComponent()">
+<div class="mt-3">
+  <button class="btn btn-primary me-2" (click)="onCreateComponent()" type="button">
     Agregar
   </button>
 
-  <button (click)="deleteComponent()">
+  <button class="btn btn-secondary" (click)="onDeleteComponent()" type="button">
     Borrar
   </button>
+</div>

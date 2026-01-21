@@ -1,35 +1,41 @@
 import { ToastrService } from 'ngx-toastr';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NzModalRef } from 'ng-zorro-antd/modal';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { TournamentService } from '../service/tournament.service';
 import { Router } from '@angular/router';
 import { TeamService } from 'src/app/service/team.service';
 import { UploadService } from 'src/app/service/upload.service';
+import { 
+  Format, 
+  Team, 
+  ImageUrl, 
+  CreateTournamentRequest,
+  TeamCountOption 
+} from '../models/tournament.interface';
+import { TOURNAMENT_CONSTANTS, TEAM_COUNT_OPTIONS, CREATE_TOURNAMENT_STEPS } from '../constants/tournament.constants';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-tournamment',
   templateUrl: './create-tournamment.component.html',
   styleUrls: ['./create-tournamment.component.css'],
 })
-export class CreateTournammentComponent implements OnInit {
-  form: FormGroup;
-  formats: Array<any> = [];
-  teams: Array<any> = [];
-  cantTeams: Array<any> = [
-    { id: 1, value: 8 },
-    { id: 2, value: 16 },
-    { id: 3, value: 20 },
-    { id: 4, value: 32 },
-    { id: 5, value: 64 },
-  ];
+export class CreateTournammentComponent implements OnInit, OnDestroy {
+  form!: FormGroup;
+  formats: Format[] = [];
+  availableTeams: Team[] = [];
+  teamCountOptions: TeamCountOption[] = TEAM_COUNT_OPTIONS;
 
-  teamsSelected: Array<any> = [];
-  teamsApi: Array<any> = [];
-  images: Array<any> = [];
-  showSpinner;
+  selectedTeams: Team[] = [];
+  selectedTeamIds: number[] = [];
+  uploadedImages: ImageUrl[] = [];
+  isUploadingImage = false;
 
-  current = 0;
-  index = 0;
+  currentStep: number = CREATE_TOURNAMENT_STEPS.TOURNAMENT_DATA;
+  currentStepIndex: number = CREATE_TOURNAMENT_STEPS.TOURNAMENT_DATA;
+
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private fb: FormBuilder,
@@ -38,151 +44,214 @@ export class CreateTournammentComponent implements OnInit {
     private toastrService: ToastrService,
     private router: Router,
     private uploadService: UploadService,
+    private modalRef: NzModalRef,
   ) {}
 
   ngOnInit(): void {
-    this._initForm();
-    this._getTeams();
-    this._getFormats();
+    this.initForm();
+    this.loadTeams();
+    this.loadFormats();
   }
 
-  onSubmitData() {
-    const obj = {
-      name: this.form.get('name').value,
-      teamsIds: this.teamsApi,
-      draft: this.form.get('draft').value,
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  onSubmitData(): void {
+    if (this.form.invalid) {
+      this.markFormGroupTouched(this.form);
+      return;
+    }
+
+    const formValue = this.form.value;
+    const request: CreateTournamentRequest = {
+      name: formValue.name,
+      teamsIds: this.selectedTeamIds,
+      logo: this.uploadedImages[0]?.url || null,
+      formatId: formValue.description,
+      enableDraft: formValue.draft || false,
     };
 
-    this.tournamentService.createTournament(obj).subscribe({
-      next: (resp) => {
-        if (resp) {
-          this.router.navigate(['/tournaments']);
-          this.toastrService.success('Torneo creado con exito', 'Exito');
-        } else {
-          this.toastrService.error('No se pudo crear el torneo', 'Error');
+    const createSub = this.tournamentService.createTournament(request).subscribe({
+      next: (response) => {
+        if (!response) {
+          this.toastrService.error(
+            TOURNAMENT_CONSTANTS.TOURNAMENT_CREATE_ERROR,
+            TOURNAMENT_CONSTANTS.ERROR_TITLE
+          );
+          return;
         }
+
+        this.toastrService.success(
+          TOURNAMENT_CONSTANTS.TOURNAMENT_CREATED_SUCCESS,
+          TOURNAMENT_CONSTANTS.SUCCESS_TITLE
+        );
+        this.modalRef.close(response);
       },
-      error: (error) => {
-        this.toastrService.error('No se pudo crear el torneo', 'Error');
+      error: () => {
+        this.toastrService.error(
+          TOURNAMENT_CONSTANTS.TOURNAMENT_CREATE_ERROR,
+          TOURNAMENT_CONSTANTS.ERROR_TITLE
+        );
       },
     });
+
+    this.subscriptions.add(createSub);
   }
 
-  onLoadImage(event: Event) {
+  onLoadImage(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
-    const formData = new FormData();
-    formData.append('file', file);
+    if (!this.isValidImageFile(file)) {
+      this.toastrService.error('Por favor selecciona un archivo de imagen válido', 'Error');
+      return;
+    }
 
-    this.showSpinner = true;
-    this.uploadService.setImage(file).subscribe({
-      next: (resp) => {
-        this.images.push(resp);
-        this.showSpinner = false;
+    this.isUploadingImage = true;
+
+    const uploadSub = this.uploadService.setImage(file).subscribe({
+      next: (response: ImageUrl) => {
+        this.uploadedImages = [response];
+        this.isUploadingImage = false;
       },
-
-      error: (err) => {
-        console.log(err);
-        this.showSpinner = false;
+      error: () => {
+        this.toastrService.error('Error al subir la imagen', 'Error');
+        this.isUploadingImage = false;
       },
     });
+
+    this.subscriptions.add(uploadSub);
   }
 
-  onSelectTeam(id) {
-    if (this.teamsApi.length >= this.form.get('countTeams').value) {
+  onSelectTeam(teamId: number): void {
+    const maxTeamsControl = this.form.get('countTeams');
+    if (!maxTeamsControl || !maxTeamsControl.value) {
       this.toastrService.warning(
-        'Ya seleccionaste el maximo de equipos',
-        'Atencion',
+        'Primero selecciona la cantidad máxima de equipos',
+        TOURNAMENT_CONSTANTS.ATTENTION_TITLE
       );
       return;
     }
 
-    const index = this.teams.findIndex((t) => t.id === id);
-    if (index === -1) return;
+    const maxTeams = maxTeamsControl.value.value;
 
-    const [team] = this.teams.splice(index, 1);
-    this.teamsSelected.push(team);
-    this.teamsApi.push(id);
+    if (this.selectedTeamIds.length >= maxTeams) {
+      this.toastrService.warning(
+        TOURNAMENT_CONSTANTS.MAX_TEAMS_REACHED_MESSAGE,
+        TOURNAMENT_CONSTANTS.ATTENTION_TITLE
+      );
+      return;
+    }
+
+    const teamIndex = this.availableTeams.findIndex((team) => team.id === teamId);
+    if (teamIndex === -1) {
+      return;
+    }
+
+    const [selectedTeam] = this.availableTeams.splice(teamIndex, 1);
+    this.selectedTeams.push(selectedTeam);
+    this.selectedTeamIds.push(teamId);
+
+    this.form.get('teams')?.setValue(null);
   }
 
-  pre(): void {
-    this.current -= 1;
-    this.changeContent();
+  onPreviousStep(): void {
+    if (this.currentStep > CREATE_TOURNAMENT_STEPS.TOURNAMENT_DATA) {
+      this.currentStep -= 1;
+      this.updateStepIndex();
+    }
   }
 
-  next(): void {
-    this.current += 1;
-    this.changeContent();
-  }
-
-  done(): void {
-    console.log('done');
-  }
-
-  changeContent(): void {
-    switch (this.current) {
-      case 0: {
-        this.index = 0;
-        break;
-      }
-      case 1: {
-        this.index = 1;
-        break;
-      }
-      case 2: {
-        this.index = 2;
-        break;
+  onNextStep(): void {
+    if (this.currentStep < CREATE_TOURNAMENT_STEPS.TEAMS) {
+      const stepValid = this.validateCurrentStep();
+      if (stepValid) {
+        this.currentStep += 1;
+        this.updateStepIndex();
       }
     }
   }
 
-  private _initForm() {
+  private initForm(): void {
     this.form = this.fb.group({
-      name: [null, Validators.required],
+      name: [null, [Validators.required, Validators.minLength(3)]],
       description: [null, Validators.required],
       countTeams: [null, Validators.required],
-      teams: [null, Validators.required],
-      draft: [null, Validators.required],
+      teams: [null],
+      draft: [false],
     });
   }
 
-  private _getTeams() {
-    this.teamService.getTeams().subscribe({
-      next: (resp) => {
-        this.teams = resp.data;
+  private loadTeams(): void {
+    const teamsSub = this.teamService.getTeams().subscribe({
+      next: (response) => {
+        this.availableTeams = response.data || [];
+      },
+      error: () => {
+        this.toastrService.error('Error al cargar los equipos', TOURNAMENT_CONSTANTS.ERROR_TITLE);
       },
     });
+
+    this.subscriptions.add(teamsSub);
   }
 
-  private _getFormats() {
-    this.tournamentService.getFormats().subscribe({
-      next: (resp) => {
-        this.formats = resp.data;
+  private loadFormats(): void {
+    const formatsSub = this.tournamentService.getFormats().subscribe({
+      next: (response) => {
+        this.formats = response.data || [];
       },
+      error: () => {
+        this.toastrService.error('Error al cargar los formatos', TOURNAMENT_CONSTANTS.ERROR_TITLE);
+      },
+    });
 
-      error: () => {},
+    this.subscriptions.add(formatsSub);
+  }
+
+  private validateCurrentStep(): boolean {
+    if (this.currentStep === CREATE_TOURNAMENT_STEPS.TOURNAMENT_DATA) {
+      const nameControl = this.form.get('name');
+      const descriptionControl = this.form.get('description');
+      const countTeamsControl = this.form.get('countTeams');
+
+      if (!nameControl?.valid) {
+        nameControl?.markAsTouched();
+      }
+      if (!descriptionControl?.valid) {
+        descriptionControl?.markAsTouched();
+      }
+      if (!countTeamsControl?.valid) {
+        countTeamsControl?.markAsTouched();
+      }
+
+      return nameControl?.valid && descriptionControl?.valid && countTeamsControl?.valid || false;
+    }
+
+    return true;
+  }
+
+  private updateStepIndex(): void {
+    this.currentStepIndex = this.currentStep;
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
+
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
     });
   }
 
-  // // Crear 32 equipos
-
-  // // Iniciar el sorteo del torneo
-  // onClickBtn() {
-  //   let teams = Array.from({ length: 32 }, (_, i) => `Equipo ${i + 1}`);
-
-  //   const teamSave = {
-  //     idFormat: 1,
-  //     teams: teams,
-  //     name: "Hacha Pro League",
-  //     logo: null
-  //   }
-
-  //   this.teamService.createTorneo(teamSave).subscribe(
-  //     res => console.log(res)
-  //   )
-
-  // }
+  private isValidImageFile(file: File): boolean {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    return validTypes.includes(file.type);
+  }
 }

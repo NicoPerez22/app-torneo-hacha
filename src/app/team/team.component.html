@@ -1,79 +1,86 @@
-<div class="container py-5">
-  <h2 class="text-info mb-3">Listado Equipos</h2>
-  <p class="text-light mb-4">
-    Agrega, edita o elimina equipos de la lista. Cada equipo puede tener
-    múltiples jugadores y estadísticas asociadas.
-  </p>
+<div class="container">
+  <!-- Header Section -->
+  <div class="teams-header">
+    <div class="header-content">
+      <h1 class="teams-title text-info">
+        <i class="bi bi-people-fill me-2"></i>
+        Listado de Equipos
+      </h1>
+      <p class="teams-subtitle">
+        Agrega, edita o elimina equipos de la lista. Cada equipo puede tener múltiples jugadores y estadísticas asociadas.
+      </p>
+    </div>
+    <div class="header-actions" *ngIf="user?.idRol == 1">
+      <button class="btn-create-team" (click)="onCreate()">
+        <i class="bi bi-plus-circle me-2"></i>
+        Crear Equipo
+      </button>
+      <button class="btn-assign-manager" (click)="openModalAssignManager()">
+        <i class="bi bi-person-check me-2"></i>
+        Asignar Manager
+      </button>
+    </div>
+  </div>
 
-  <div class="mb-2 mt-5 gap-2 d-flex" *ngIf="user?.idRol == 1">
-    <button class="btn btn-primary" (click)="onCreate()">Crear equipo</button>
-    <button class="btn btn-warning" (click)="openModalAssignManager()">
-      Asignar Manager
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="teams.length === 0">
+    <i class="bi bi-people empty-icon"></i>
+    <h3>No hay equipos disponibles</h3>
+    <p>Crea tu primer equipo para comenzar</p>
+    <button class="btn-create-team" (click)="onCreate()" *ngIf="user?.idRol == 1">
+      <i class="bi bi-plus-circle me-2"></i>
+      Crear Equipo
     </button>
   </div>
-  <div class="table-responsive table-wrapper">
-    <table class="table table-hover mb-0">
-      <thead>
-        <tr>
-          <th>Equipo</th>
-          <th>Manager</th>
-          <th>Activo</th>
-          <th>Accion</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of teams">
-          <td class="player-name">
-            <span>
-              <img
-                [src]="
-                  item?.logo
-                    ? item?.logo?.secureUrl
-                    : '../../../assets/images/player-default.png'
-                "
-                class="mb-2"
-                width="40"
-                style="border-color: #303134; margin-right: 2%"
-              />
-            </span>
-            {{ item.name }}
-          </td>
 
-          <td>
-            <span class="badge bg-secondary">
-              {{ item?.owner?.name }} {{ item?.owner?.lastName }}
-            </span>
-          </td>
+  <!-- Grid de cards -->
+  <div class="teams-grid" *ngIf="teams.length > 0">
+    <div class="team-card" *ngFor="let item of teams">
+      <div class="team-card-inner">
+        <!-- Glow effect -->
+        <div class="card-glow"></div>
+        
+        <!-- Logo Container -->
+        <div class="team-logo-container">
+          <div class="logo-wrapper">
+            <img
+              [src]="item?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+              [alt]="item.name"
+              class="team-logo"
+            />
+          </div>
+        </div>
 
-          <td>
-            <span class="badge bg-secondary">
-              {{ item.currentTeam ? 'Si' : 'No' }}
-            </span>
-          </td>
-
-          <td>
-            <div
-              class="d-flex align-items-center justify-content-center d-grid gap-2 column-gap-2"
-            >
-              <button class="btn btn-warning" (click)="onViewTeam(item.id)">
-                <i class="fa fa-eye" aria-hidden="true"></i>
-              </button>
-
-              <button class="btn btn-primary" *ngIf="user?.idRol == 1">
-                <i class="fa fa-pencil" aria-hidden="true"></i>
-              </button>
-
-              <button
-                class="btn btn-danger"
-                (click)="onDelete(item.id)"
-                *ngIf="user?.idRol == 1"
-              >
-                <i class="fa fa-trash" aria-hidden="true"></i>
-              </button>
+        <!-- Content -->
+        <div class="team-content">
+          <h3 class="team-name">{{ item.name }}</h3>
+          
+          <div class="team-info">
+            <div class="info-item">
+              <span class="info-label">Manager</span>
+              <span class="info-value">{{ item?.owner?.name }} {{ item?.owner?.lastName }}</span>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <div class="info-item">
+              <span class="info-label">Estado</span>
+              <span class="status-badge" [ngClass]="item.currentTeam ? 'status-active' : 'status-inactive'">
+                {{ item.currentTeam ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="team-actions">
+            <button class="btn-action btn-view" (click)="onViewTeam(item.id)">
+              <i class="fa fa-eye"></i>
+            </button>
+            <button class="btn-action btn-edit" *ngIf="user?.idRol == 1">
+              <i class="fa fa-pencil"></i>
+            </button>
+            <button class="btn-action btn-delete" *ngIf="user?.idRol == 1" (click)="onDelete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
