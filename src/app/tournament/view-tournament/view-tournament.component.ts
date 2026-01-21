@@ -28,7 +28,7 @@ export class ViewTournamentComponent implements OnInit {
 
   private _getTournament() {
     this.tournamentService
-      .getRoundsPagination(this.id, 1, 2)
+      .getRoundsPagination(this.id, 1, 8)
       .pipe(
         switchMap((resp) => {
           this.rounds = resp.rounds;
