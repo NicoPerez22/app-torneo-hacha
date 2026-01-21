@@ -1,240 +1,213 @@
-<div
-  class="bg-dark py-4"
-  style="
-    background: url('../../assets/images/fondo1.png') no-repeat center center /
-      cover;
-    min-height: 290px;
-  "
-></div>
-
-<div class="tournament-container">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-6 text-center position-relative mb-4">
-      <div
-        class="position-absolute top-0 start-50 translate-middle"
-        style="z-index: 1"
-      >
-        <img
-          [src]="
-            tournament?.logo?.secureUrl
-              ? tournament.logo.secureUrl
-              : '../../../assets/images/HYT-IESA.png'
-          "
-          class="tournament-logo"
-        />
-      </div>
-
-      <div class="title-wrap">
-        <h2 class="text-white fw-bold">{{ tournament?.name }}</h2>
-        <p class="text-secondary mb-1">{{ tournament?.format?.description }}</p>
-      </div>
+<div class="container">
+  <!-- Header Section -->
+  <div class="tournament-header">
+    <div class="header-content">
+      <img
+        [src]="tournament?.logo?.secureUrl || '../../../assets/images/HYT-IESA.png'"
+        alt="Tournament Logo"
+        class="tournament-logo"
+      />
+      <h1 class="tournament-title">{{ tournament?.name }}</h1>
+      <p class="tournament-subtitle">{{ tournament?.format?.description }}</p>
     </div>
   </div>
 
-  <nz-tabset nzCentered style="color: white">
-    <nz-tab nzTitle="Tabla de posiciones">
-      <div class="row mb-5 g-4">
-        <!-- Tabla -->
-        <div class="col-12 col-md-8">
-          <div class="table-responsive table-wrapper">
-            <table class="table table-hover mb-0">
-              <thead>
-                <tr>
-                  <th>POS</th>
-                  <th>Equipo</th>
-                  <th>PTS</th>
-                  <th class="d-none d-sm-table-cell">PG</th>
-                  <th class="d-none d-lg-table-cell">PE</th>
-                  <th class="d-none d-lg-table-cell">PP</th>
-                  <th class="d-none d-xl-table-cell">GF</th>
-                  <th class="d-none d-xl-table-cell">GE</th>
-                  <th class="d-none d-sm-table-cell">DIF</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let rank of ranking; let i = index">
-                  <td class="text-center player-name">
-                    <span>{{ i + 1 }}</span>
-                  </td>
-                  <td class="player-name text-start">
-                    <span>
-                      <img
-                        [src]="
-                          rank?.logoUrl
-                            ? rank.logoUrl
-                            : '../../../assets/images/player-default.png'
-                        "
-                        class="mb-2 team-logo"
-                      />
-                    </span>
-                    {{ rank.teamName }}
-                  </td>
-                  <td class="text-center player-name">
-                    <span>{{ rank.points }}</span>
-                  </td>
-                  <td class="text-center player-name d-none d-sm-table-cell">
-                    {{ rank.wins }}
-                  </td>
-                  <td class="text-center player-name d-none d-lg-table-cell">
-                    <span>{{ rank.draws }}</span>
-                  </td>
-                  <td class="text-center player-name d-none d-lg-table-cell">
-                    <span>{{ rank.losses }}</span>
-                  </td>
-                  <td class="text-center player-name d-none d-xl-table-cell">
-                    <span>{{ rank.goalsFor }}</span>
-                  </td>
-                  <td class="text-center player-name d-none d-xl-table-cell">
-                    <span>{{ rank.goalsAgainst }}</span>
-                  </td>
-                  <td class="text-center player-name d-none d-sm-table-cell">
-                    <span>{{ rank.goalDifference }}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+  <!-- Tabs Section -->
+  <div class="tabs-container">
+    <nz-tabset nzCentered>
+      <!-- Tab: Tabla de posiciones -->
+      <nz-tab nzTitle="Tabla de posiciones">
+        <div class="row g-3">
+          <!-- Tabla -->
+          <div class="col-12 col-lg-8">
+            <div class="table-card">
+              <div class="table-wrapper">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>POS</th>
+                      <th style="text-align: left;">Equipo</th>
+                      <th>PTS</th>
+                      <th class="d-none d-sm-table-cell">PG</th>
+                      <th class="d-none d-md-table-cell">PE</th>
+                      <th class="d-none d-md-table-cell">PP</th>
+                      <th class="d-none d-lg-table-cell">GF</th>
+                      <th class="d-none d-lg-table-cell">GC</th>
+                      <th class="d-none d-sm-table-cell">DIF</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let rank of ranking; let i = index">
+                      <td>
+                        <span 
+                          class="position-badge"
+                          [ngClass]="{
+                            'top': i < 3,
+                            'mid': i >= 3 && i < ranking.length - 2,
+                            'bottom': i >= ranking.length - 2
+                          }"
+                        >
+                          {{ i + 1 }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="team-cell">
+                          <img
+                            [src]="rank?.logoUrl || '../../../assets/images/player-default.png'"
+                            alt="Team Logo"
+                            class="team-logo"
+                          />
+                          <span class="team-name-text">{{ rank.teamName }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="points-badge">{{ rank.points }}</span>
+                      </td>
+                      <td class="d-none d-sm-table-cell">{{ rank.wins }}</td>
+                      <td class="d-none d-md-table-cell">{{ rank.draws }}</td>
+                      <td class="d-none d-md-table-cell">{{ rank.losses }}</td>
+                      <td class="d-none d-lg-table-cell">{{ rank.goalsFor }}</td>
+                      <td class="d-none d-lg-table-cell">{{ rank.goalsAgainst }}</td>
+                      <td class="d-none d-sm-table-cell">{{ rank.goalDifference }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Fixtures -->
-        <div class="col-12 col-md-4">
-          <div class="row">
-            <!-- GRUPOS de esa FECHA -->
-            <div *ngFor="let group of rounds; let i = index">
-              <div class="group-card p-2">
-                <h6 class="mb-2 text-white">Grupo {{ group.groupNumber }}</h6>
-
-                <ul class="p-0 m-0">
+          <!-- Fixtures -->
+          <div class="col-12 col-lg-4">
+            <div class="fixtures-container">
+              <div class="group-card" *ngFor="let group of rounds">
+                <h6 class="group-title">Grupo {{ group.groupNumber }}</h6>
+                <ul class="matches-list">
                   <li class="match-item" *ngFor="let match of group.rounds">
                     <div class="team left">
                       <img
-                        [src]="
-                          match?.homeLogoUrl ||
-                          '../../../assets/images/player-default.png'
-                        "
-                        alt="Logo"
+                        [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'"
+                        alt="Home Team"
                       />
                       <span>{{ match.homeTeamName }}</span>
                     </div>
-
                     <div class="vs">
                       <span>{{ match.homeGoals ?? '-' }}</span>
                       VS
                       <span>{{ match.awayGoals ?? '-' }}</span>
                     </div>
-
                     <div class="team right">
                       <span>{{ match.awayTeamName }}</span>
                       <img
-                        [src]="
-                          match?.awayLogoUrl ||
-                          '../../../assets/images/player-default.png'
-                        "
-                        alt="Logo"
+                        [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'"
+                        alt="Away Team"
                       />
                     </div>
                   </li>
                 </ul>
               </div>
             </div>
-          </div>
 
-          <div class="mt-4" *ngIf="pagination && pagination.totalPages > 1">
-            <pagination-controls
-              (pageChange)="onPageChange($event)"
-              previousLabel="Anterior"
-              nextLabel="Siguiente"
-              [maxSize]="pagination?.totalPages"
-            ></pagination-controls>
+            <div class="pagination-wrapper" *ngIf="pagination && pagination.totalPages > 1">
+              <pagination-controls
+                (pageChange)="onPageChange($event)"
+                previousLabel="Anterior"
+                nextLabel="Siguiente"
+                [maxSize]="pagination?.totalPages"
+              ></pagination-controls>
+            </div>
           </div>
         </div>
-      </div>
-    </nz-tab>
+      </nz-tab>
 
-    <nz-tab nzTitle="Goleadores">
-      <div class="row mb-5">
-        <div class="col-12">
-          <div class="table-responsive table-wrapper">
-            <table class="table table-hover mb-0">
-              <thead>
-                <tr>
-                  <th>POS</th>
-                  <th>Jugador</th>
-                  <th>PJ</th>
-                  <th>Goles</th>
-                  <th class="d-none d-sm-table-cell">Asistencias</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let player of tournament?.teams; let i = index">
-                  <td class="text-center player-name">
-                    <span>{{ i + 1 }}</span>
-                  </td>
-                  <td class="player-name text-start">
-                    <span>
-                      <img
-                        [src]="
-                          player?.logo
-                            ? player.logo.secureUrl
-                            : '../../../assets/images/player-default.png'
-                        "
-                        class="mb-2 team-logo"
-                      />
-                    </span>
-                    {{ player.name }}
-                  </td>
-                  <td class="text-center player-name"><span>12</span></td>
-                  <td class="text-center player-name">12</td>
-                  <td class="text-center player-name d-none d-sm-table-cell">
-                    <span>12</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      <!-- Tab: Goleadores -->
+      <nz-tab nzTitle="Goleadores">
+        <div class="row">
+          <div class="col-12">
+            <div class="table-card">
+              <div class="table-wrapper">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>POS</th>
+                      <th style="text-align: left;">Jugador</th>
+                      <th>PJ</th>
+                      <th>Goles</th>
+                      <th class="d-none d-sm-table-cell">Asist.</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let player of tournament?.teams; let i = index">
+                      <td>
+                        <span 
+                          class="position-badge"
+                          [ngClass]="{
+                            'top': i < 3,
+                            'mid': i >= 3
+                          }"
+                        >
+                          {{ i + 1 }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="team-cell">
+                          <img
+                            [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                            alt="Player"
+                            class="team-logo"
+                          />
+                          <span class="team-name-text">{{ player.name }}</span>
+                        </div>
+                      </td>
+                      <td>12</td>
+                      <td>
+                        <span class="points-badge">12</span>
+                      </td>
+                      <td class="d-none d-sm-table-cell">12</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </nz-tab>
+      </nz-tab>
 
-    <nz-tab nzTitle="Tarjetas">
-      <div class="row mb-5">
-        <div class="col-12">
-          <div class="table-responsive table-wrapper">
-            <table class="table table-hover mb-0">
-              <thead>
-                <tr>
-                  <th>Jugador</th>
-                  <th>Motivo</th>
-                  <th class="d-none d-sm-table-cell">Sanción</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let player of tournament?.teams; let i = index">
-                  <td class="player-name text-start">
-                    <span>
-                      <img
-                        [src]="
-                          player?.logo
-                            ? player.logo.secureUrl
-                            : '../../../assets/images/player-default.png'
-                        "
-                        class="mb-2 team-logo"
-                      />
-                    </span>
-                    {{ player.name }}
-                  </td>
-                  <td class="text-center player-name">
-                    <span>{{ i + 1 }}</span>
-                  </td>
-                  <td class="text-center player-name d-none d-sm-table-cell">
-                    <span>12</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      <!-- Tab: Tarjetas -->
+      <nz-tab nzTitle="Tarjetas">
+        <div class="row">
+          <div class="col-12">
+            <div class="table-card">
+              <div class="table-wrapper">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th style="text-align: left;">Jugador</th>
+                      <th>Motivo</th>
+                      <th class="d-none d-sm-table-cell">Sanción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let player of tournament?.teams; let i = index">
+                      <td>
+                        <div class="team-cell">
+                          <img
+                            [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                            alt="Player"
+                            class="team-logo"
+                          />
+                          <span class="team-name-text">{{ player.name }}</span>
+                        </div>
+                      </td>
+                      <td>{{ i + 1 }}</td>
+                      <td class="d-none d-sm-table-cell">12</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </nz-tab>
-  </nz-tabset>
+      </nz-tab>
+    </nz-tabset>
+  </div>
 </div>

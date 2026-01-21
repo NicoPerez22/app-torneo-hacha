@@ -1,6 +1,6 @@
 <div class="wrapper">
-  <header #hdr *ngIf="user">
-    <app-header [user]="user"></app-header>
+  <header #hdr>
+    <app-header *ngIf="(loginService.user$ | async) as user" [user]="user"></app-header>
   </header>
 
   <!-- Aplico padding-top en px calculado -->
@@ -8,7 +8,7 @@
     <router-outlet></router-outlet>
   </main>
 
-  <footer *ngIf="user" class="footer bg-black back text-light py-4">
+  <footer *ngIf="loginService.user$ | async" class="footer bg-black back text-light py-4">
     <div class="container">
       <div class="text-center mt-3">
         <p class="mb-0">&copy; 2025 Todos los derechos reservados.</p>

@@ -4,11 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { userGuard } from './shared/guard/user.guard';
 
 const routes: Routes = [
-  // {
-  //   path: '**',
-  //   redirectTo: 'auth/login',
-  //   pathMatch: 'full',
-  // },
   {
     path: 'auth',
     loadChildren: () =>

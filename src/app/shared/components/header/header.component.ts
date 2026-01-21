@@ -1,10 +1,6 @@
 import { LoginService } from 'src/app/service/login.service';
-import { UserService } from './../../../service/user.service';
-import { User } from '../../../models/user';
-import { TeamService } from '../../../service/team.service';
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-header',

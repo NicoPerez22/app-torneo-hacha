@@ -1,74 +1,73 @@
-<div class="profile-container">
-  <!-- Header Background -->
-  <div class="profile-header-bg"></div>
+<div class="container">
 
   <!-- Profile Content -->
-  <div class="container">
-    <div class="profile-content">
-      <!-- Profile Card -->
-      <div class="profile-card">
-        <!-- Profile Photo -->
-        <div class="profile-photo-container">
-          <div class="photo-wrapper">
-            <img
-              src="../../assets/images/Nicp.png"
-              [alt]="user?.name + ' ' + user?.lastName"
-              class="profile-photo"
-            />
-            <span class="online-status"></span>
-          </div>
-        </div>
-
-        <!-- Profile Info -->
-        <div class="profile-info">
-          <h1 class="profile-name">{{ user?.name }} {{ user?.lastName }}</h1>
-          
-          <!-- Social Links -->
-          <div class="social-links">
-            <a href="#" class="social-link">
-              <i class="fa fa-twitch"></i>
-            </a>
-            <a href="#" class="social-link">
-              <i class="fa fa-youtube"></i>
-            </a>
-          </div>
-
-          <!-- Edit Button -->
-          <button class="btn-edit-profile">
-            <i class="fa fa-pencil me-2"></i>
-            Editar perfil
-          </button>
+  <div class="profile-content">
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <!-- Profile Photo -->
+      <div class="profile-photo-container">
+        <div class="photo-wrapper">
+          <img
+            src="../../assets/images/Nicp.png"
+            [alt]="user?.name + ' ' + user?.lastName"
+            class="profile-photo"
+          />
+          <span class="online-status"></span>
         </div>
       </div>
 
-      <!-- Team Card -->
-      <div class="team-info-card" *ngIf="team">
-        <div class="card-inner">
-          <div class="card-glow"></div>
-          
-          <div class="team-content">
-            <h3 class="team-card-title">
-              <i class="bi bi-people-fill me-2"></i>
-              Mi Equipo
-            </h3>
+      <!-- Profile Info -->
+      <div class="profile-info">
+        <h1 class="profile-name">{{ user?.name }} {{ user?.lastName }}</h1>
 
-            <div class="team-info">
-              <div class="team-logo-section">
-                <div class="team-logo-wrapper">
-                  <img
-                    [src]="team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-                    [alt]="team?.name"
-                    class="team-logo-image"
-                  />
-                </div>
-                <h4 class="team-name">{{ team?.name }}</h4>
+        <!-- Social Links -->
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <i class="fa fa-twitch"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fa fa-youtube"></i>
+          </a>
+        </div>
+
+        <!-- Edit Button -->
+        <button class="btn-edit-profile">
+          <i class="fa fa-pencil me-2"></i>
+          Editar perfil
+        </button>
+      </div>
+    </div>
+
+    <!-- Team Card -->
+    <div class="team-info-card" *ngIf="team">
+      <div class="card-inner">
+        <div class="card-glow"></div>
+
+        <div class="team-content">
+          <h3 class="team-card-title">
+            <i class="bi bi-people-fill me-2"></i>
+            Mi Equipo
+          </h3>
+
+          <div class="team-info">
+            <div class="team-logo-section">
+              <div class="team-logo-wrapper">
+                <img
+                  [src]="
+                    team?.logo?.secureUrl ||
+                    '../../../assets/images/player-default.png'
+                  "
+                  [alt]="team?.name"
+                  class="team-logo-image"
+                />
               </div>
-
-              <button class="btn-edit-team">
-                <i class="fa fa-pencil me-2"></i>
-                Editar equipo
-              </button>
+              <h4 class="team-name">{{ team?.name }}</h4>
             </div>
+
+            <button class="btn-edit-team">
+              <i class="fa fa-pencil me-2"></i>
+              Editar equipo
+            </button>
           </div>
         </div>
       </div>

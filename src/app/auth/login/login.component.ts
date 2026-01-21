@@ -1,42 +1,48 @@
-import { LoginService } from 'src/app/service/login.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  Validators,
-  FormControl,
-  FormGroup,
-} from '@angular/forms';
-import { AuthService } from 'src/app/service/auth.service';
+import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/service/auth.service';
+import { LoginService } from 'src/app/service/login.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
-  form: FormGroup;
+export class LoginComponent implements OnInit, OnDestroy {
+  form!: FormGroup;
+  private subscription = new Subscription();
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private loginService: LoginService,
-    private toastrService: ToastrService,
+    private toastrService: ToastrService
   ) {}
 
   ngOnInit(): void {
-    this._initForm();
+    this.initForm();
   }
 
-  onLogin() {
-    this.authService.login(this.form.getRawValue()).subscribe({
-      next: (resp) => {
-        if (resp.httpCode == 200) {
-          this.toastrService.success('Bienvenido');
-          this.loginService.login(resp.data);
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
+  onLogin(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.toastrService.warning('Por favor, completa todos los campos');
+      return;
+    }
+
+    const loginSub = this.authService.login(this.form.getRawValue()).subscribe({
+      next: (resp) => {
+        if (resp.httpCode === 200) {
+          this.toastrService.success('Bienvenido');
+          this.loginService.login(resp.data, resp.data.token);
           this.router.navigate(['/home']);
         } else {
           this.toastrService.error('Usuario o contraseña incorrectos');
@@ -46,12 +52,23 @@ export class LoginComponent implements OnInit {
         this.toastrService.error('No se pudo ingresar, la conexión falló');
       },
     });
+
+    this.subscription.add(loginSub);
   }
 
-  private _initForm() {
+  private initForm(): void {
     this.form = this.fb.group({
-      email: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
+  }
+
+  // Getters for form controls
+  get email() {
+    return this.form.get('email');
+  }
+
+  get password() {
+    return this.form.get('password');
   }
 }

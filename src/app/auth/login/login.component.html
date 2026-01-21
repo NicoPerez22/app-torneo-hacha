@@ -1,59 +1,76 @@
-<div class="container py-5">
-  <div class="row justify-content-center align-items-center min-vh-80">
-    <div class="col-lg-6 col-md-8">
-      <div class="card shadow">
-        <div class="card-body">
-          <div class="text-center mb-4">
-            <img
-              src="../../../assets/images/seaneternos.png"
-              alt="Logo"
-              class="img-fluid"
-              style="max-width: 120px"
+<div class="auth-container">
+  <div class="auth-card">
+    <!-- Glow effect -->
+    <div class="card-glow"></div>
+    
+    <div class="auth-card-inner">
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <div class="logo-wrapper">
+          <img
+            src="../../../assets/images/seaneternos.png"
+            alt="Sean Eternos Logo"
+            class="auth-logo"
+          />
+        </div>
+        <h1 class="auth-title">Sean Eternos</h1>
+        <p class="auth-subtitle">Ingresa a tu cuenta para continuar</p>
+      </div>
+
+      <!-- Form Section -->
+      <form [formGroup]="form" class="auth-form">
+        <div class="form-group">
+          <label for="email" class="form-label">
+            <i class="bi bi-envelope me-2"></i>Email
+          </label>
+          <div class="input-wrapper">
+            <input
+              formControlName="email"
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="tu@email.com"
             />
-            <h3 class="mt-3 mb-2">Sean Eternos</h3>
-            <h6 class="text-muted">Por favor, ingrese con su cuenta</h6>
-          </div>
-          <form [formGroup]="form">
-            <div class="mb-3">
-              <label for="email" class="form-label text-muted">Email</label>
-              <input
-                formControlName="email"
-                type="text"
-                id="email"
-                name="email"
-                class="form-control"
-              />
-            </div>
-            <div class="mb-4">
-              <label for="psw" class="form-label text-muted">Password</label>
-              <input
-                formControlName="password"
-                type="password"
-                id="psw"
-                name="psw"
-                class="form-control"
-              />
-            </div>
-            <div class="d-grid mb-3">
-              <button type="button" class="btn btn-primary" (click)="onLogin()">
-                Iniciar Sesión
-              </button>
-            </div>
-          </form>
-          <div class="text-center mb-2">
-            <a href="#"
-              ><small class="text-muted"
-                >¿Olvidaste tu usuario o contraseña?</small
-              ></a
-            >
-          </div>
-          <div class="text-center mt-4">
-            <span class="text-muted">¿No tienes una cuenta aún?</span>
-            <button type="button" class="btn btn-outline-secondary ms-2">
-              Crear cuenta
-            </button>
           </div>
         </div>
+
+        <div class="form-group">
+          <label for="psw" class="form-label">
+            <i class="bi bi-lock me-2"></i>Contraseña
+          </label>
+          <div class="input-wrapper">
+            <input
+              formControlName="password"
+              type="password"
+              id="psw"
+              name="psw"
+              class="form-input"
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+
+        <div class="forgot-link">
+          <a href="#">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="button" class="btn-primary-auth" (click)="onLogin()">
+          <i class="bi bi-box-arrow-in-right me-2"></i>
+          Iniciar Sesión
+        </button>
+      </form>
+
+      <!-- Footer Section -->
+      <div class="auth-footer">
+        <div class="divider">
+          <span>o</span>
+        </div>
+        <p class="footer-text">¿No tienes una cuenta aún?</p>
+        <button type="button" class="btn-secondary-auth" routerLink="/auth/register">
+          <i class="bi bi-person-plus me-2"></i>
+          Crear cuenta
+        </button>
       </div>
     </div>
   </div>
