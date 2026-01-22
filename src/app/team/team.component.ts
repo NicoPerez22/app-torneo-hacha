@@ -44,11 +44,16 @@ export class TeamComponent implements OnInit {
   }
 
   onCreate(): void {
-    this.modalService.create({
+    const modal = this.modalService.create({
       nzTitle: 'Crear equipo',
       nzContent: TeamCreateComponent,
       nzWidth: 800,
       nzFooter: null,
+    });
+
+    modal.afterClose.subscribe((result) => {
+      this._getTeams();
+
     });
   }
 

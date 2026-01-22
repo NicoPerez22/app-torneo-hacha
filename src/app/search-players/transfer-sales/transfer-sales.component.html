@@ -1,0 +1,91 @@
+<div class="container">
+  <!-- Header Section -->
+  <div class="tournament-header">
+    <div class="header-content">
+      <h1 class="tournament-title">{{ title }}</h1>
+      <p class="tournament-subtitle">{{ subTitle }}</p>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <!-- Tabla -->
+    <div class="col-12 col-lg-12">
+      <div class="table-card">
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="d-none d-sm-table-cell">Equipo Saliente</th>
+                <th class="d-none d-sm-table-cell">Jugador Saliente</th>
+                <th class="d-none d-md-table-cell">Equipo Entrante</th>
+                <th class="d-none d-md-table-cell">Jugador Entrante</th>
+                <th class="d-none d-md-table-cell">Estado Oferta</th>
+                <th class="d-none d-md-table-cell">Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let offer of transferOffer; let i = index">
+                <td>
+                  <div class="team-cell">
+                    <img
+                      [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'"
+                      alt="Team Logo"
+                      class="team-logo"
+                    />
+                    <span class="team-name-text">{{ offer.fromTeamName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="team-name-text"
+                    >{{ offer.offeredPlayerName }} {{offer.offeredPlayerLastname
+                    }}</span
+                  >
+                </td>
+                <td class="d-none d-sm-table-cell">
+                  <div class="team-cell">
+                    <img
+                      [src]="offer?.toTeamLogoUrl || '../../../assets/images/player-default.png'"
+                      alt="Team Logo"
+                      class="team-logo"
+                    />
+                    <span class="team-name-text">{{ offer.toTeamName }}</span>
+                  </div>
+                </td>
+                <td class="d-none d-md-table-cell">
+                  <span class="team-name-text">{{ offer.targetPlayerName }} {{ offer.targetPlayerLastname }}</span>
+                </td>
+                <td class="d-none d-md-table-cell">
+                  <span
+                    class="position-badge"
+                    [ngClass]="{
+                            'mid': offer.status == 'pending',
+                            'top': offer.status == 'approved',
+                            'bottom': offer.status == 'rejected',
+                            'cancell': offer.status == 'cancelled',
+                          }"
+                  >
+                    {{ offer.statusEs }}
+                  </span>
+                </td>
+                <td class="d-none d-lg-table-cell">
+                  <div class="team-actions">
+                    <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1" (click)="onActionBird(offer.id, 'approve')">
+                      <i class="fa fa-check"></i>
+                    </button>
+                    <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1" (click)="onActionBird(offer.id, 'reject')">
+                      <i class="fa fa-times"></i>
+                    </button>
+                    <button class="btn-action btn-edit" (click)="onActionBird(offer.id, 'cancel')">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

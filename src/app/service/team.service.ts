@@ -93,6 +93,11 @@ export class TeamService {
     return this.http.get<any>(url);
   }
 
+  setBirdTransferPlayer(dto) {
+    const url = this.API_URL + `player/transfer/offers`;
+    return this.http.post<any>(url, dto);
+  }
+
   assignTransferPlayer(id, isTransfer) {
     const isTransferParam = { isTransfer: isTransfer };
     const url = this.API_URL + `player/transfer/${id}`;
@@ -107,5 +112,25 @@ export class TeamService {
   transferManager(teamId, id) {
     const url = this.API_URL + `team/assingUser/${teamId}/${id}`;
     return this.http.get<any>(url);
+  }
+
+  transferOffer(transferOffer){
+    const url = this.API_URL + `player/transfer/offers`;
+    return this.http.post<any>(url, transferOffer);
+  }
+
+  getTransferOffer(idTeam: number): Observable<any> {
+    const url = this.API_URL + `player/transfer/offers/team/${idTeam}`;
+    return this.http.get<any>(url, { params: { status: '', page: 1, limit: 10 } });
+  }
+
+  getAllOferrs(): Observable<any> {
+    const url = this.API_URL + `player/pending`;
+    return this.http.get<any>(url, { params: { page: 1, limit: 10 } });
+  }
+
+  setStatusBird(id, rewieOffer, idAdmin){
+    const url = this.API_URL + `player/${id}/${idAdmin}/review`;
+    return this.http.post<any>(url, rewieOffer);
   }
 }

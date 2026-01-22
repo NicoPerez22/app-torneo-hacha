@@ -4,6 +4,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UserService } from '../service/user.service';
 import { AuthService } from '../service/auth.service';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { LoginService } from '../service/login.service';
 
 @Component({
   selector: 'app-search-players',
@@ -15,6 +18,7 @@ export class SearchPlayersComponent implements OnInit {
   columns: Array<any> = [];
   players: Array<any> = [];
   myPlayers: Array<any> = [];
+  team
 
   player;
 
@@ -25,7 +29,10 @@ export class SearchPlayersComponent implements OnInit {
     private teamService: TeamService,
     private spinnerService: NgxSpinnerService,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastrService: ToastrService,
+    private router: Router,
+    public loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +46,7 @@ export class SearchPlayersComponent implements OnInit {
     this._getPlayerMyTeam(user.idTeam);
 
     this.player = player;
+    console.log(this.player)
 
     this.isVisible = true;
     this.form.get('playerOut').patchValue(player?.fullName);
@@ -47,6 +55,29 @@ export class SearchPlayersComponent implements OnInit {
 
   onSubmit(): void {
     this.isVisible = false;
+
+    const dto = {
+      fromTeamId: this.loginService.user.idTeam,
+      targetPlayerId: this.player.id,
+      offeredPlayerId: this.form.get('playerIn').value,
+    }
+
+    this.teamService.setBirdTransferPlayer(dto).subscribe({
+      next: (resp) => {
+        this.toastrService.success('Oferta realizada', 'Exito');
+      },
+      error: (err) => {
+        this.toastrService.error('Ocurrio un error al realizar la oferta', 'Error');
+      }
+    })
+  }
+
+  onListBird(){
+    this.router.navigate(['mercado-transferencias/ofertas'])
+  }
+
+  onListBirdAdmin(){
+    this.router.navigate(['mercado-transferencias/comprobar-ofertas'])
   }
 
   handleCancel(): void {
@@ -70,6 +101,7 @@ export class SearchPlayersComponent implements OnInit {
     this.teamService.getTeamByID(id).subscribe({
       next: (resp: any) => {
         this.myPlayers = resp.data.players;
+        this.team = resp.data
       }
     })
   }

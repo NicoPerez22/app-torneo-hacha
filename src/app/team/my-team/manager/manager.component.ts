@@ -61,7 +61,7 @@ export class ManagerComponent implements OnInit {
   private _getUsers() {
     this.userService.getUsers().subscribe({
       next: (resp) => {
-        this.users = resp;
+        this.users = resp.data;
       },
 
       error: () => {},

@@ -49,6 +49,12 @@ const routes: Routes = [
         (m) => m.TournamentModule,
       ),
   },
+
+  // 2) redirect vacío (opcional)
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+
+  // 3) wildcard SIEMPRE ÚLTIMO
+  { path: '**', redirectTo: 'auth/login' },
 ];
 
 @NgModule({

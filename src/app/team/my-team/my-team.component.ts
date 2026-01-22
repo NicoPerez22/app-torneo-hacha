@@ -3,11 +3,11 @@ import { TeamService } from './../../service/team.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PlayersComponent } from './players/players.component';
-import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ManagerComponent } from './manager/manager.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-my-team',
@@ -33,6 +33,7 @@ export class MyTeamComponent implements OnInit {
     private authService: AuthService,
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
+    private toastrService: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -75,13 +76,6 @@ export class MyTeamComponent implements OnInit {
   onDelete(id) {
     this.teamService.deletePlayer(id).subscribe((res) => {
       if (res) {
-        Swal.fire({
-          title: 'Error!',
-          text: 'Do you want to continue',
-          icon: 'success',
-          Animation: true,
-          position: 'top-end',
-        });
       }
     });
   }
@@ -125,16 +119,11 @@ export class MyTeamComponent implements OnInit {
     this.teamService.assignTransferPlayer(id, isTransfer).subscribe({
       next: (res) => {
         this.spinnerService.hide();
-        Swal.fire({
-          title: 'Success!',
-          text: 'Player transfered successfully',
-          icon: 'success',
-          Animation: true,
-          position: 'top-end',
-        });
+        this.toastrService.success('Jugador listado en transferencias', 'Exito')
       },
 
       error: () => {
+        this.toastrService.error('No se pudo listar en transferencias al jugador', 'Error')
         this.spinnerService.hide();
       },
     });

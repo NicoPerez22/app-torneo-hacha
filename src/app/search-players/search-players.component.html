@@ -10,6 +10,18 @@
         Transferencias abiertas. ¿A quién fichás para tu equipo campeón?
       </p>
     </div>
+
+    <div class="header-actions">
+      <button class="btn-create-team" (click)="onListBirdAdmin()">
+        <i class="bi bi-list me-2"></i>
+        Comprobar Ofertas
+      </button>
+
+      <button class="btn-assign-manager" (click)="onListBird()">
+        <i class="bi bi-hand-thumbs-up me-2"></i>
+        Mis ofertas
+      </button>
+    </div>
   </div>
 
   <!-- Empty State -->
@@ -76,7 +88,7 @@
           </div>
 
           <!-- Footer -->
-          <div class="player-footer">
+          <div class="player-footer" *ngIf="loginService.user.idTeam !== player.team.id">
             <button class="btn-offer" (click)="onBird(player)">
               <i class="bi bi-hand-thumbs-up me-2"></i>
               Ofertar
@@ -99,68 +111,59 @@
   <ng-template #modalTitle>Oferta de transferencia</ng-template>
 
   <ng-template #modalContent>
-    <div class="container">
-      <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
-        <div class="row">
-          <div class="col-md-6">
-            <nz-form-item>
-              <nz-form-label nzFor="manager">Jugador Entrante</nz-form-label>
-              <nz-form-control>
-                <input nz-input formControlName="playerOut" />
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-
-          <div class="col-md-6">
-            <nz-form-item>
-              <nz-form-label nzFor="teams">Jugador Salida</nz-form-label>
-              <nz-form-control>
-                <nz-select formControlName="playerIn">
-                  <nz-option
-                    *ngFor="let item of myPlayers"
-                    [nzValue]="item.id"
-                    [nzLabel]="item.name + ' ' + item.lastName"
-                  ></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-      </form>
-
+    <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
       <div class="row">
         <div class="col-md-6">
-          <div class="d-flex flex-column align-items-center">
-            <img
-              [src]="
-                player?.photo
-                  ? player.photo.secureUrl
-                  : '../../../assets/images/player-default.png'
-              "
-              alt="Logo equipo"
-              width="40"
-              height="40"
-              style="object-fit: cover; margin-bottom: 5px"
-            />
-            <span>{{ player?.team?.name }}</span>
-          </div>
+          <nz-form-item>
+            <nz-form-label nzFor="manager">Jugador Entrante</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="playerOut" />
+            </nz-form-control>
+          </nz-form-item>
         </div>
 
         <div class="col-md-6">
-          <div class="d-flex flex-column align-items-center">
-            <img
-              [src]="
-                player?.photo
-                  ? player.photo.secureUrl
-                  : '../../../assets/images/player-default.png'
-              "
-              alt="Logo equipo"
-              width="40"
-              height="40"
-              style="object-fit: cover; margin-bottom: 5px"
-            />
-            <span>{{ player?.team?.name }}</span>
-          </div>
+          <nz-form-item>
+            <nz-form-label nzFor="teams">Jugador Salida</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="playerIn">
+                <nz-option
+                  *ngFor="let item of myPlayers"
+                  [nzValue]="item.id"
+                  [nzLabel]="item.name + ' ' + item.lastName"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="d-flex flex-column align-items-center">
+          <img
+            [src]="player?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+            [alt]="player?.team?.name"
+            width="40"
+            height="40"
+            style="object-fit: cover; margin-bottom: 5px"
+          />
+          <span>{{ player?.team?.name }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="d-flex flex-column align-items-center">
+          <img
+            [src]="team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+            [alt]="team?.name"
+            alt="Logo equipo"
+            width="40"
+            height="40"
+            style="object-fit: cover; margin-bottom: 5px"
+          />
+          <span>{{ team?.name }}</span>
         </div>
       </div>
     </div>

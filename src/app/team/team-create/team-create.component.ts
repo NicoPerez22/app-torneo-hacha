@@ -4,6 +4,7 @@ import { TeamService } from 'src/app/service/team.service';
 import { FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { UploadService } from 'src/app/service/upload.service';
 import { Team } from '../models/team';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-team-create',
@@ -21,6 +22,7 @@ export class TeamCreateComponent implements OnInit {
     private uploadService: UploadService,
     private fb: UntypedFormBuilder,
     private toastr: ToastrService,
+    private NzModalService: NzModalService
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +38,7 @@ export class TeamCreateComponent implements OnInit {
       next: (resp) => {
         if (resp.data) {
           this._onClean();
+          this.NzModalService.closeAll();
           this.toastr.success(resp?.message);
         } else {
           this.toastr.error(resp?.message);
