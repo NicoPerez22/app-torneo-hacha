@@ -2,12 +2,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TournamentService } from '../service/tournament.service';
 import { forkJoin, of, Subscription } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
 import { Tournament } from '../models/tournament.interface';
 import { Round, Pagination } from '../models/round.interface';
-import { RankingEntry } from '../models/ranking.interface';
 import { ToastrService } from 'ngx-toastr';
 import { TOURNAMENT_CONSTANTS } from '../constants/tournament.constants';
+import { RankingTable } from '../models/ranking.interface';
 
 @Component({
   selector: 'app-view-tournament',
@@ -21,7 +21,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   pagination?: Pagination;
 
   rounds: Round[] = [];
-  ranking: RankingEntry[] = [];
+  rankingTables: RankingTable[] = [];
   isLoading = false;
 
   private subscriptions: Subscription = new Subscription();
@@ -51,46 +51,70 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   private loadTournamentData(): void {
     this.isLoading = true;
-
-    const tournamentData$ = forkJoin({
-      rounds: this.tournamentService.getRoundsPagination(this.tournamentId, this.INITIAL_PAGE).pipe(
-        catchError((error) => {
-          this.handleError('Error al cargar las fechas del torneo', error);
-          return of({ data: { groups: [], pagination: null } });
-        })
-      ),
-      ranking: this.tournamentService.getRanking(this.tournamentId).pipe(
-        catchError((error) => {
-          this.handleError('Error al cargar el ranking', error);
-          return of({ data: [] });
-        })
-      ),
-      tournament: this.tournamentService.getTournamentByID(this.tournamentId).pipe(
+  
+    const loadSub = this.tournamentService
+      .getTournamentByID(this.tournamentId)
+      .pipe(
         catchError((error) => {
           this.handleError('Error al cargar los datos del torneo', error);
           return of({ data: null });
-        })
-      ),
-    });
-
-    const loadSub = tournamentData$
-      .pipe(
+        }),
+  
+        switchMap((tournamentRes) => {
+          const tournament = tournamentRes?.data;
+  
+          if (!tournament) {
+            return forkJoin({
+              rounds: of({ data: { groups: [], pagination: null } }),
+              ranking: of({ data: { tables: [] } }),
+              tournament: of({ data: null }),
+            });
+          }
+  
+          const isGroupStage = tournament?.format?.id === 2;
+  
+          const ranking$ = isGroupStage
+            ? this.tournamentService.getRankingGroups(this.tournamentId)
+            : this.tournamentService.getRankingLeague(this.tournamentId);
+  
+          return forkJoin({
+            rounds: this.tournamentService
+              .getRoundsPagination(this.tournamentId, this.INITIAL_PAGE)
+              .pipe(
+                catchError((error) => {
+                  this.handleError('Error al cargar las fechas del torneo', error);
+                  return of({ data: { groups: [], pagination: null } });
+                }),
+              ),
+  
+            ranking: ranking$.pipe(
+              catchError((error) => {
+                this.handleError('Error al cargar el ranking', error);
+                return of({ data: { tables: [] } });
+              }),
+            ),
+  
+            tournament: of({ data: tournament }),
+          });
+        }),
+  
         finalize(() => {
           this.isLoading = false;
-        })
+        }),
       )
       .subscribe({
         next: (results) => {
           this.rounds = results.rounds.data?.groups || [];
           this.pagination = results.rounds.data?.pagination;
-          this.ranking = results.ranking.data || [];
           this.tournament = results.tournament.data;
+  
+          this.rankingTables = results.ranking.data?.tables || [];
         },
         error: (error) => {
           this.handleError('Error al cargar los datos del torneo', error);
         },
       });
-
+  
     this.subscriptions.add(loadSub);
   }
 

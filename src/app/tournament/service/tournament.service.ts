@@ -10,7 +10,7 @@ import {
   CreateTournamentResponse 
 } from '../models/tournament.interface';
 import { RoundsResponse } from '../models/round.interface';
-import { RankingResponse } from '../models/ranking.interface';
+import { RankingTablesResponse } from '../models/ranking.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,9 @@ export class TournamentService {
   private readonly TOURNAMENT_ENDPOINT = 'tournament';
   private readonly FORMATS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/formats`;
   private readonly RANKING_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/ranking`;
+  private readonly RANKING_GROUPS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/groups`;
   private readonly ROUNDS_PAGINATION_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/{page}`;
+  private readonly DELETE_TOURNAMENT = `${this.TOURNAMENT_ENDPOINT}/delete/{id}`;
 
   constructor(private http: HttpClient) {}
 
@@ -51,8 +53,18 @@ export class TournamentService {
     return this.http.get<RoundsResponse>(url);
   }
 
-  getRanking(id: number): Observable<RankingResponse> {
+  getRankingLeague(id: number): Observable<RankingTablesResponse> {
     const url = `${this.API_URL}${this.RANKING_ENDPOINT}`.replace('{id}', id.toString());
-    return this.http.get<RankingResponse>(url);
+    return this.http.get<RankingTablesResponse>(url);
+  }
+
+  getRankingGroups(id: number): Observable<RankingTablesResponse> {
+    const url = `${this.API_URL}${this.RANKING_GROUPS_ENDPOINT}`.replace('{id}', id.toString());
+    return this.http.get<RankingTablesResponse>(url);
+  }
+
+  deleteTournament(id: number): Observable<RankingTablesResponse> {
+    const url = `${this.API_URL}${this.DELETE_TOURNAMENT}`.replace('{id}', id.toString());
+    return this.http.delete<RankingTablesResponse>(url);
   }
 }

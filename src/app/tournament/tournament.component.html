@@ -27,7 +27,7 @@
 
   <!-- Grid de cards -->
   <div class="tournaments-grid" *ngIf="tournaments.length > 0">
-    <div class="tournament-card" *ngFor="let tournament of tournaments" (click)="onViewTournament(tournament.id)">
+    <div class="tournament-card" *ngFor="let tournament of tournaments">
       <div class="tournament-card-inner">
         <!-- Glow effect -->
         <div class="card-glow"></div>
@@ -53,13 +53,13 @@
           </div>
 
           <div class="team-actions">
-            <button class="btn-action btn-view" (click)="onViewTournament(tournament.id); $event.stopPropagation()">
+            <button class="btn-action btn-view" (click)="onViewTournament(tournament.id)">
               <i class="fa fa-eye"></i>
             </button>
             <!-- <button class="btn-action btn-edit" >
               <i class="fa fa-pencil"></i>
             </button> -->
-            <button class="btn-action btn-delete">
+            <button class="btn-action btn-delete" (click)="onDelete(tournament.id)">
               <i class="fa fa-trash"></i>
             </button>
           </div>

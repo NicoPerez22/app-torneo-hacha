@@ -2,11 +2,8 @@
   <!-- Header Section -->
   <div class="tournament-header">
     <div class="header-content">
-      <img
-        [src]="tournament?.logo?.secureUrl || '../../../assets/images/HYT-IESA.png'"
-        alt="Tournament Logo"
-        class="tournament-logo"
-      />
+      <img [src]="tournament?.logo?.secureUrl || '../../../assets/images/HYT-IESA.png'" alt="Tournament Logo"
+        class="tournament-logo" />
       <h1 class="tournament-title">{{ tournament?.name }}</h1>
       <p class="tournament-subtitle">{{ tournament?.format?.description }}</p>
     </div>
@@ -16,91 +13,91 @@
   <div class="tabs-container">
     <nz-tabset nzCentered>
       <!-- Tab: Tabla de posiciones -->
+      <!-- Tab: Tabla de posiciones -->
       <nz-tab nzTitle="Tabla de posiciones">
         <div class="row g-3">
-          <!-- Tabla -->
+          <!-- Tabla(s) -->
           <div class="col-12 col-lg-8">
-            <div class="table-card">
-              <div class="table-wrapper">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>POS</th>
-                      <th style="text-align: left;">Equipo</th>
-                      <th>PTS</th>
-                      <th class="d-none d-sm-table-cell">PG</th>
-                      <th class="d-none d-md-table-cell">PE</th>
-                      <th class="d-none d-md-table-cell">PP</th>
-                      <th class="d-none d-lg-table-cell">GF</th>
-                      <th class="d-none d-lg-table-cell">GC</th>
-                      <th class="d-none d-sm-table-cell">DIF</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let rank of ranking; let i = index">
-                      <td>
-                        <span 
-                          class="position-badge"
-                          [ngClass]="{
-                            'top': i < 3,
-                            'mid': i >= 3 && i < ranking.length - 2,
-                            'bottom': i >= ranking.length - 2
-                          }"
-                        >
-                          {{ i + 1 }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="team-cell">
-                          <img
-                            [src]="rank?.logoUrl || '../../../assets/images/player-default.png'"
-                            alt="Team Logo"
-                            class="team-logo"
-                          />
-                          <span class="team-name-text">{{ rank.teamName }}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="points-badge">{{ rank.points }}</span>
-                      </td>
-                      <td class="d-none d-sm-table-cell">{{ rank.wins }}</td>
-                      <td class="d-none d-md-table-cell">{{ rank.draws }}</td>
-                      <td class="d-none d-md-table-cell">{{ rank.losses }}</td>
-                      <td class="d-none d-lg-table-cell">{{ rank.goalsFor }}</td>
-                      <td class="d-none d-lg-table-cell">{{ rank.goalsAgainst }}</td>
-                      <td class="d-none d-sm-table-cell">{{ rank.goalDifference }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="group-card mb-3" *ngFor="let table of rankingTables">
+              <h6 class="group-title" *ngIf="table.groupName">{{ table.groupName }}</h6>
+
+              <div class="table-card">
+                <div class="table-wrapper">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>POS</th>
+                        <th style="text-align: left;">Equipo</th>
+                        <th>PTS</th>
+                        <th class="d-none d-sm-table-cell">PG</th>
+                        <th class="d-none d-md-table-cell">PE</th>
+                        <th class="d-none d-md-table-cell">PP</th>
+                        <th class="d-none d-lg-table-cell">GF</th>
+                        <th class="d-none d-lg-table-cell">GC</th>
+                        <th class="d-none d-sm-table-cell">DIF</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr *ngFor="let rank of table.rows; let i = index">
+                        <td>
+                          <span class="position-badge" [ngClass]="{
+                        'top': i < 3,
+                        'mid': i >= 3 && i < table.rows.length - 2,
+                        'bottom': i >= table.rows.length - 2
+                      }">
+                            {{ i + 1 }}
+                          </span>
+                        </td>
+
+                        <td>
+                          <div class="team-cell">
+                            <img [src]="rank?.logoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                              class="team-logo" />
+                            <span class="team-name-text">{{ rank.teamName }}</span>
+                          </div>
+                        </td>
+
+                        <td><span class="points-badge">{{ rank.points }}</span></td>
+                        <td class="d-none d-sm-table-cell">{{ rank.wins }}</td>
+                        <td class="d-none d-md-table-cell">{{ rank.draws }}</td>
+                        <td class="d-none d-md-table-cell">{{ rank.losses }}</td>
+                        <td class="d-none d-lg-table-cell">{{ rank.goalsFor }}</td>
+                        <td class="d-none d-lg-table-cell">{{ rank.goalsAgainst }}</td>
+                        <td class="d-none d-sm-table-cell">{{ rank.goalDifference }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Fixtures -->
+          <!-- Fixtures (los dejé igual) -->
           <div class="col-12 col-lg-4">
             <div class="fixtures-container">
               <div class="group-card" *ngFor="let group of rounds">
-                <h6 class="group-title">Grupo {{ group.groupNumber }}</h6>
+                
+                <h6 class="group-title">
+                  {{ group.groupNumber ? ('Grupo ' + group.groupNumber) : 'Fechas' }}
+                </h6>
+
                 <ul class="matches-list">
                   <li class="match-item" *ngFor="let match of group.rounds">
                     <div class="team left">
-                      <img
-                        [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'"
-                        alt="Home Team"
-                      />
+                      <img [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
                       <span>{{ match.homeTeamName }}</span>
                     </div>
+
                     <div class="vs">
                       <span>{{ match.homeGoals ?? '-' }}</span>
                       VS
                       <span>{{ match.awayGoals ?? '-' }}</span>
                     </div>
+
                     <div class="team right">
                       <span>{{ match.awayTeamName }}</span>
-                      <img
-                        [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'"
-                        alt="Away Team"
-                      />
+                      <img [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
                     </div>
                   </li>
                 </ul>
@@ -108,12 +105,8 @@
             </div>
 
             <div class="pagination-wrapper" *ngIf="pagination && pagination.totalPages > 1">
-              <pagination-controls
-                (pageChange)="onPageChange($event)"
-                previousLabel="Anterior"
-                nextLabel="Siguiente"
-                [maxSize]="pagination?.totalPages"
-              ></pagination-controls>
+              <pagination-controls (pageChange)="onPageChange($event)" previousLabel="Anterior" nextLabel="Siguiente"
+                [maxSize]="pagination?.totalPages"></pagination-controls>
             </div>
           </div>
         </div>
@@ -138,23 +131,17 @@
                   <tbody>
                     <tr *ngFor="let player of tournament?.teams; let i = index">
                       <td>
-                        <span 
-                          class="position-badge"
-                          [ngClass]="{
+                        <span class="position-badge" [ngClass]="{
                             'top': i < 3,
                             'mid': i >= 3
-                          }"
-                        >
+                          }">
                           {{ i + 1 }}
                         </span>
                       </td>
                       <td>
                         <div class="team-cell">
-                          <img
-                            [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-                            alt="Player"
-                            class="team-logo"
-                          />
+                          <img [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                            alt="Player" class="team-logo" />
                           <span class="team-name-text">{{ player.name }}</span>
                         </div>
                       </td>
@@ -190,11 +177,8 @@
                     <tr *ngFor="let player of tournament?.teams; let i = index">
                       <td>
                         <div class="team-cell">
-                          <img
-                            [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-                            alt="Player"
-                            class="team-logo"
-                          />
+                          <img [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                            alt="Player" class="team-logo" />
                           <span class="team-name-text">{{ player.name }}</span>
                         </div>
                       </td>

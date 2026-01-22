@@ -39,6 +39,15 @@ export class TournamentComponent implements OnInit, OnDestroy {
     this.router.navigate(['/tournament/view', id]);
   }
 
+  onDelete(id){
+    this.tournamentService.deleteTournament(id).subscribe({
+      next: (resp) => {
+        this.loadTournaments();
+        this.toastrService.success('Torneo eliminado con exito', 'Exito')
+      }
+    })
+  }
+
   onCreate(): void {
     this.modalRef = this.modalService.create({
       nzTitle: 'Crear torneo',

@@ -1,4 +1,5 @@
-export interface RankingEntry {
+export interface RankingRow {
+  teamId: number;
   teamName: string;
   points: number;
   wins: number;
@@ -7,9 +8,20 @@ export interface RankingEntry {
   goalsFor: number;
   goalsAgainst: number;
   goalDifference: number;
+  matchesPlayed: number;
   logoUrl?: string;
+  logoPublicId?: string;
+  logoOriginalName?: string;
 }
 
-export interface RankingResponse {
-  data: RankingEntry[];
+export interface RankingTable {
+  groupNumber: number | null;
+  groupName: string;
+  rows: RankingRow[];
+}
+
+export interface RankingTablesResponse {
+  data: {
+    tables: RankingTable[];
+  };
 }
