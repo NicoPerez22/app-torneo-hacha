@@ -1,1 +1,209 @@
-<p>results works!</p>
+<div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="steps-content">
+          <form nz-form nzLayout="vertical" [formGroup]="form">
+            <div *ngIf="currentStepIndex === 0">
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-item>
+                    <nz-form-label nzFor="name">Nombre del torneo</nz-form-label>
+                    <nz-form-control>
+                      <input
+                        nz-input
+                        formControlName="name"
+                        type="text"
+                        id="name"
+                        placeholder="Ingrese el nombre del torneo"
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div class="col-md-4">
+                  <nz-form-item class="mb-0">
+                    <nz-form-label nzFor="description" nzRequired
+                      >Formatos del torneo</nz-form-label
+                    >
+                    <nz-form-control
+                      nzHasFeedback
+                      [nzErrorTip]="descriptionErrorTpl"
+                    >
+                      <nz-select
+                        tabindex="4"
+                        nzPlaceHolder="Seleccione"
+                        formControlName="description"
+                        nzShowSearch
+                      >
+                        <nz-option
+                          *ngFor="let elem of formats"
+                          [nzValue]="elem.id"
+                          [nzLabel]="elem.description"
+                        ></nz-option>
+                      </nz-select>
+  
+                      <ng-template #descriptionErrorTpl let-control>
+                        <span *ngIf="control.hasError('required')">
+                          El formato es obligatorio
+                        </span>
+                      </ng-template>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div class="col-md-3">
+                  <nz-form-item class="mb-0">
+                    <nz-form-label nzFor="countTeams" nzRequired
+                      >Cantidad de equipos</nz-form-label
+                    >
+                    <nz-form-control
+                      nzHasFeedback
+                      [nzErrorTip]="countTeamsErrorTpl"
+                    >
+                      <nz-select
+                        tabindex="4"
+                        nzPlaceHolder="Seleccione"
+                        formControlName="countTeams"
+                        nzShowSearch
+                      >
+                        <nz-option
+                          *ngFor="let option of teamCountOptions"
+                          [nzValue]="option"
+                          [nzLabel]="option.value"
+                        ></nz-option>
+                      </nz-select>
+  
+                      <ng-template #countTeamsErrorTpl let-control>
+                        <span *ngIf="control.hasError('required')">
+                          El formato es obligatorio
+                        </span>
+                      </ng-template>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div class="row">
+                <div
+                  class="d-flex justify-content-center mt-5"
+                  *ngIf="!uploadedImages.length"
+                >
+                  <input
+                    type="file"
+                    #fileInput
+                    accept="image/*"
+                    (change)="onLoadImage($event)"
+                    style="display: none"
+                  />
+                  <button
+                    type="button"
+                    (click)="fileInput.click()"
+                    class="btn-custom-file"
+                  >
+                    Seleccione logo
+                  </button>
+                </div>
+  
+                <div class="d-flex justify-content-center" *ngIf="isUploadingImage">
+                  <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+                </div>
+  
+                <div class="d-flex justify-content-center" *ngIf="uploadedImages.length">
+                  <div *ngFor="let image of uploadedImages" style="margin-top: 5%">
+                    <img [src]="image.url || image.secureUrl" width="100" alt="Logo del torneo" />
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div *ngIf="currentStepIndex === 1">
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-item>
+                    <nz-form-label nzFor="teams">Equipos</nz-form-label>
+                    <nz-form-control>
+                      <nz-select
+                        formControlName="teams"
+                        nzPlaceHolder="Seleccione un equipo"
+                        (ngModelChange)="onSelectTeam($event)"
+                      >
+                        <nz-option
+                          *ngFor="let team of availableTeams"
+                          [nzValue]="team.id"
+                          [nzLabel]="team.name"
+                        ></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div class="col-md-4">
+                  <nz-form-item>
+                    <nz-form-label nzFor="teams"
+                      >Torneo con Draft (No/Si)</nz-form-label
+                    >
+                    <nz-form-control>
+                      <nz-switch formControlName="draft"></nz-switch>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+  
+              <div class="row mt-2">
+                <div class="col-auto mt-5" *ngFor="let team of selectedTeams">
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                    "
+                  >
+                    <img
+                      [src]="team.logo?.secureUrl || team.logo?.url || team.logoUrl"
+                      width="40"
+                      height="40"
+                      [alt]="team.name"
+                    />
+                    <span><b>{{ team.name }}</b></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+  
+        <hr style="border-top: 0px" />
+  
+        <div class="steps-action">
+          <button 
+            class="btn btn-primary" 
+            (click)="onPreviousStep()" 
+            *ngIf="currentStep > 0"
+            type="button"
+          >
+            <span>Anterior</span>
+          </button>
+  
+          <button 
+            class="btn btn-primary" 
+            (click)="onNextStep()" 
+            *ngIf="currentStep < 1"
+            type="button"
+          >
+            <span>Siguiente</span>
+          </button>
+  
+          <button
+            class="btn btn-success"
+            (click)="onSubmitData()"
+            *ngIf="currentStep === 1"
+            type="button"
+            [disabled]="form.invalid || selectedTeamIds.length === 0"
+          >
+            <span>Crear Torneo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

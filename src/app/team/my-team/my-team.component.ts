@@ -8,6 +8,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ManagerComponent } from './manager/manager.component';
 import { ToastrService } from 'ngx-toastr';
+import { ResultsComponent } from './results/results.component';
 
 @Component({
   selector: 'app-my-team',
@@ -93,6 +94,21 @@ export class MyTeamComponent implements OnInit {
 
       this._assignTransferPlayer(player.id, true);
     }, 1000);
+  }
+
+  onReport(){
+    const modal = this.modalService.create({
+      nzTitle: 'Reportar Partido',
+      nzContent: ResultsComponent,
+      nzWidth: 800,
+      nzFooter: null,
+    });
+
+    modal.afterClose.subscribe((result) => {
+      if (result === true) {
+        this._getTeamById(this.params.id);
+      }
+    });
   }
 
   private _getTeamById(id) {
