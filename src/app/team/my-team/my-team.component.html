@@ -131,61 +131,48 @@
       </nz-tab>
 
       <nz-tab nzTitle="Proximas Fechas">
-        <div class="text-center py-4">
-          <div class="row justify-content-center">
-            <div class="col-12 col-md-4 col-lg-10">
-              <ul class="list-group list-group-flush">
-                <li
-                  class="list-group-item bg-dark text-white d-flex align-items-center justify-content-start rounded-3 my-2 gap-5"
-                  *ngFor="
-                    let match of myTeam?.rounds
-                      | paginate : { itemsPerPage: 6, currentPage: p }
-                  "
-                >
-                  <!-- Local -->
-                  <div class="d-flex align-items-center gap-2">
-                    <img
-                      [src]="
-                        match?.homeLogo?.secureUrl
-                          ? match?.homeLogo?.secureUrl
-                          : '../../../assets/images/player-default.png'
-                      "
-                      alt="Logo local"
-                      width="28"
-                      height="30"
-                      class="object-fit-contain"
-                    />
-                    <span class="fw-semibold">{{ match.home }}</span>
-                  </div>
+        <div class="fixtures-container">
+          <div class="group-card">
+            <ul class="matches-list">
+              <li class="match-item" *ngFor="let match of myTeam?.rounds">
+                <div class="team left">
+                  <img [src]="match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
+                  <span>{{ match.home }}</span>
+                </div>
 
-                  <div class="text-white-50 fw-bold">VS</div>
+                <div class="vs">
+                  <span>{{ match.homeGoals ?? '-' }}</span>
+                  VS
+                  <span>{{ match.awayGoals ?? '-' }}</span>
+                </div>
 
-                  <!-- Visitante -->
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="fw-semibold">{{ match.away }}</span>
-                    <img
-                      [src]="
-                        match?.awayLogo?.secureUrl
-                          ? match?.awayLogo?.secureUrl
-                          : '../../../assets/images/player-default.png'
-                      "
-                      alt="Logo visitante"
-                      width="28"
-                      height="30"
-                      class="object-fit-contain"
-                    />
-                  </div>
-                </li>
-              </ul>
+                <div class="team right">
+                  <span>{{ match.away }}</span>
+                  <img [src]="match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
+                </div>
 
-              <div class="mt-4">
-                <pagination-controls
-                  (pageChange)="p = $event"
-                  previousLabel="Anterior"
-                  nextLabel="Siguiente"
-                ></pagination-controls>
-              </div>
-            </div>
+
+                <div class="team-actions">
+                  <button class="btn-action btn-edit" >
+                    <i class="fa fa-pencil"></i>
+                  </button>
+                  <!--<button class="btn-action btn-delete" >
+                    <i class="fa fa-times"></i>
+                  </button>
+                  <button class="btn-action btn-edit" >
+                    <i class="fa fa-trash"></i>
+                  </button> -->
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-4">
+            <pagination-controls
+              (pageChange)="p = $event"
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+            ></pagination-controls>
           </div>
         </div>
       </nz-tab>
