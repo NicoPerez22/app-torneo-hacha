@@ -100,7 +100,7 @@ export class MyTeamComponent implements OnInit {
     const modal = this.modalService.create({
       nzTitle: 'Reportar Partido',
       nzContent: ResultsComponent,
-      nzWidth: 800,
+      nzWidth: 1200,
       nzFooter: null,
     });
 
