@@ -1,101 +1,134 @@
-<div class="modal-body">
+<div class="modal-body match-report-modal">
   <!-- Score / Summary -->
-  <div class="p-3 mb-3">
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-      <div class="fw-semibold">Equipo Local</div>
-
-      <div class="d-flex align-items-center gap-3">
-        <button type="button" class="btn btn-outline-primary">
-          <i class="fa fa-minus"></i>
-        </button>
-        
-        <button type="button" class="btn btn-outline-primary">
-          <i class="fa fa-plus"></i>
-        </button>
-        <div class="text-center">
-          <div class="small text-muted">Goles</div>
-          <div class="fs-4 fw-bold">0</div>
+  <form [formGroup]="form">
+    <div class="match-card match-summary mb-3">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 match-summary-row">
+        <!-- Home -->
+        <div class="team-name team-home team-block">
+          <img class="team-logo" [src]="match?.homeLogo?.secureUrl" width="70" alt="Home Team" />
+          <span class="team-text">{{ match?.home }}</span>
         </div>
 
-        <div class="fs-4 fw-bold">-</div>
+        <!-- Score -->
+        <div class="score-wrap score-block d-flex align-items-center gap-3 flex-wrap justify-content-center">
+          <button type="button" class="btn-icon btn-icon-outline" aria-label="Restar gol local"
+            (click)="removeGoal(form.controls['homeGoals'])">
+            <i class="fa fa-minus"></i>
+          </button>
 
-        <div class="text-center">
-          <div class="small text-muted">Goles</div>
-          <div class="fs-4 fw-bold">0</div>
+          <button type="button" class="btn-icon btn-icon-outline" aria-label="Sumar gol local"
+            (click)="addGoal(form.controls['homeGoals'])">
+            <i class="fa fa-plus"></i>
+          </button>
+
+          <div class="score-box text-center">
+            <div class="score-label">Goles</div>
+            <div class="score-value">{{ form.get('homeGoals')?.value }}</div>
+          </div>
+
+          <div class="score-sep">-</div>
+
+          <div class="score-box text-center">
+            <div class="score-label">Goles</div>
+            <div class="score-value">{{ form.get('awayGoals')?.value }}</div>
+          </div>
+
+          <button type="button" class="btn-icon btn-icon-outline" aria-label="Sumar gol visitante"
+            (click)="addGoal(form.controls['awayGoals'])">
+            <i class="fa fa-plus"></i>
+          </button>
+
+          <button type="button" class="btn-icon btn-icon-outline" aria-label="Restar gol visitante"
+            (click)="removeGoal(form.controls['awayGoals'])">
+            <i class="fa fa-minus"></i>
+          </button>
         </div>
 
-
-
-        <button type="button" class="btn btn-outline-primary">
-          <i class="fa fa-plus"></i>
-        </button>
-
-        <button type="button" class="btn btn-outline-primary">
-          <i class="fa fa-minus"></i>
-        </button>
-      </div>
-
-      <div class="fw-semibold text-end">Equipo Visitante</div>
-    </div>
-
-    <div class="d-flex gap-2 mt-3 flex-wrap">
-
-      <button type="button" class="btn btn-outline-secondary ms-auto">
-        + Agregar evento
-      </button>
-    </div>
-  </div>
-
-  <!-- Events Header -->
-  <div class="d-flex align-items-center justify-content-between mb-2">
-    <h6 class="mb-0">Eventos del partido</h6>
-    <span class="text-muted small">0 evento(s)</span>
-  </div>
-
-  <!-- Events List -->
-  <div class="vstack gap-2">
-    <!-- Event item -->
-    <div class="border rounded p-3">
-      <div class="row g-2 align-items-end">
-        <div class="col-12 col-md-2">
-          <label class="form-label mb-1">Min</label>
-          <input type="number" class="form-control" min="0" max="120" placeholder="0" />
-          <div class="text-danger small d-none">Minuto inválido (0–120)</div>
-        </div>
-
-        <div class="col-12 col-md-2">
-          <label class="form-label mb-1">Tipo</label>
-          <select class="form-select">
-            <option>Gol</option>
-            <option>Amarilla</option>
-            <option>Roja</option>
-            <option>Cambio</option>
-            <option>Nota</option>
-          </select>
-        </div>
-
-        <div class="col-12 col-md-3">
-          <label class="form-label mb-1">Equipo</label>
-          <select class="form-select">
-            <option>Equipo Local</option>
-            <option>Equipo Visitante</option>
-          </select>
-        </div>
-
-        <div class="col-12 col-md-4">
-          <label class="form-label mb-1">Jugador</label>
-          <select class="form-select">
-            <option>— Seleccionar —</option>
-            <option>Jugador 1</option>
-            <option>Jugador 2</option>
-            <option>Jugador 3</option>
-          </select>
-        </div>
-
-        <div class="col-12 col-md-1 d-grid">
-          <button type="button" class="btn btn-outline-danger">✕</button>
+        <!-- Away -->
+        <div class="team-name team-away team-block">
+          <span class="team-text">{{ match?.away }}</span>
+          <img class="team-logo" [src]="match?.awayLogo?.secureUrl" width="70" alt="Away Team" />
         </div>
       </div>
+
+      <div class="d-flex gap-2 mt-3 flex-wrap">
+        <button type="button" class="btn-ghost ms-auto">
+          <i class="bi bi-plus-circle me-2"></i>
+          Agregar evento
+        </button>
+      </div>
     </div>
-  </div>
+
+    <!-- Events Header -->
+    <div class="events-header d-flex align-items-center justify-content-between mb-2">
+      <h6 class="mb-0 section-title">Eventos del partido</h6>
+      <span class="section-meta">0 evento(s)</span>
+    </div>
+
+    <!-- Events List -->
+    <div class="vstack gap-2">
+      <!-- Event item -->
+      <div class="match-card match-event">
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-2">
+            <label class="form-label field-label mb-1">Min</label>
+            <input type="number" class="form-control input-dark" min="0" max="120" placeholder="0" />
+            <div class="text-danger small d-none">Minuto inválido (0–120)</div>
+          </div>
+
+          <div class="col-12 col-md-2">
+            <label class="form-label field-label mb-1">Tipo</label>
+
+            <select
+              class="form-select input-dark"
+              formControlName="idTeamReports"
+            >
+              <option value="" selected disabled>— Seleccionar —</option>
+            
+              <option *ngFor="let t of events" [value]="t.id">
+                {{ t.eventType }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <label class="form-label field-label mb-1">Equipo</label>
+
+            <select
+              class="form-select input-dark"
+              formControlName="idTeamReports"
+              (change)="getPlayers($any($event.target).value)"
+            >
+              <option value="" selected disabled>— Seleccionar —</option>
+            
+              <option *ngFor="let t of teams" [value]="t.id">
+                {{ t.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <label class="form-label field-label mb-1">Jugador</label>
+
+            <select
+              class="form-select input-dark"
+              formControlName="idPlayer"
+            >
+              <option value="" selected disabled>— Seleccionar —</option>
+            
+              <option *ngFor="let t of players" [value]="t.id">
+                {{ t.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-1 d-grid">
+            <button type="button" class="btn-icon btn-icon-danger" aria-label="Eliminar evento">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>

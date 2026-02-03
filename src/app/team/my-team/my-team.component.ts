@@ -1,7 +1,6 @@
 import { AuthService } from 'src/app/service/auth.service';
 import { TeamService } from './../../service/team.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PlayersComponent } from './players/players.component';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -96,12 +95,17 @@ export class MyTeamComponent implements OnInit {
     }, 1000);
   }
 
-  onReport(){
+  onReport(value){
     const modal = this.modalService.create({
       nzTitle: 'Reportar Partido',
       nzContent: ResultsComponent,
       nzWidth: 1200,
-      nzFooter: null,
+      nzComponentParams: {
+        match: value
+      },
+      nzOnOk: () => {
+        modal.componentInstance.onSubmit();
+      }
     });
 
     modal.afterClose.subscribe((result) => {

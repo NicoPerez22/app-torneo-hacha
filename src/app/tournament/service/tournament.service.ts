@@ -23,6 +23,8 @@ export class TournamentService {
   private readonly RANKING_GROUPS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/groups`;
   private readonly ROUNDS_PAGINATION_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/{page}`;
   private readonly DELETE_TOURNAMENT = `${this.TOURNAMENT_ENDPOINT}/delete/{id}`;
+  private readonly REPORT_MATCH = `${this.TOURNAMENT_ENDPOINT}/report`;
+  private readonly GET_TEAMS_ID_ROUND = `${this.TOURNAMENT_ENDPOINT}/{roundId}/teams`;
 
   constructor(private http: HttpClient) {}
 
@@ -66,5 +68,15 @@ export class TournamentService {
   deleteTournament(id: number): Observable<RankingTablesResponse> {
     const url = `${this.API_URL}${this.DELETE_TOURNAMENT}`.replace('{id}', id.toString());
     return this.http.delete<RankingTablesResponse>(url);
+  }
+
+  setReportMatch(dto): Observable<any> {
+    const url = `${this.API_URL}${this.REPORT_MATCH}`;
+    return this.http.post<any>(url, dto);
+  }
+
+  getTeamsByIdRound(id: number): Observable<any> {
+    const url = `${this.API_URL}${this.GET_TEAMS_ID_ROUND}`.replace('{roundId}', id.toString());
+    return this.http.get<any>(url);
   }
 }

@@ -59,7 +59,8 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     NzTableModule,
     NzDropDownModule,
     NgxPaginationModule,
-    NzTabsModule
+    NzTabsModule,
+    NzModalModule
   ],
 })
 export class SharedModule {}
