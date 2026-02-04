@@ -23,18 +23,14 @@
   </div>
 
   <!-- Empty State -->
-  <div class="empty-state" *ngIf="teams.length === 0">
+  <div class="empty-state" *ngIf="teams == null || teams?.length === 0">
     <i class="bi bi-people empty-icon"></i>
     <h3>No hay equipos disponibles</h3>
     <p>Crea tu primer equipo para comenzar</p>
-    <button class="btn-create-team" (click)="onCreate()" *ngIf="user?.idRol == 1">
-      <i class="bi bi-plus-circle me-2"></i>
-      Crear Equipo
-    </button>
   </div>
 
   <!-- Grid de cards -->
-  <div class="teams-grid" *ngIf="teams.length > 0">
+  <div class="teams-grid" *ngIf="teams?.length > 0">
     <div class="team-card" *ngFor="let item of teams">
       <div class="team-card-inner">
         <!-- Glow effect -->

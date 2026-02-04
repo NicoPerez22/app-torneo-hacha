@@ -9,6 +9,8 @@ interface RegisterPayload {
   email: string;
   username: string;
   password: string;
+  lastName: string;
+  name: string;
 }
 
 @Component({
@@ -42,10 +44,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const { email, userName, password } = this.formRegisterUser.getRawValue();
+    const { email, userName, password, lastName, name } = this.formRegisterUser.getRawValue();
     const payload: RegisterPayload = {
       email,
       username: userName,
+      lastName: lastName,
+      name: name,
       password,
     };
 
@@ -67,6 +71,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      lastName: ['', [Validators.required]],
+      name: ['', [Validators.required]],
     });
   }
 
@@ -81,5 +87,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   get password(): FormControl {
     return this.formRegisterUser.get('password') as FormControl;
+  }
+
+  get lastName(): FormControl {
+    return this.formRegisterUser.get('lastName') as FormControl;
+  }
+
+  get name(): FormControl {
+    return this.formRegisterUser.get('name') as FormControl;
   }
 }

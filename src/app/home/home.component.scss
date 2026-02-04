@@ -5,23 +5,25 @@
   place-items: center;
   position: relative;
   overflow: hidden;
+  z-index: 0;
 }
 
 .home-section::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("../../assets/images/eafc-24-etihad.jpg");
+  background-image: url("../../assets/images/campeones.jpeg");
   background-size: cover;
   background-position: center;
-  opacity: 0.2;
-  z-index: -1;
+  opacity: 0.1;
+  z-index: 0;
 }
 
 .home-content {
   position: relative;
   color: #fff;
   text-shadow: 1px 1px 4px rgba(0,0,0,.8);
+  z-index: 1;
 }
 
 /* ------ Tipografías fluidas ------ */

@@ -32,7 +32,7 @@ export class TeamCreateComponent implements OnInit {
   onSubmit() {
     const form = this.form.getRawValue();
     this.team.name = form.name;
-    this.team.idLogo = this.images[0].id;
+    this.team.idLogo ? this.team.idLogo = this.images[0].id : null;
 
     this.teamService.createTeam(this.team).subscribe({
       next: (resp) => {

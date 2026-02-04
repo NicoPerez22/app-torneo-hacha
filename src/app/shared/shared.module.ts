@@ -39,7 +39,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     NzTableModule,
     NzDropDownModule,
     NgxPaginationModule,
-    NzTabsModule
+    NzTabsModule,
   ],
   exports: [
     CommonModule,

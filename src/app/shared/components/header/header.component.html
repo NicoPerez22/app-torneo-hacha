@@ -34,13 +34,12 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          <img
-            src="../../../assets/images/Nicp.png"
-            alt="Perfil"
-            width="40"
-            height="40"
-            class="rounded-circle me-2"
-          />
+        <img
+          [src]="user?.logo?.secureUrl || '../../../assets/images/profile.png'"
+          [alt]="user.name"
+          width="40"
+          height="40"
+        />
           <span class="d-none d-sm-inline">{{
             loginService?.user?.nombre
           }}</span>

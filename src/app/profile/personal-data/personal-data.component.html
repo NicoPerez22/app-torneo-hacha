@@ -1,35 +1,46 @@
-<div>
-    <div>
-        <img [src]="myUser.image" width="50" height="50">
+<form nz-form nzLayout="vertical" [formGroup]="form">
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-label nzFor="name">Nombre</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="name" type="text" id="name" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-label nzFor="lastName">Apellido</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="lastName" type="text" id="lastName" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
     </div>
 
-    <div>
-        <label>Nombre</label>
-        <h6>{{myUser.displayName}}</h6>
+
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-label nzFor="userName">Nombre de Usuario (PSN ID)</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="userName" type="text" id="userName" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-label nzFor="email">Email</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="email" type="text" id="email" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
     </div>
-
-    <div>
-        <label>Usuario</label>
-        <h6>{{myUser.userName}}</h6>
-    </div>
-</div>
-
-
-
-
-
-<div>
-    <form>
-        <div>
-            <input class="form-control">
-        </div>
-    
-        <div>
-            <input class="form-control">
-        </div>
-    
-        <div>
-            <input class="form-control">
-        </div>
-    </form>
-</div>
+</form>

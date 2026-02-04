@@ -16,7 +16,7 @@ export class AuthService {
   API_URL = environment.API_URL;
 
   register(userRegister): Observable<any> {
-    const url = this.API_URL + `users/register`;
+    const url = this.API_URL + `auth/register`;
     return this.http.post<any>(url, userRegister);
   }
 

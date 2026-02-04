@@ -8,10 +8,10 @@
       <div class="profile-photo-container">
         <div class="photo-wrapper">
           <img
-            src="../../assets/images/Nicp.png"
-            [alt]="user?.name + ' ' + user?.lastName"
-            class="profile-photo"
-          />
+          [src]="user?.logo?.secureUrl || '../../../assets/images/profile.png'"
+          [alt]="user.name"
+          class="profile-photo"
+        />
           <span class="online-status"></span>
         </div>
       </div>
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Edit Button -->
-        <button class="btn-edit-profile">
+        <button class="btn-edit-profile" (click)="onEdit()">
           <i class="fa fa-pencil me-2"></i>
           Editar perfil
         </button>
@@ -39,12 +39,12 @@
     </div>
 
     <!-- Team Card -->
-    <div class="team-info-card" *ngIf="team">
+    <div class="team-info-card">
       <div class="card-inner">
         <div class="card-glow"></div>
 
-        <div class="team-content">
-          <h3 class="team-card-title">
+        <div class="team-content" *ngIf="team?.id != null">
+          <h3 class="team-card-title" >
             <i class="bi bi-people-fill me-2"></i>
             Mi Equipo
           </h3>
@@ -69,6 +69,13 @@
               Editar equipo
             </button>
           </div>
+        </div>
+
+        <div class="team-content" *ngIf="team?.id == null">
+          <h3 class="team-card-title" >
+            <i class="bi bi-people-fill me-2"></i>
+            No tienes un equipo asignado
+          </h3>
         </div>
       </div>
     </div>
