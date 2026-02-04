@@ -8,6 +8,7 @@ import { CreateTournammentComponent } from './create-tournamment/create-tournamm
 import { Tournament } from './models/tournament.interface';
 import { TOURNAMENT_CONSTANTS } from './constants/tournament.constants';
 import { finalize, Subscription } from 'rxjs';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-tournament',
@@ -25,6 +26,7 @@ export class TournamentComponent implements OnInit, OnDestroy {
     private spinnerService: NgxSpinnerService,
     private toastrService: ToastrService,
     private modalService: NzModalService,
+    public authService: AuthService,
   ) {}
 
   ngOnInit(): void {

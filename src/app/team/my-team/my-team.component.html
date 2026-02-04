@@ -1,36 +1,23 @@
-<!-- Sección principal -->
-<section class="position-relative">
-  <!-- Fondo para que el blur tenga efecto -->
-<div
-  class="bg-dark py-4"
-  style="
-    background: url('../../assets/images/fondo1.png') no-repeat center center /
-      cover;
-    min-height: 290px;
-  "
-></div>
-
-  <div class="container position-relative">
-    <!-- Encabezado equipo -->
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8 text-center position-relative mb-4">
-        <!-- Logo centrado -->
-        <div class="position-absolute top-0 start-50 translate-middle z-1">
+<div class="container">
+  <div class="tournament-header">
+    <div class="header-content">
+      <div class="col-12 col-md-8 team-header-col">
+        <div class="team-logo-wrap">
           <img
             [src]="myTeam?.logo?.secureUrl"
             alt="Logo equipo"
             width="70"
             height="70"
-            class="object-fit-contain"
+            class="team-logo-img"
           />
         </div>
 
-        <div class="pt-5 mt-4">
-          <h2 class="text-white fw-bold mb-1">{{ myTeam?.name }}</h2>
-          <ul class="d-flex justify-content-center gap-2 list-unstyled mb-3">
-            <li><h6 class="text-white-50 mb-0">Manager:</h6></li>
+        <div class="team-info">
+          <h2 class="team-name">{{ myTeam?.name }}</h2>
+          <ul class="team-manager-list">
+            <li><h6 class="team-manager-label">Manager:</h6></li>
             <li>
-              <h6 class="text-white mb-0">
+              <h6 class="team-manager-name">
                 {{ myTeam?.owner?.name }} {{ myTeam?.owner?.lastName }}
               </h6>
             </li>
@@ -38,144 +25,143 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Tabs -->
-    <nz-tabset nzCentered style="color: white">
-      <nz-tab nzTitle="Jugadores">
-        <div class="players-grid-compact">
-          <div class="player-card-compact" *ngFor="let player of playersTeamsList">
-            <div class="player-card-compact-inner">
-              <!-- Glow effect -->
-              <div class="card-glow-compact"></div>
+  <div class="row g-3">
+    <div class="col-12 col-lg-12">
+      <div class="table-card">
+        <div class="table-wrapper">
+          <div class="p-3">
+            <div class="row justify-content-center">
 
-              <!-- Acción (cambiar) -->
-              <ng-container
-                *ngIf="!player.loading && user.id === myTeam?.owner?.id"
-              >
-                <button
-                  type="button"
-                  class="btn-exchange"
-                  (click)="onChangePlayer(player)"
-                >
-                  <i class="fa fa-exchange"></i>
-                </button>
-              </ng-container>
+            </div>
+            <div class="tabs-container">
+              <nz-tabset nzCentered style="color: white">
+                <nz-tab nzTitle="Jugadores">
+                  <div class="players-grid-compact">
+                    <div class="player-card-compact" *ngFor="let player of playersTeamsList">
+                      <div class="player-card-compact-inner">
+                        <div class="card-glow-compact"></div>
 
-              <!-- Spinner -->
-              <ng-container *ngIf="player.loading">
-                <div class="spinner-container">
-                  <div class="spinner-border spinner-border-sm text-info"></div>
-                </div>
-              </ng-container>
+                        <ng-container
+                          *ngIf="!player.loading && user.id === myTeam?.owner?.id"
+                        >
+                          <button
+                            type="button"
+                            class="btn-exchange"
+                            (click)="onChangePlayer(player)"
+                          >
+                            <i class="fa fa-exchange"></i>
+                          </button>
+                        </ng-container>
 
-              <!-- Foto -->
-              <div class="player-photo-compact">
-                <img
-                  [src]="
-                    player?.photo?.secureUrl
-                      ? player.photo.secureUrl
-                      : '../../../assets/images/player-default.png'
-                  "
-                  [alt]="player?.name + ' ' + player?.lastName"
-                  class="player-image"
-                />
-              </div>
+                        <ng-container *ngIf="player.loading">
+                          <div class="spinner-container">
+                            <div class="spinner-border spinner-border-sm text-info"></div>
+                          </div>
+                        </ng-container>
 
-              <!-- Estado -->
-              <div class="player-status">
-                <span
-                  class="status-badge-compact"
-                  [ngClass]="player.isHabilitado ? 'status-enabled' : 'status-disabled'"
-                >
-                  {{ player.isHabilitado ? 'Activo' : 'Inactivo' }}
-                </span>
-              </div>
+                        <div class="player-photo-compact">
+                          <img
+                            [src]="
+                              player?.photo?.secureUrl
+                                ? player.photo.secureUrl
+                                : '../../../assets/images/player-default.png'
+                            "
+                            [alt]="player?.name + ' ' + player?.lastName"
+                            class="player-image"
+                          />
+                        </div>
 
-              <!-- Nombre -->
-              <h6 class="player-name-compact">
-                {{ player?.name }} {{ player?.lastName }}
-              </h6>
+                        <div class="player-status">
+                          <span
+                            class="status-badge-compact"
+                            [ngClass]="player.isHabilitado ? 'status-enabled' : 'status-disabled'"
+                          >
+                            {{ player.isHabilitado ? 'Activo' : 'Inactivo' }}
+                          </span>
+                        </div>
 
-              <!-- Posición + valoración -->
-              <div class="player-stats-compact">
-                <span
-                  class="position-badge-compact"
-                  [ngClass]="{
-                    'pos-gk': player?.position == 'POR',
-                    'pos-defence': ['LD', 'DFC', 'LI'].includes(player?.position),
-                    'pos-midfield': ['MCO', 'MCD', 'MC', 'MI', 'MD'].includes(player?.position),
-                    'pos-attack': ['DC', 'ED', 'EI'].includes(player?.position)
-                  }"
-                >
-                  {{ player?.position }}
-                </span>
-                <span
-                  class="rating-badge-compact"
-                  [ngClass]="{
-                    'rating-low': player?.valoration < 70,
-                    'rating-medium': player?.valoration >= 70 && player?.valoration < 85,
-                    'rating-high': player?.valoration >= 85
-                  }"
-                >
-                  {{ player?.valoration }}
-                </span>
-              </div>
+                        <h6 class="player-name-compact">
+                          {{ player?.name }} {{ player?.lastName }}
+                        </h6>
 
-              <!-- Transferencia -->
-              <div *ngIf="player?.isTransfer" class="transfer-badge-compact">
-                <span class="badge-transfer">En transferencias</span>
-              </div>
+                        <div class="player-stats-compact">
+                          <span
+                            class="position-badge-compact"
+                            [ngClass]="{
+                              'pos-gk': player?.position == 'POR',
+                              'pos-defence': ['LD', 'DFC', 'LI'].includes(player?.position),
+                              'pos-midfield': ['MCO', 'MCD', 'MC', 'MI', 'MD'].includes(player?.position),
+                              'pos-attack': ['DC', 'ED', 'EI'].includes(player?.position)
+                            }"
+                          >
+                            {{ player?.position }}
+                          </span>
+                          <span
+                            class="rating-badge-compact"
+                            [ngClass]="{
+                              'rating-low': player?.valoration < 70,
+                              'rating-medium': player?.valoration >= 70 && player?.valoration < 85,
+                              'rating-high': player?.valoration >= 85
+                            }"
+                          >
+                            {{ player?.valoration }}
+                          </span>
+                        </div>
+
+                        <div *ngIf="player?.isTransfer" class="transfer-badge-compact">
+                          <span class="badge-transfer">En transferencias</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </nz-tab>
+
+                <nz-tab nzTitle="Proximas Fechas">
+                  <div class="fixtures-container">
+                    <div class="group-card">
+                      <ul class="matches-list">
+                        <li class="match-item" *ngFor="let match of myTeam?.rounds">
+                          <div class="team left">
+                            <img [src]="match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
+                            <span>{{ match.home }}</span>
+                          </div>
+
+                          <div class="vs">
+                            <span>{{ match.homeGoals ?? '-' }}</span>
+                            VS
+                            <span>{{ match.awayGoals ?? '-' }}</span>
+                          </div>
+
+                          <div class="team right">
+                            <span>{{ match.away }}</span>
+                            <img [src]="match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
+                          </div>
+
+                          <div class="team-actions">
+                            <button class="btn-action btn-edit" (click)="onReport(match)">
+                              <i class="fa fa-pencil"></i>
+                            </button>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="mt-4">
+                      <pagination-controls
+                        (pageChange)="p = $event"
+                        previousLabel="Anterior"
+                        nextLabel="Siguiente"
+                      ></pagination-controls>
+                    </div>
+                  </div>
+                </nz-tab>
+              </nz-tabset>
             </div>
           </div>
         </div>
-      </nz-tab>
-
-      <nz-tab nzTitle="Proximas Fechas">
-        <div class="fixtures-container">
-          <div class="group-card">
-            <ul class="matches-list">
-              <li class="match-item" *ngFor="let match of myTeam?.rounds">
-                <div class="team left">
-                  <img [src]="match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
-                  <span>{{ match.home }}</span>
-                </div>
-
-                <div class="vs">
-                  <span>{{ match.homeGoals ?? '-' }}</span>
-                  VS
-                  <span>{{ match.awayGoals ?? '-' }}</span>
-                </div>
-
-                <div class="team right">
-                  <span>{{ match.away }}</span>
-                  <img [src]="match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
-                </div>
-
-
-                <div class="team-actions">
-                  <button class="btn-action btn-edit" (click)="onReport(match)">
-                    <i class="fa fa-pencil"></i>
-                  </button>
-                  <!--<button class="btn-action btn-delete" >
-                    <i class="fa fa-times"></i>
-                  </button>
-                  <button class="btn-action btn-edit" >
-                    <i class="fa fa-trash"></i>
-                  </button> -->
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="mt-4">
-            <pagination-controls
-              (pageChange)="p = $event"
-              previousLabel="Anterior"
-              nextLabel="Siguiente"
-            ></pagination-controls>
-          </div>
-        </div>
-      </nz-tab>
-    </nz-tabset>
+      </div>
+    </div>
   </div>
-</section>
+</div>

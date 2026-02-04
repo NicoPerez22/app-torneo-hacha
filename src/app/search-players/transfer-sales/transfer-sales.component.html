@@ -76,7 +76,7 @@
                     <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1" (click)="onActionBird(offer.id, 'reject')">
                       <i class="fa fa-times"></i>
                     </button>
-                    <button class="btn-action btn-edit" (click)="onActionBird(offer.id, 'cancel')">
+                    <button class="btn-action btn-edit" *ngIf="offer.status == 'pending'" (click)="onActionBird(offer.id, 'cancel')">
                       <i class="fa fa-trash"></i>
                     </button>
                   </div>

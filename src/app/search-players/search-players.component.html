@@ -12,7 +12,7 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn-create-team" (click)="onListBirdAdmin()">
+      <button class="btn-create-team" (click)="onListBirdAdmin()" *ngIf="loginService?.user?.idRol == 1">
         <i class="bi bi-list me-2"></i>
         Comprobar Ofertas
       </button>
