@@ -432,102 +432,575 @@
   }
 }
 
-/* MODAL WRAPPER */
-:host ::ng-deep .transfer-modal .ant-modal {
-  width: calc(100vw - 24px) !important;
-  max-width: 520px;
-  margin: 12px auto;
-}
+/* ============================================
+   MODAL - TRANSFER EXCHANGE STYLES
+   Mobile-First Responsive Design
+   ============================================ */
 
-:host ::ng-deep .transfer-modal .ant-modal-body {
-  padding: 14px;
-}
-
-:host ::ng-deep .transfer-modal .ant-modal-content {
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-/* En pantallas grandes sí puede crecer más */
-@media (min-width: 768px) {
-  :host ::ng-deep .transfer-modal .ant-modal {
-    max-width: 900px;
-  }
-}
-
-/* FORM */
-.tm-form {
-  width: 100%;
-}
-
-.tm-grid {
-  display: grid;
-  grid-template-columns: 1fr; /* mobile first */
-  gap: 12px;
-}
-
-@media (min-width: 768px) {
-  .tm-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-}
-
-/* controles más "tocables" */
-.tm-control {
-  width: 100%;
-}
-
-/* mejora tactil */
-:host ::ng-deep .transfer-modal .ant-input,
-:host ::ng-deep .transfer-modal .ant-select-selector {
-  min-height: 44px; /* recomendado para mobile */
-  border-radius: 10px;
-  font-size: 16px; /* evita zoom en iOS */
-}
-
-/* TEAMS */
-.tm-teams {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.tm-team-card {
+/* Modal Title Custom */
+.modal-title-custom {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.modal-title-custom i {
+  color: #339af0;
+}
+
+/* Teams Header Container */
+.teams-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* Team Header Cards */
+.team-header-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(22, 33, 44, 0.95) 0%, rgba(30, 42, 56, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
+  position: relative;
+  text-align: center;
+}
+
+.team-header-card.incoming {
+  border-color: rgba(81, 207, 102, 0.3);
+}
+
+.team-header-card.outgoing {
+  border-color: rgba(253, 126, 20, 0.3);
+}
+
+.team-header-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+}
+
+.team-header-card.incoming .team-header-badge {
+  background: linear-gradient(135deg, #2b8a3e 0%, #51cf66 100%);
+  color: white;
+}
+
+.team-header-card.outgoing .team-header-badge {
+  background: linear-gradient(90deg, #e67700 0%, #fd7e14 100%);
+  color: white;
+}
+
+.team-header-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.team-header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.team-header-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.exchange-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(90deg, rgba(25, 38, 133, 1) 0%, rgba(29, 101, 253, 1) 100%);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.exchange-icon-container i {
+  color: white;
+  font-size: 1rem;
+}
+
+/* Transfer Columns */
+.transfer-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.transfer-column {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.tm-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  object-fit: cover;
+.incoming-column {
+  border-left: 3px solid #51cf66;
 }
 
-.tm-team-name {
-  font-size: 14px;
-  line-height: 1.2;
+.outgoing-column {
+  border-left: 3px solid #fd7e14;
 }
 
-/* FOOTER sticky-like */
-.tm-footer {
-  padding: 10px 12px;
+.column-header {
   display: flex;
-  gap: 10px;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.tm-btn {
-  width: 100%;
-  max-width: 420px;
-  min-height: 44px;
-  border-radius: 12px;
+.column-title {
+  font-size: 0.9rem;
   font-weight: 600;
+  color: white;
+}
+
+.selection-badge {
+  background: linear-gradient(90deg, rgba(25, 38, 133, 1) 0%, rgba(29, 101, 253, 1) 100%);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+/* Selected Players Preview */
+.selected-players-preview {
+  margin-top: 0.75rem;
+}
+
+.preview-players {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preview-player {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.preview-player:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.preview-player-photo {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.preview-player-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.preview-player-name {
+  font-size: 0.85rem;
+  color: white;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-player-position {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+/* Empty Selection State */
+.empty-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.empty-selection i {
+  font-size: 1.5rem;
+}
+
+.empty-selection span {
+  font-size: 0.8rem;
+}
+
+/* Exchange Summary */
+.exchange-summary {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(25, 38, 133, 0.15) 0%, rgba(29, 101, 253, 0.15) 100%);
+  border: 1px solid rgba(29, 101, 253, 0.25);
+  border-radius: 10px;
+}
+
+.exchange-summary .summary-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.exchange-summary .summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: white;
+}
+
+.exchange-summary .summary-item i {
+  font-size: 1rem;
+}
+
+.exchange-summary .summary-item.incoming i {
+  color: #51cf66;
+}
+
+.exchange-summary .summary-item.outgoing i {
+  color: #fd7e14;
+}
+
+.exchange-summary .summary-item strong {
+  font-size: 1.1rem;
+}
+
+.exchange-summary .summary-item span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+}
+
+.summary-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Modal Footer Custom */
+.modal-footer-custom {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: stretch;
+  width: 100%;
+}
+
+.btn-cancel,
+.btn-confirm {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-cancel:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-confirm {
+  background: linear-gradient(90deg, #e67700 0%, #fd7e14 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(230, 119, 0, 0.3);
+}
+
+.btn-confirm:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Custom NZ-Select Styles for Multiple Selection */
+::ng-deep .transfer-modal .ant-modal-content {
+  background: #1a2332 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+::ng-deep .transfer-modal .ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+::ng-deep .transfer-modal .ant-modal-title {
+  color: white !important;
+}
+
+::ng-deep .transfer-modal .ant-modal-close-x {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+::ng-deep .transfer-modal .ant-modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+}
+
+::ng-deep .ant-select-multiple .ant-select-selection-item {
+  background: linear-gradient(90deg, rgba(25, 38, 133, 0.8) 0%, rgba(29, 101, 253, 0.8) 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  max-width: 100%;
+}
+
+::ng-deep .ant-select-multiple .ant-select-selection-item-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+::ng-deep .ant-select-multiple .ant-select-selection-item-remove {
+  color: white;
+}
+
+::ng-deep .ant-select-multiple .ant-select-selection-item-remove:hover {
+  color: #ff6b6b;
+}
+
+::ng-deep .ant-select-selector {
+  min-height: 44px !important;
+}
+
+::ng-deep .ant-select-dropdown {
+  max-height: 250px !important;
+}
+
+/* ============================================
+   TABLET RESPONSIVE (768px+)
+   ============================================ */
+@media (min-width: 768px) {
+  .teams-header-container {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .team-header-card {
+    padding: 1rem;
+    min-width: 150px;
+    max-width: 220px;
+  }
+
+  .team-header-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .team-header-name {
+    font-size: 0.95rem;
+  }
+
+  .team-header-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .exchange-icon-container {
+    width: 44px;
+    height: 44px;
+  }
+
+  .exchange-icon-container i {
+    font-size: 1.25rem;
+  }
+
+  .transfer-columns {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+
+  .transfer-column {
+    flex: 1;
+    padding: 1.25rem;
+  }
+
+  .column-title {
+    font-size: 1rem;
+  }
+
+  .preview-player-photo {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .preview-player-name {
+    font-size: 0.9rem;
+  }
+
+  .exchange-summary {
+    padding: 1rem 1.5rem;
+  }
+
+  .exchange-summary .summary-item {
+    font-size: 0.95rem;
+  }
+
+  .exchange-summary .summary-item strong {
+    font-size: 1.25rem;
+  }
+
+  .modal-footer-custom {
+    justify-content: flex-end;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    flex: 0 0 auto;
+    min-width: 140px;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* ============================================
+   DESKTOP RESPONSIVE (1024px+)
+   ============================================ */
+@media (min-width: 1024px) {
+  .team-header-card {
+    flex-direction: row;
+    text-align: left;
+    max-width: 280px;
+    gap: 0.75rem;
+  }
+
+  .team-header-badge {
+    top: 50%;
+    left: -10px;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center center;
+  }
+
+  .team-header-info {
+    align-items: flex-start;
+  }
+
+  .team-header-name {
+    font-size: 1rem;
+  }
+
+  .transfer-column {
+    padding: 1.5rem;
+  }
+
+  .btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-confirm:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(230, 119, 0, 0.4);
+  }
+}
+
+/* ============================================
+   SMALL MOBILE (< 360px)
+   ============================================ */
+@media (max-width: 359px) {
+  .teams-header-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .team-header-card {
+    width: 100%;
+    max-width: none;
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .team-header-badge {
+    top: -8px;
+    left: 10px;
+    transform: none;
+  }
+
+  .team-header-info {
+    align-items: flex-start;
+  }
+
+  .exchange-icon-container {
+    transform: rotate(90deg);
+  }
+
+  .transfer-column {
+    padding: 0.75rem;
+  }
+
+  .column-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modal-footer-custom {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+  }
+
+  .exchange-summary .summary-content {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .summary-divider {
+    width: 40px;
+    height: 1px;
+  }
 }
