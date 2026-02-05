@@ -431,3 +431,103 @@
     gap: 3.5rem;
   }
 }
+
+/* MODAL WRAPPER */
+:host ::ng-deep .transfer-modal .ant-modal {
+  width: calc(100vw - 24px) !important;
+  max-width: 520px;
+  margin: 12px auto;
+}
+
+:host ::ng-deep .transfer-modal .ant-modal-body {
+  padding: 14px;
+}
+
+:host ::ng-deep .transfer-modal .ant-modal-content {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* En pantallas grandes sí puede crecer más */
+@media (min-width: 768px) {
+  :host ::ng-deep .transfer-modal .ant-modal {
+    max-width: 900px;
+  }
+}
+
+/* FORM */
+.tm-form {
+  width: 100%;
+}
+
+.tm-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile first */
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .tm-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+/* controles más "tocables" */
+.tm-control {
+  width: 100%;
+}
+
+/* mejora tactil */
+:host ::ng-deep .transfer-modal .ant-input,
+:host ::ng-deep .transfer-modal .ant-select-selector {
+  min-height: 44px; /* recomendado para mobile */
+  border-radius: 10px;
+  font-size: 16px; /* evita zoom en iOS */
+}
+
+/* TEAMS */
+.tm-teams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.tm-team-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tm-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.tm-team-name {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* FOOTER sticky-like */
+.tm-footer {
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.tm-btn {
+  width: 100%;
+  max-width: 420px;
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 600;
+}

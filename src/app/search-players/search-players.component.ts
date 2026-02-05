@@ -19,6 +19,7 @@ export class SearchPlayersComponent implements OnInit {
   players: Array<any> = [];
   myPlayers: Array<any> = [];
   team
+  user
 
   player;
 
@@ -32,21 +33,21 @@ export class SearchPlayersComponent implements OnInit {
     private authService: AuthService,
     private toastrService: ToastrService,
     private router: Router,
-    public loginService: LoginService
+    public loginService: LoginService,
+    private userSerivce: UserService,
   ) {}
 
   ngOnInit(): void {
     this._getPlayers();
+    this._getProfile(this.loginService.user.id)
   }
 
   onBird(player): void {
     this._initForm();
-    const user = this.authService.getUser();
 
-    this._getPlayerMyTeam(user.idTeam);
+    this._getPlayerMyTeam(this.user.teams[0].id);
 
     this.player = player;
-    console.log(this.player)
 
     this.isVisible = true;
     this.form.get('playerOut').patchValue(player?.fullName);
@@ -105,6 +106,15 @@ export class SearchPlayersComponent implements OnInit {
       }
     })
   }
+
+  private _getProfile(id) {
+    this.userSerivce.getUserByID(id).subscribe({
+      next: (resp) => {
+        this.user = resp.data.user;
+      },
+    });
+  }
+
 
   private _initForm() {
     this.form = this.fb.group({

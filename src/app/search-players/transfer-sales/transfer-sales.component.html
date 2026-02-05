@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div class="row g-3">
+  <div class="d-none d-md-block row g-3">
     <!-- Tabla -->
     <div class="col-12 col-lg-12">
       <div class="table-card">
@@ -28,27 +28,19 @@
               <tr *ngFor="let offer of transferOffer; let i = index">
                 <td>
                   <div class="team-cell">
-                    <img
-                      [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'"
-                      alt="Team Logo"
-                      class="team-logo"
-                    />
+                    <img [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                      class="team-logo" />
                     <span class="team-name-text">{{ offer.fromTeamName }}</span>
                   </div>
                 </td>
                 <td>
-                  <span class="team-name-text"
-                    >{{ offer.offeredPlayerName }} {{offer.offeredPlayerLastname
-                    }}</span
-                  >
+                  <span class="team-name-text">{{ offer.offeredPlayerName }} {{offer.offeredPlayerLastname
+                    }}</span>
                 </td>
                 <td class="d-none d-sm-table-cell">
                   <div class="team-cell">
-                    <img
-                      [src]="offer?.toTeamLogoUrl || '../../../assets/images/player-default.png'"
-                      alt="Team Logo"
-                      class="team-logo"
-                    />
+                    <img [src]="offer?.toTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                      class="team-logo" />
                     <span class="team-name-text">{{ offer.toTeamName }}</span>
                   </div>
                 </td>
@@ -56,27 +48,27 @@
                   <span class="team-name-text">{{ offer.targetPlayerName }} {{ offer.targetPlayerLastname }}</span>
                 </td>
                 <td class="d-none d-md-table-cell">
-                  <span
-                    class="position-badge"
-                    [ngClass]="{
+                  <span class="position-badge" [ngClass]="{
                             'mid': offer.status == 'pending',
                             'top': offer.status == 'approved',
                             'bottom': offer.status == 'rejected',
                             'cancell': offer.status == 'cancelled',
-                          }"
-                  >
+                          }">
                     {{ offer.statusEs }}
                   </span>
                 </td>
                 <td class="d-none d-lg-table-cell">
                   <div class="team-actions">
-                    <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1" (click)="onActionBird(offer.id, 'approve')">
+                    <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1"
+                      (click)="onActionBird(offer.id, 'approve')">
                       <i class="fa fa-check"></i>
                     </button>
-                    <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1" (click)="onActionBird(offer.id, 'reject')">
+                    <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1"
+                      (click)="onActionBird(offer.id, 'reject')">
                       <i class="fa fa-times"></i>
                     </button>
-                    <button class="btn-action btn-edit" *ngIf="offer.status == 'pending'" (click)="onActionBird(offer.id, 'cancel')">
+                    <button class="btn-action btn-edit" *ngIf="offer.status == 'pending'"
+                      (click)="onActionBird(offer.id, 'cancel')">
                       <i class="fa fa-trash"></i>
                     </button>
                   </div>
@@ -87,5 +79,92 @@
         </div>
       </div>
     </div>
+  </div>
+
+
+  <!-- MOBILE -->
+  <div class="d-block d-md-none d-flex align-items-center justify-content-center flex-column gap-4">
+    <ng-container *ngFor="let offer of transferOffer; let i = index">
+      <div class="profile-card">
+        <!-- Profile Info -->
+        <div class="profile-info">
+
+          <div class="label-card">
+            <h5 class="profile-name">Equipo Saliente: </h5>
+
+            <div>
+              <span class="team-name-text">{{ offer.fromTeamName }}</span>
+              <img [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                class="team-logo" />
+
+            </div>
+
+          </div>
+
+          <div class="label-card">
+            <h5 class="profile-name">Jugador Saliente: </h5>
+
+            <div>
+              <span class="team-name-text">{{ offer.offeredPlayerName }} {{offer.offeredPlayerLastname }}</span>
+            </div>
+          </div>
+
+          <div class="label-card">
+            <h5 class="profile-name">Equipo Entrante: </h5>
+
+            <div>
+              <span class="team-name-text">{{ offer.toTeamName }}</span>
+              <img [src]="offer?.toTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                class="team-logo" />
+
+            </div>
+
+          </div>
+
+          <div class="label-card">
+            <h5 class="profile-name">Jugador Entrante: </h5>
+
+            <div>
+              <span class="team-name-text">{{ offer.targetPlayerName }} {{
+                offer.targetPlayerLastname }}</span>
+            </div>
+          </div>
+
+          <div class="label-card">
+            <h5 class="profile-name">Estado Oferta: </h5>
+
+            <div>
+              <span class="position-badge" [ngClass]="{
+                'mid': offer.status == 'pending',
+                'top': offer.status == 'approved',
+                'bottom': offer.status == 'rejected',
+                'cancell': offer.status == 'cancelled',
+              }">
+                {{ offer.statusEs }}
+              </span>
+            </div>
+
+          </div>
+
+
+
+          <div class="team-actions">
+            <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1"
+              (click)="onActionBird(offer.id, 'approve')">
+              <i class="fa fa-check"></i>
+            </button>
+            <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1"
+              (click)="onActionBird(offer.id, 'reject')">
+              <i class="fa fa-times"></i>
+            </button>
+            <button class="btn-action btn-edit" *ngIf="offer.status == 'pending'"
+              (click)="onActionBird(offer.id, 'cancel')">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
   </div>
 </div>

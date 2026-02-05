@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { AuthService } from './service/auth.service';
 import { LoginService } from './service/login.service';
+import { UserService } from './service/user.service';
 
 @Component({
   selector: 'app-root',
@@ -15,15 +16,18 @@ import { LoginService } from './service/login.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  user;
+  userActive: any;
 
-  constructor(public loginService: LoginService) {}
+  constructor(
+    private userSerivce: UserService,
+    public loginService: LoginService
+  ) {}
 
   @ViewChild('hdr', { static: true }) hdr!: ElementRef<HTMLElement>;
   headerH = 0;
 
   ngOnInit(): void {
-    this.user = this.loginService.user;
+    this._getProfile(this.loginService.user.id)
   }
 
   ngAfterViewInit(): void {
@@ -33,6 +37,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   @HostListener('window:resize')
   onResize() {
     this.updateHeaderHeight();
+  }
+
+  private _getProfile(id) {
+    this.userSerivce.getUserByID(id).subscribe({
+      next: (resp) => {
+        this.userActive = resp.data.user;
+      },
+    });
   }
 
   private updateHeaderHeight() {

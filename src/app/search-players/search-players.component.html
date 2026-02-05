@@ -105,66 +105,53 @@
   [nzTitle]="modalTitle"
   [nzContent]="modalContent"
   [nzFooter]="modalFooter"
-  [nzWidth]="1200"
+  nzWrapClassName="transfer-modal"
   (nzOnCancel)="handleCancel()"
 >
   <ng-template #modalTitle>Oferta de transferencia</ng-template>
 
   <ng-template #modalContent>
-    <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
-      <div class="row">
-        <div class="col-md-6">
-          <nz-form-item>
-            <nz-form-label nzFor="manager">Jugador Entrante</nz-form-label>
-            <nz-form-control>
-              <input nz-input formControlName="playerOut" />
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-
-        <div class="col-md-6">
-          <nz-form-item>
-            <nz-form-label nzFor="teams">Jugador Salida</nz-form-label>
-            <nz-form-control>
-              <nz-select formControlName="playerIn">
-                <nz-option
-                  *ngFor="let item of myPlayers"
-                  [nzValue]="item.id"
-                  [nzLabel]="item.name + ' ' + item.lastName"
-                ></nz-option>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
+    <form [formGroup]="form" nz-form nzLayout="vertical" class="tm-form">
+      <div class="tm-grid">
+        <nz-form-item class="tm-item">
+          <nz-form-label nzFor="playerOut">Jugador Entrante</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="playerOut" class="tm-control" />
+          </nz-form-control>
+        </nz-form-item>
+  
+        <nz-form-item class="tm-item">
+          <nz-form-label nzFor="playerIn">Jugador Salida</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="playerIn" class="tm-control" nzPlaceHolder="Elegí un jugador">
+              <nz-option
+                *ngFor="let item of myPlayers"
+                [nzValue]="item.id"
+                [nzLabel]="item.name + ' ' + item.lastName"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
       </div>
     </form>
-
-    <div class="row">
-      <div class="col-md-6">
-        <div class="d-flex flex-column align-items-center">
-          <img
-            [src]="player?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-            [alt]="player?.team?.name"
-            width="40"
-            height="40"
-            style="object-fit: cover; margin-bottom: 5px"
-          />
-          <span>{{ player?.team?.name }}</span>
-        </div>
+  
+    <div class="tm-teams">
+      <div class="tm-team-card">
+        <img
+          class="tm-logo"
+          [src]="player?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+          [alt]="player?.team?.name"
+        />
+        <span class="tm-team-name">{{ player?.team?.name }}</span>
       </div>
-
-      <div class="col-md-6">
-        <div class="d-flex flex-column align-items-center">
-          <img
-            [src]="team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-            [alt]="team?.name"
-            alt="Logo equipo"
-            width="40"
-            height="40"
-            style="object-fit: cover; margin-bottom: 5px"
-          />
-          <span>{{ team?.name }}</span>
-        </div>
+  
+      <div class="tm-team-card">
+        <img
+          class="tm-logo"
+          [src]="team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+          [alt]="team?.name"
+        />
+        <span class="tm-team-name">{{ team?.name }}</span>
       </div>
     </div>
   </ng-template>

@@ -14,7 +14,9 @@ export class HeaderComponent implements OnInit {
 
   constructor(private router: Router, public loginService: LoginService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.user)
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -30,6 +32,7 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToTeam() {
-    this.router.navigate(['/equipos/' + this.user.idTeam]);
+    console.log(this.user)
+    this.router.navigate(['/equipos/' + this.user?.teams[0]?.id]);
   }
 }

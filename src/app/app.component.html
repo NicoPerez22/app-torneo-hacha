@@ -1,6 +1,6 @@
 <div class="wrapper">
   <header #hdr>
-    <app-header *ngIf="(loginService.user$ | async) as user" [user]="user"></app-header>
+    <app-header *ngIf="(loginService.user$ | async) as user" [user]="userActive"></app-header>
   </header>
 
   <!-- Aplico padding-top en px calculado -->
