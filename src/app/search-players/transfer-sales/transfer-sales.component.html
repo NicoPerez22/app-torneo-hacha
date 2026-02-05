@@ -16,9 +16,9 @@
             <thead>
               <tr>
                 <th class="d-none d-sm-table-cell">Equipo Saliente</th>
-                <th class="d-none d-sm-table-cell">Jugador Saliente</th>
+                <th class="d-none d-sm-table-cell">Jugadores Salientes</th>
                 <th class="d-none d-md-table-cell">Equipo Entrante</th>
-                <th class="d-none d-md-table-cell">Jugador Entrante</th>
+                <th class="d-none d-md-table-cell">Jugadores Entrantes</th>
                 <th class="d-none d-md-table-cell">Estado Oferta</th>
                 <th class="d-none d-md-table-cell">Acciones</th>
               </tr>
@@ -34,8 +34,13 @@
                   </div>
                 </td>
                 <td>
-                  <span class="team-name-text">{{ offer.offeredPlayerName }} {{offer.offeredPlayerLastname
-                    }}</span>
+                  <div class="players-cell">
+                    <div class="players-stack">
+                      <span class="player-pill" *ngFor="let p of offer.outgoingPlayers">
+                        {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
+                      </span>
+                    </div>
+                  </div>
                 </td>
                 <td class="d-none d-sm-table-cell">
                   <div class="team-cell">
@@ -45,7 +50,13 @@
                   </div>
                 </td>
                 <td class="d-none d-md-table-cell">
-                  <span class="team-name-text">{{ offer.targetPlayerName }} {{ offer.targetPlayerLastname }}</span>
+                  <div class="players-cell">
+                    <div class="players-stack">
+                      <span class="player-pill" *ngFor="let p of offer.incomingPlayers">
+                        {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
+                      </span>
+                    </div>
+                  </div>
                 </td>
                 <td class="d-none d-md-table-cell">
                   <span class="position-badge" [ngClass]="{
@@ -85,69 +96,64 @@
   <!-- MOBILE -->
   <div class="d-block d-md-none d-flex align-items-center justify-content-center flex-column gap-4">
     <ng-container *ngFor="let offer of transferOffer; let i = index">
-      <div class="profile-card">
-        <!-- Profile Info -->
-        <div class="profile-info">
-
-          <div class="label-card">
-            <h5 class="profile-name">Equipo Saliente: </h5>
-
-            <div>
-              <span class="team-name-text">{{ offer.fromTeamName }}</span>
-              <img [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
-                class="team-logo" />
-
-            </div>
-
-          </div>
-
-          <div class="label-card">
-            <h5 class="profile-name">Jugador Saliente: </h5>
-
-            <div>
-              <span class="team-name-text">{{ offer.offeredPlayerName }} {{offer.offeredPlayerLastname }}</span>
-            </div>
-          </div>
-
-          <div class="label-card">
-            <h5 class="profile-name">Equipo Entrante: </h5>
-
-            <div>
-              <span class="team-name-text">{{ offer.toTeamName }}</span>
-              <img [src]="offer?.toTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
-                class="team-logo" />
-
-            </div>
-
-          </div>
-
-          <div class="label-card">
-            <h5 class="profile-name">Jugador Entrante: </h5>
-
-            <div>
-              <span class="team-name-text">{{ offer.targetPlayerName }} {{
-                offer.targetPlayerLastname }}</span>
-            </div>
-          </div>
-
-          <div class="label-card">
-            <h5 class="profile-name">Estado Oferta: </h5>
-
-            <div>
-              <span class="position-badge" [ngClass]="{
+      <div class="offer-card-mobile">
+        <div class="offer-card-header">
+          <div class="offer-title">Oferta {{ offer?.id ? ('#' + offer.id) : (i + 1) }}</div>
+          <span class="position-badge" [ngClass]="{
                 'mid': offer.status == 'pending',
                 'top': offer.status == 'approved',
                 'bottom': offer.status == 'rejected',
                 'cancell': offer.status == 'cancelled',
               }">
-                {{ offer.statusEs }}
-              </span>
+            {{ offer.statusEs }}
+          </span>
+        </div>
+
+        <div class="offer-sides">
+          <!-- SALIENTES -->
+          <div class="offer-side offer-side-out">
+            <div class="offer-side-header">
+              <span class="offer-side-label">Salientes</span>
+              <span class="players-count">({{ offer.outgoingPlayers.length }})</span>
             </div>
 
+            <div class="offer-team-row">
+              <img [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                class="team-logo" />
+              <span class="team-name-text team-name-wrap">{{ offer.fromTeamName }}</span>
+            </div>
+
+            <div class="players-stack players-stack-left">
+              <span class="player-pill" *ngFor="let p of offer.outgoingPlayers">
+                {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
+              </span>
+            </div>
           </div>
 
+          <div class="offer-divider"></div>
 
+          <!-- ENTRANTES -->
+          <div class="offer-side offer-side-in">
+            <div class="offer-side-header">
+              <span class="offer-side-label">Entrantes</span>
+              <span class="players-count">({{ offer.incomingPlayers.length }})</span>
+            </div>
 
+            <div class="offer-team-row">
+              <img [src]="offer?.toTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                class="team-logo" />
+              <span class="team-name-text team-name-wrap">{{ offer.toTeamName }}</span>
+            </div>
+
+            <div class="players-stack players-stack-left">
+              <span class="player-pill" *ngFor="let p of offer.incomingPlayers">
+                {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="offer-card-footer">
           <div class="team-actions">
             <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1"
               (click)="onActionBird(offer.id, 'approve')">

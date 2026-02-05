@@ -201,6 +201,49 @@
   max-width: 150px;
 }
 
+.players-cell {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.players-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.players-stack-left {
+  align-items: flex-start;
+}
+
+.player-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.45rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  font-size: 0.82rem;
+  line-height: 1.1;
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 240px;
+}
+
+.players-count {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+  font-size: 0.85em;
+}
+
 .position-badge {
   display: inline-flex;
   align-items: center;
@@ -482,6 +525,100 @@
   width: 95%;
 }
 
+.offer-card-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.offer-title {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+
+/* ============================================
+   MOBILE OFFER CARD (REDESIGN)
+   ============================================ */
+.offer-card-mobile {
+  background: linear-gradient(
+    135deg,
+    rgba(22, 33, 44, 0.95) 0%,
+    rgba(30, 42, 56, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 0.85rem 0.85rem;
+  width: 95%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.offer-sides {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.offer-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.offer-side {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 0.75rem;
+}
+
+.offer-side-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.offer-side-label {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.offer-team-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  min-width: 0;
+}
+
+.team-name-wrap {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  max-width: 100%;
+}
+
+.offer-card-footer {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .profile-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 50px rgba(25, 38, 133, 0.3);
@@ -542,7 +679,7 @@
   font-size: 12px;
   font-weight: 700;
   color: white;
-  margin: 0 0 1.5rem 0;
+  margin: 0;
 }
 
 /* ============================================
@@ -728,7 +865,28 @@
 
 .label-card {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 180px;
-  align-items: baseline;
+  grid-template-columns: 140px 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  width: 100%;
+  padding: 0.25rem 0;
+}
+
+.label-card > div {
+  min-width: 0;
+}
+
+.label-card + .label-card {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .label-card {
+    grid-template-columns: 125px 1fr;
+    gap: 0.6rem;
+  }
+
+  .player-pill {
+    max-width: 100%;
+  }
 }

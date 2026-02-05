@@ -174,7 +174,7 @@
                 <nz-option
                   *ngFor="let item of targetTeamPlayers"
                   [nzValue]="item.id"
-                  [nzLabel]="item.name + ' ' + item.lastName + ' (' + item.position + ')'"
+                  [nzLabel]="item.name + ' ' + item.lastName + ' (' + item.position + ')' + ' - ' + item.valoration"
                 ></nz-option>
               </nz-select>
             </nz-form-control>
@@ -192,7 +192,7 @@
                       class="preview-player-photo"
                     />
                     <div class="preview-player-info">
-                      <span class="preview-player-name">{{ p.name }} {{ p.lastName }}</span>
+                      <span class="preview-player-name">{{ p.name }} {{ p.lastName }} - {{ p.valoration }}</span>
                       <span class="preview-player-position">{{ p.position }}</span>
                     </div>
                   </ng-container>
@@ -229,7 +229,7 @@
                 <nz-option
                   *ngFor="let item of myPlayers"
                   [nzValue]="item.id"
-                  [nzLabel]="item.name + ' ' + item.lastName + ' (' + item.position + ')'"
+                  [nzLabel]="item.name + ' ' + item.lastName + ' (' + item.position + ')' + ' - ' + item.valoration"
                 ></nz-option>
               </nz-select>
             </nz-form-control>
@@ -247,7 +247,7 @@
                       class="preview-player-photo"
                     />
                     <div class="preview-player-info">
-                      <span class="preview-player-name">{{ p.name }} {{ p.lastName }}</span>
+                      <span class="preview-player-name">{{ p.name }} {{ p.lastName }} - {{ p.valoration }}</span>
                       <span class="preview-player-position">{{ p.position }}</span>
                     </div>
                   </ng-container>

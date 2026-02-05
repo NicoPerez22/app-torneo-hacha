@@ -4,7 +4,11 @@
 >
   <div class="container">
     <!-- Logo / Brand -->
-    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/home">
+    <a
+      class="navbar-brand d-flex align-items-center gap-2"
+      routerLink="/home"
+      (click)="collapseMobileMenu()"
+    >
       <img
         src="../../../../assets/images/seaneternos2.png"
         alt="Sean Eternos"
@@ -80,12 +84,13 @@
       aria-controls="mainNav"
       aria-expanded="false"
       aria-label="Toggle navigation"
+      #navToggler
     >
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <!-- Menú centrado (collapse) -->
-    <div class="collapse navbar-collapse order-lg-2" id="mainNav">
+    <div class="collapse navbar-collapse order-lg-2" id="mainNav" #mainNav>
       <ul class="navbar-nav mx-lg-auto text-center gap-lg-2">
         <li class="nav-item">
           <a
@@ -93,6 +98,7 @@
             routerLink="/home"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
+            (click)="collapseMobileMenu()"
           >
             <i class="fa fa-home me-1" aria-hidden="true"></i> Inicio
           </a>
@@ -103,13 +109,19 @@
             class="nav-link"
             routerLink="/tournament"
             routerLinkActive="active"
+            (click)="collapseMobileMenu()"
           >
             <i class="fa fa-trophy me-1" aria-hidden="true"></i> Torneos
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" routerLink="/equipos" routerLinkActive="active">
+          <a
+            class="nav-link"
+            routerLink="/equipos"
+            routerLinkActive="active"
+            (click)="collapseMobileMenu()"
+          >
             <i class="fa fa-shield me-1" aria-hidden="true"></i> Equipos
           </a>
         </li>
@@ -119,6 +131,7 @@
             class="nav-link"
             routerLink="/mercado-transferencias"
             routerLinkActive="active"
+            (click)="collapseMobileMenu()"
           >
             <i class="fa fa-users me-1" aria-hidden="true"></i> Mercado
             Transferencias
@@ -130,6 +143,7 @@
             class="nav-link"
             routerLink="/inhabilitados"
             routerLinkActive="active"
+            (click)="collapseMobileMenu()"
           >
             <i class="fa fa-ban me-1" aria-hidden="true"></i> Inhabilitados
           </a>

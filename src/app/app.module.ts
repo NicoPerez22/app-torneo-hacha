@@ -1,5 +1,6 @@
 import { ROOT_REDUCERS } from './state/app.state';
 import { JwtInterceptorInterceptor } from './shared/Interceptor/jwt-interceptor.interceptor';
+import { LoadingInterceptor } from './shared/Interceptor/loading.interceptor';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -49,7 +50,8 @@ registerLocaleData(es);
     AuthGuard,
     CookieService,
     { provide: NZ_I18N, useValue: es_ES },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

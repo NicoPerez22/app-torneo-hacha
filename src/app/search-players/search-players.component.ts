@@ -1,6 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { TeamService } from '../service/team.service';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../service/user.service';
 import { AuthService } from '../service/auth.service';
@@ -32,7 +31,6 @@ export class SearchPlayersComponent implements OnInit {
 
   constructor(
     private teamService: TeamService,
-    private spinnerService: NgxSpinnerService,
     private fb: FormBuilder,
     private authService: AuthService,
     private toastrService: ToastrService,
@@ -43,20 +41,18 @@ export class SearchPlayersComponent implements OnInit {
 
   ngOnInit(): void {
     this._getPlayers();
-    // this._getProfile(this.loginService.user.id)
+    this._getProfile(this.loginService.user.id)
   }
 
   onBird(player): void {
     this._initForm();
 
-    this._getPlayerMyTeam(this.user.idTeam);
+    this._getPlayerMyTeam(this.user?.teams[0].id);
     this._getTargetTeamPlayers(player.team.id);
 
     this.player = player;
-    console.log(this.player);
 
     this.isVisible = true;
-    // Pre-seleccionar el jugador objetivo en el select de jugadores entrantes
     this.form.get('playersOut').patchValue([player.id]);
   }
 
@@ -125,14 +121,11 @@ export class SearchPlayersComponent implements OnInit {
   }
 
   private _getPlayers() {
-    this.spinnerService.show();
     this.teamService.getPlayers().subscribe({
       next: (response) => {
-        this.spinnerService.hide();
         this.playersList = response.data;
       },
       error: (error) => {
-        this.spinnerService.hide();
       },
     });
   }
@@ -151,6 +144,14 @@ export class SearchPlayersComponent implements OnInit {
     this.teamService.getTeamByID(teamId).subscribe({
       next: (resp: any) => {
         this.targetTeamPlayers = resp.data.players;
+      },
+    });
+  }
+
+  private _getProfile(id) {
+    this.userSerivce.getUserByID(id).subscribe({
+      next: (resp) => {
+        this.user = resp.data.user;
       },
     });
   }

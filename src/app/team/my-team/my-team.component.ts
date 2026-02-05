@@ -4,7 +4,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { PlayersComponent } from './players/players.component';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { ManagerComponent } from './manager/manager.component';
 import { ToastrService } from 'ngx-toastr';
 import { ResultsComponent } from './results/results.component';
@@ -29,7 +28,6 @@ export class MyTeamComponent implements OnInit {
 
   constructor(
     private teamService: TeamService,
-    private spinnerService: NgxSpinnerService,
     private authService: AuthService,
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
@@ -116,11 +114,9 @@ export class MyTeamComponent implements OnInit {
   }
 
   private _getTeamById(id) {
-    this.spinnerService.show();
     this.teamService.getTeamByID(id).subscribe({
       next: (res) => {
         this.myTeam = res.data;
-        this.spinnerService.hide();
 
         if (this.myTeam) {
           this.myTeamEnable = true;
@@ -129,22 +125,18 @@ export class MyTeamComponent implements OnInit {
       },
 
       error: () => {
-        this.spinnerService.hide();
       },
     });
   }
 
   private _assignTransferPlayer(id, isTransfer) {
-    this.spinnerService.show();
     this.teamService.assignTransferPlayer(id, isTransfer).subscribe({
       next: (res) => {
-        this.spinnerService.hide();
         this.toastrService.success('Jugador listado en transferencias', 'Exito')
       },
 
       error: () => {
         this.toastrService.error('No se pudo listar en transferencias al jugador', 'Error')
-        this.spinnerService.hide();
       },
     });
   }

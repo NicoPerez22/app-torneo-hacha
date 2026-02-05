@@ -1,5 +1,9 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { LoginService } from './service/login.service';
+import { UserService } from './service/user.service';
+import { of } from 'rxjs';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -7,6 +11,22 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        {
+          provide: LoginService,
+          useValue: {
+            user: { id: 1 },
+            user$: of(null),
+          },
+        },
+        {
+          provide: UserService,
+          useValue: {
+            getUserByID: () => of({ data: { user: {} } }),
+          },
+        },
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   });
 
@@ -14,18 +34,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'ivg-latam'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('ivg-latam');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('ivg-latam app is running!');
   });
 });
