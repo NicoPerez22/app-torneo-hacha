@@ -107,9 +107,10 @@
   [nzFooter]="modalFooter"
   [nzWidth]="'95vw'"
   [nzStyle]="{ maxWidth: '1000px' }"
-  [nzBodyStyle]="{ padding: '16px', maxHeight: '70vh', overflowY: 'auto' }"
+  [nzBodyStyle]="{ padding: '16px' }"
   [nzCentered]="true"
   (nzOnCancel)="handleCancel()"
+  [nzWrapClassName]="'transfer-modal-wrap'"
   nzClassName="transfer-modal"
 >
   <ng-template #modalTitle>
@@ -120,6 +121,7 @@
   </ng-template>
 
   <ng-template #modalContent>
+    <div class="transfer-modal-scroll" cdkScrollable>
     <!-- Encabezado con equipos -->
     <div class="teams-header-container">
       <div class="team-header-card incoming">
@@ -162,21 +164,56 @@
           
           <nz-form-item>
             <nz-form-control nzErrorTip="Selecciona al menos un jugador">
-              <nz-select
-                formControlName="playersOut"
-                nzMode="multiple"
-                nzPlaceHolder="Toca para seleccionar..."
-                [nzMaxTagCount]="3"
-                nzShowSearch
-                [nzDropdownMatchSelectWidth]="false"
-                (ngModelChange)="onPlayersOutChange($event)"
-              >
-                <nz-option
-                  *ngFor="let item of targetTeamPlayers"
-                  [nzValue]="item.id"
-                  [nzLabel]="item.name + ' ' + item.lastName + ' (' + item.position + ')' + ' - ' + item.valoration"
-                ></nz-option>
-              </nz-select>
+              <div class="transfer-ms" (click)="stopPropagation($event)">
+                <button type="button" class="transfer-ms-trigger" (click)="togglePlayersOutOpen($event)">
+                  <div class="transfer-ms-tags" *ngIf="form.get('playersOut').value?.length; else playersOutPlaceholder">
+                    <span class="transfer-ms-tag" *ngFor="let id of form.get('playersOut').value">
+                      <span class="transfer-ms-tag-text">{{ getLabel(findById('playersOut', id)) }}</span>
+                      <button
+                        type="button"
+                        class="transfer-ms-tag-remove"
+                        (click)="removeSelected('playersOut', id, $event)"
+                        aria-label="Quitar"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  </div>
+                  <ng-template #playersOutPlaceholder>
+                    <span class="transfer-ms-placeholder">Toca para seleccionar...</span>
+                  </ng-template>
+                  <i class="bi bi-chevron-down transfer-ms-arrow"></i>
+                </button>
+
+                <div class="transfer-ms-menu" *ngIf="playersOutOpen">
+                  <div class="transfer-ms-search">
+                    <input
+                      type="text"
+                      class="form-control transfer-ms-search-input"
+                      placeholder="Buscar..."
+                      [(ngModel)]="playersOutSearch"
+                      [ngModelOptions]="{ standalone: true }"
+                      (click)="stopPropagation($event)"
+                    />
+                  </div>
+                  <div class="transfer-ms-options">
+                    <button
+                      type="button"
+                      class="transfer-ms-option"
+                      *ngFor="let item of getFilteredOptions('playersOut')"
+                      (click)="toggleSelected('playersOut', item.id, $event)"
+                    >
+                      <div class="transfer-ms-option-main">
+                        <div class="transfer-ms-option-text">
+                          <div class="transfer-ms-option-title">{{ item.name }} {{ item.lastName }} - {{ item.valoration }}</div>
+                          <div class="transfer-ms-option-sub">{{ item.position }}</div>
+                        </div>
+                        <i class="bi bi-check-lg transfer-ms-check" *ngIf="isSelected('playersOut', item.id)"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </nz-form-control>
           </nz-form-item>
           
@@ -217,21 +254,56 @@
 
           <nz-form-item>
             <nz-form-control nzErrorTip="Selecciona al menos un jugador">
-              <nz-select
-                formControlName="playersIn"
-                nzMode="multiple"
-                nzPlaceHolder="Toca para seleccionar..."
-                [nzMaxTagCount]="3"
-                nzShowSearch
-                [nzDropdownMatchSelectWidth]="false"
-                (ngModelChange)="onPlayersInChange($event)"
-              >
-                <nz-option
-                  *ngFor="let item of myPlayers"
-                  [nzValue]="item.id"
-                  [nzLabel]="item.name + ' ' + item.lastName + ' (' + item.position + ')' + ' - ' + item.valoration"
-                ></nz-option>
-              </nz-select>
+              <div class="transfer-ms" (click)="stopPropagation($event)">
+                <button type="button" class="transfer-ms-trigger" (click)="togglePlayersInOpen($event)">
+                  <div class="transfer-ms-tags" *ngIf="form.get('playersIn').value?.length; else playersInPlaceholder">
+                    <span class="transfer-ms-tag" *ngFor="let id of form.get('playersIn').value">
+                      <span class="transfer-ms-tag-text">{{ getLabel(findById('playersIn', id)) }}</span>
+                      <button
+                        type="button"
+                        class="transfer-ms-tag-remove"
+                        (click)="removeSelected('playersIn', id, $event)"
+                        aria-label="Quitar"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  </div>
+                  <ng-template #playersInPlaceholder>
+                    <span class="transfer-ms-placeholder">Toca para seleccionar...</span>
+                  </ng-template>
+                  <i class="bi bi-chevron-down transfer-ms-arrow"></i>
+                </button>
+
+                <div class="transfer-ms-menu" *ngIf="playersInOpen">
+                  <div class="transfer-ms-search">
+                    <input
+                      type="text"
+                      class="form-control transfer-ms-search-input"
+                      placeholder="Buscar..."
+                      [(ngModel)]="playersInSearch"
+                      [ngModelOptions]="{ standalone: true }"
+                      (click)="stopPropagation($event)"
+                    />
+                  </div>
+                  <div class="transfer-ms-options">
+                    <button
+                      type="button"
+                      class="transfer-ms-option"
+                      *ngFor="let item of getFilteredOptions('playersIn')"
+                      (click)="toggleSelected('playersIn', item.id, $event)"
+                    >
+                      <div class="transfer-ms-option-main">
+                        <div class="transfer-ms-option-text">
+                          <div class="transfer-ms-option-title">{{ item.name }} {{ item.lastName }} - {{ item.valoration }}</div>
+                          <div class="transfer-ms-option-sub">{{ item.position }}</div>
+                        </div>
+                        <i class="bi bi-check-lg transfer-ms-check" *ngIf="isSelected('playersIn', item.id)"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </nz-form-control>
           </nz-form-item>
 
@@ -280,6 +352,7 @@
           <span>saliente(s)</span>
         </div>
       </div>
+    </div>
     </div>
   </ng-template>
 

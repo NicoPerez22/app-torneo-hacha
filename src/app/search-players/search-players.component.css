@@ -822,7 +822,142 @@
   cursor: not-allowed;
 }
 
-/* Custom NZ-Select Styles for Multiple Selection */
+/* MultiSelect (Bootstrap-like) para reemplazar nz-select */
+.transfer-ms {
+  position: relative;
+  width: 100%;
+}
+
+.transfer-ms-trigger {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.transfer-ms-placeholder {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 500;
+}
+
+.transfer-ms-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.transfer-ms-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(25, 38, 133, 0.8) 0%, rgba(29, 101, 253, 0.8) 100%);
+  color: white;
+  max-width: 100%;
+}
+
+.transfer-ms-tag-text {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.transfer-ms-tag-remove {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.1rem;
+}
+
+.transfer-ms-tag-remove:hover {
+  color: #ff6b6b;
+}
+
+.transfer-ms-arrow {
+  margin-left: auto;
+  opacity: 0.75;
+}
+
+.transfer-ms-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 1060; /* arriba del modal body */
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.transfer-ms-search {
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.transfer-ms-search-input {
+  border-radius: 8px;
+}
+
+.transfer-ms-options {
+  max-height: 250px;
+  overflow: auto;
+}
+
+.transfer-ms-option {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+}
+
+.transfer-ms-option:hover {
+  background: rgba(29, 101, 253, 0.08);
+}
+
+.transfer-ms-option-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.transfer-ms-option-title {
+  font-weight: 700;
+  color: #111827;
+}
+
+.transfer-ms-option-sub {
+  font-weight: 600;
+  color: rgba(17, 24, 39, 0.6);
+  font-size: 0.85rem;
+}
+
+.transfer-ms-check {
+  color: #1d65fd;
+  font-size: 1.1rem;
+}
+
+/* Custom NZ-Select Styles for Multiple Selection (legacy, ya no usado en este modal) */
 ::ng-deep .transfer-modal .ant-modal-content {
   background: #1a2332 !important;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -874,6 +1009,22 @@
 
 ::ng-deep .ant-select-dropdown {
   max-height: 250px !important;
+}
+
+/* Modal: el scroll vive en este wrapper (cdkScrollable) para que el overlay
+   del nz-select se reposicione bien en mobile y en contenedores con scroll. */
+.transfer-modal-scroll {
+  max-height: min(70vh, calc(100dvh - 260px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Importante en mobile: evitamos que scrollee el wrap del modal, porque
+   al abrir/focus del buscador el navegador puede scrollear el wrap y el
+   overlay del nz-select queda desfasado. El scroll lo maneja el wrapper
+   `.transfer-modal-scroll` (cdkScrollable). */
+::ng-deep .transfer-modal-wrap {
+  overflow: hidden;
 }
 
 /* ============================================

@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { TeamService } from '../service/team.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../service/user.service';
@@ -29,6 +29,12 @@ export class SearchPlayersComponent implements OnInit {
   // Límite máximo de jugadores seleccionables
   readonly MAX_PLAYERS_SELECTION = 3;
 
+  // "Bootstrap style" multiselect dropdown state
+  playersOutOpen = false;
+  playersInOpen = false;
+  playersOutSearch = '';
+  playersInSearch = '';
+
   constructor(
     private teamService: TeamService,
     private fb: FormBuilder,
@@ -54,6 +60,14 @@ export class SearchPlayersComponent implements OnInit {
 
     this.isVisible = true;
     this.form.get('playersOut').patchValue([player.id]);
+    this._resetMultiSelectUI();
+  }
+
+  @HostListener('document:click')
+  onDocumentClick() {
+    // Close dropdowns when clicking outside
+    this.playersOutOpen = false;
+    this.playersInOpen = false;
   }
 
   onSubmit(): void {
@@ -98,6 +112,7 @@ export class SearchPlayersComponent implements OnInit {
 
   handleCancel(): void {
     this.isVisible = false;
+    this._resetMultiSelectUI();
   }
 
   // Validar que no se seleccionen más de 3 jugadores entrantes
@@ -118,6 +133,76 @@ export class SearchPlayersComponent implements OnInit {
       this.form.get('playersIn').patchValue(limited);
       this.toastrService.warning(`Máximo ${this.MAX_PLAYERS_SELECTION} jugadores de salida`, 'Atención');
     }
+  }
+
+  // ----- Bootstrap-style multiselect helpers -----
+  togglePlayersOutOpen(ev: Event) {
+    ev.stopPropagation();
+    if (!this.isVisible) return;
+    this.playersOutOpen = !this.playersOutOpen;
+    if (this.playersOutOpen) this.playersInOpen = false;
+  }
+
+  togglePlayersInOpen(ev: Event) {
+    ev.stopPropagation();
+    if (!this.isVisible) return;
+    this.playersInOpen = !this.playersInOpen;
+    if (this.playersInOpen) this.playersOutOpen = false;
+  }
+
+  stopPropagation(ev: Event) {
+    ev.stopPropagation();
+  }
+
+  isSelected(controlName: 'playersOut' | 'playersIn', id: number): boolean {
+    const value = (this.form?.get(controlName)?.value ?? []) as number[];
+    return Array.isArray(value) && value.includes(id);
+  }
+
+  toggleSelected(controlName: 'playersOut' | 'playersIn', id: number, ev?: Event) {
+    ev?.stopPropagation();
+    const control = this.form.get(controlName);
+    const value = (control.value ?? []) as number[];
+    const next = Array.isArray(value) ? [...value] : [];
+    const idx = next.indexOf(id);
+
+    if (idx >= 0) {
+      next.splice(idx, 1);
+    } else {
+      next.push(id);
+    }
+
+    if (controlName === 'playersOut') this.onPlayersOutChange(next);
+    if (controlName === 'playersIn') this.onPlayersInChange(next);
+    control.patchValue(next);
+  }
+
+  removeSelected(controlName: 'playersOut' | 'playersIn', id: number, ev?: Event) {
+    ev?.stopPropagation();
+    const control = this.form.get(controlName);
+    const value = (control.value ?? []) as number[];
+    const next = (Array.isArray(value) ? value : []).filter((x) => x !== id);
+    control.patchValue(next);
+  }
+
+  getFilteredOptions(controlName: 'playersOut' | 'playersIn'): any[] {
+    const list = controlName === 'playersOut' ? this.targetTeamPlayers : this.myPlayers;
+    const q = (controlName === 'playersOut' ? this.playersOutSearch : this.playersInSearch).trim().toLowerCase();
+    if (!q) return list ?? [];
+    return (list ?? []).filter((p) => {
+      const text = `${p?.name ?? ''} ${p?.lastName ?? ''} ${p?.position ?? ''} ${p?.valoration ?? ''}`.toLowerCase();
+      return text.includes(q);
+    });
+  }
+
+  getLabel(p: any): string {
+    if (!p) return '';
+    return `${p?.name ?? ''} ${p?.lastName ?? ''} (${p?.position ?? ''}) - ${p?.valoration ?? ''}`.trim();
+  }
+
+  findById(controlName: 'playersOut' | 'playersIn', id: number): any | undefined {
+    const list = controlName === 'playersOut' ? this.targetTeamPlayers : this.myPlayers;
+    return (list ?? []).find((x) => x?.id === id);
   }
 
   private _getPlayers() {
@@ -161,5 +246,12 @@ export class SearchPlayersComponent implements OnInit {
       playersOut: [[], Validators.required], // Array de jugadores entrantes
       playersIn: [[], Validators.required], // Array de jugadores de salida
     });
+  }
+
+  private _resetMultiSelectUI() {
+    this.playersOutOpen = false;
+    this.playersInOpen = false;
+    this.playersOutSearch = '';
+    this.playersInSearch = '';
   }
 }
