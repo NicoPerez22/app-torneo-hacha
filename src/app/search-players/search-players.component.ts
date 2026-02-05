@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { TeamService } from '../service/team.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../service/user.service';
 import { AuthService } from '../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
@@ -18,12 +18,16 @@ export class SearchPlayersComponent implements OnInit {
   columns: Array<any> = [];
   players: Array<any> = [];
   myPlayers: Array<any> = [];
-  team
+  targetTeamPlayers: Array<any> = []; // Jugadores del equipo objetivo
+  team;
 
   player;
 
   isVisible: boolean = false;
   form: FormGroup;
+
+  // Límite máximo de jugadores seleccionables
+  readonly MAX_PLAYERS_SELECTION = 3;
 
   constructor(
     private teamService: TeamService,
@@ -44,44 +48,78 @@ export class SearchPlayersComponent implements OnInit {
     const user = this.authService.getUser();
 
     this._getPlayerMyTeam(user.idTeam);
+    this._getTargetTeamPlayers(player.team.id);
 
     this.player = player;
-    console.log(this.player)
+    console.log(this.player);
 
     this.isVisible = true;
-    this.form.get('playerOut').patchValue(player?.fullName);
-    this.form.get('playerOut').disable();
+    // Pre-seleccionar el jugador objetivo en el select de jugadores entrantes
+    this.form.get('playersOut').patchValue([player.id]);
   }
 
   onSubmit(): void {
+    const playersOut = this.form.get('playersOut').value || [];
+    const playersIn = this.form.get('playersIn').value || [];
+
+    if (playersOut.length === 0) {
+      this.toastrService.warning('Debes seleccionar al menos un jugador entrante', 'Atención');
+      return;
+    }
+
+    if (playersIn.length === 0) {
+      this.toastrService.warning('Debes seleccionar al menos un jugador de salida', 'Atención');
+      return;
+    }
+
     this.isVisible = false;
 
     const dto = {
       fromTeamId: this.loginService.user.idTeam,
-      targetPlayerId: this.player.id,
-      offeredPlayerId: this.form.get('playerIn').value,
-    }
+      targetPlayerIds: playersOut, // Array de IDs de jugadores entrantes
+      offeredPlayerIds: playersIn, // Array de IDs de jugadores ofrecidos
+    };
 
     this.teamService.setBirdTransferPlayer(dto).subscribe({
       next: (resp) => {
-        this.toastrService.success('Oferta realizada', 'Exito');
+        this.toastrService.success('Oferta realizada', 'Éxito');
       },
       error: (err) => {
-        this.toastrService.error('Ocurrio un error al realizar la oferta', 'Error');
-      }
-    })
+        this.toastrService.error('Ocurrió un error al realizar la oferta', 'Error');
+      },
+    });
   }
 
-  onListBird(){
-    this.router.navigate(['mercado-transferencias/ofertas'])
+  onListBird() {
+    this.router.navigate(['mercado-transferencias/ofertas']);
   }
 
-  onListBirdAdmin(){
-    this.router.navigate(['mercado-transferencias/comprobar-ofertas'])
+  onListBirdAdmin() {
+    this.router.navigate(['mercado-transferencias/comprobar-ofertas']);
   }
 
   handleCancel(): void {
     this.isVisible = false;
+  }
+
+  // Validar que no se seleccionen más de 3 jugadores entrantes
+  onPlayersOutChange(selectedIds: number[]): void {
+    if (selectedIds && selectedIds.length > this.MAX_PLAYERS_SELECTION) {
+      // Mantener solo los primeros 3
+      const limited = selectedIds.slice(0, this.MAX_PLAYERS_SELECTION);
+      this.form.get('playersOut').patchValue(limited);
+      this.toastrService.warning(`Máximo ${this.MAX_PLAYERS_SELECTION} jugadores entrantes`, 'Atención');
+    }
+  }
+
+  // Validar que no se seleccionen más de 3 jugadores de salida
+  onPlayersInChange(selectedIds: number[]): void {
+    if (selectedIds && selectedIds.length > this.MAX_PLAYERS_SELECTION) {
+      // Mantener solo los primeros 3
+      const limited = selectedIds.slice(0, this.MAX_PLAYERS_SELECTION);
+      this.form.get('playersIn').patchValue(limited);
+      this.toastrService.warning(`Máximo ${this.MAX_PLAYERS_SELECTION} jugadores de salida`, 'Atención');
+    }
   }
 
   private _getPlayers() {
@@ -101,15 +139,24 @@ export class SearchPlayersComponent implements OnInit {
     this.teamService.getTeamByID(id).subscribe({
       next: (resp: any) => {
         this.myPlayers = resp.data.players;
-        this.team = resp.data
-      }
-    })
+        this.team = resp.data;
+      },
+    });
+  }
+
+  // Obtener jugadores del equipo objetivo para seleccionar múltiples jugadores entrantes
+  private _getTargetTeamPlayers(teamId: number) {
+    this.teamService.getTeamByID(teamId).subscribe({
+      next: (resp: any) => {
+        this.targetTeamPlayers = resp.data.players;
+      },
+    });
   }
 
   private _initForm() {
     this.form = this.fb.group({
-      playerOut: [null],
-      playerIn: [null],
+      playersOut: [[], Validators.required], // Array de jugadores entrantes
+      playersIn: [[], Validators.required], // Array de jugadores de salida
     });
   }
 }
