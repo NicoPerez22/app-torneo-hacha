@@ -55,6 +55,18 @@
                           </button>
                         </ng-container>
 
+                      <ng-container
+                        *ngIf="!player.loading && user.id !== myTeam?.owner?.id"
+                      >
+                        <button
+                          type="button"
+                          class="btn-exchange"
+                          (click)="onChangePlayer(player)"
+                        >
+                          <i class="fa fa-dollar"></i>
+                        </button>
+                      </ng-container>
+
                         <ng-container *ngIf="player.loading">
                           <div class="spinner-container">
                             <div class="spinner-border spinner-border-sm text-info"></div>
@@ -122,7 +134,13 @@
                   <div class="fixtures-container">
                     <div class="group-card">
                       <ul class="matches-list">
-                        <li class="match-item" *ngFor="let match of myTeam?.rounds">
+                        <li
+                          class="match-item"
+                          *ngFor="
+                            let match of (myTeam?.rounds || [])
+                              | paginate: { id: 'my-team-rounds', itemsPerPage: roundsPerPage, currentPage: p }
+                          "
+                        >
                           <div class="team left">
                             <img [src]="match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
                             <span>{{ match.home }}</span>
@@ -148,8 +166,9 @@
                       </ul>
                     </div>
 
-                    <div class="mt-4">
+                    <div class="pagination-wrapper" *ngIf="(myTeam?.rounds?.length || 0) > roundsPerPage">
                       <pagination-controls
+                        id="my-team-rounds"
                         (pageChange)="p = $event"
                         previousLabel="Anterior"
                         nextLabel="Siguiente"

@@ -41,7 +41,7 @@
           <div class="logo-wrapper">
             <img
               [src]="item?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-              [alt]="item.name"
+              [alt]="item?.name"
               class="team-logo"
             />
           </div>
@@ -68,7 +68,7 @@
             <button class="btn-action btn-view" (click)="onViewTeam(item.id)">
               <i class="fa fa-eye"></i>
             </button>
-            <button class="btn-action btn-edit" *ngIf="user?.idRol == 1">
+            <button class="btn-action btn-edit" *ngIf="user?.idRol == 1" (click)="onEdit(item)">
               <i class="fa fa-pencil"></i>
             </button>
             <button class="btn-action btn-delete" *ngIf="user?.idRol == 1" (click)="onDelete(item.id)">

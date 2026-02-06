@@ -76,6 +76,22 @@ export class TeamComponent implements OnInit {
     this.router.navigate(['equipos/' + id]);
   }
 
+  onEdit(team){
+    const modal = this.modalService.create({
+      nzTitle: 'Editar equipo',
+      nzContent: TeamCreateComponent,
+      nzWidth: 800,
+      nzFooter: null,
+      nzComponentParams: {
+        teamData: team,
+      }
+    });
+
+    modal.afterClose.subscribe((result) => {
+      this._getTeams();
+    });
+  }
+
   private _getTeams() {
     this.teamService.getTeams().subscribe({
       next: (resp) => {

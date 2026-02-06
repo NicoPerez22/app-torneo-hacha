@@ -24,7 +24,10 @@ export class MyTeamComponent implements OnInit {
   myTeam: any;
   myTeamEnable: boolean = false;
   playersTeamsList: Array<any> = [];
-  p: number = 0;
+
+  // pagination (ngx-pagination) para "Proximas Fechas"
+  p: number = 1;
+  readonly roundsPerPage = 5;
 
   constructor(
     private teamService: TeamService,

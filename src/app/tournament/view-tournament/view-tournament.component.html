@@ -2,7 +2,7 @@
   <!-- Header Section -->
   <div class="tournament-header">
     <div class="header-content">
-      <img [src]="tournament?.logo?.secureUrl || '../../../assets/images/HYT-IESA.png'" alt="Tournament Logo"
+      <img [src]="tournament?.logo || '../../../assets/images/HYT-IESA.png'" alt="Tournament Logo"
         class="tournament-logo" />
       <h1 class="tournament-title">{{ tournament?.name }}</h1>
       <p class="tournament-subtitle">{{ tournament?.format?.description }}</p>
@@ -79,7 +79,11 @@
               <div class="group-card" *ngFor="let group of rounds">
                 
                 <h6 class="group-title">
-                  {{ group.groupNumber ? ('Grupo ' + group.groupNumber) : 'Fechas' }}
+                  {{
+                    isGroupStage
+                      ? ('Grupo ' + group.groupNumber)
+                      : ('Fecha ' + (pagination?.page ?? currentPage))
+                  }}
                 </h6>
 
                 <ul class="matches-list">
@@ -105,8 +109,20 @@
             </div>
 
             <div class="pagination-wrapper" *ngIf="pagination && pagination.totalPages > 1">
-              <pagination-controls (pageChange)="onPageChange($event)" previousLabel="Anterior" nextLabel="Siguiente"
-                [maxSize]="pagination?.totalPages"></pagination-controls>
+              <ul class="ngx-pagination">
+                <li [class.disabled]="currentPage === 1">
+                  <a (click)="goToPage(currentPage - 1)">Anterior</a>
+                </li>
+
+                <li *ngFor="let p of visiblePages" [class.current]="p === currentPage">
+                  <span *ngIf="p === currentPage">{{ p }}</span>
+                  <a *ngIf="p !== currentPage" (click)="goToPage(p)">{{ p }}</a>
+                </li>
+
+                <li [class.disabled]="currentPage === pagination?.totalPages">
+                  <a (click)="goToPage(currentPage + 1)">Siguiente</a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

@@ -16,10 +16,12 @@ export const TOURNAMENT_CONSTANTS = {
 
 export const TEAM_COUNT_OPTIONS: TeamCountOption[] = [
   { id: 1, value: 8 },
-  { id: 2, value: 16 },
-  { id: 3, value: 20 },
-  { id: 4, value: 32 },
-  { id: 5, value: 64 },
+  { id: 3, value: 10 },
+  { id: 4, value: 12 },
+  { id: 5, value: 16 },
+  { id: 6, value: 20 },
+  { id: 7, value: 32 },
+  { id: 8, value: 64 },
 ];
 
 export const CREATE_TOURNAMENT_STEPS = {

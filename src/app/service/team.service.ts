@@ -28,6 +28,11 @@ export class TeamService {
     return this.http.post<any>(url, team);
   }
 
+  updateTeam(team: any): Observable<any> {
+    const url = this.API_URL + `team/${team.id}`;
+    return this.http.patch<any>(url, team);
+  }
+
   getTeams(): Observable<any> {
     const url = this.API_URL + `team/`;
     return this.http.get<any>(url);

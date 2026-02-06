@@ -87,7 +87,7 @@ export class SearchPlayersComponent implements OnInit {
     this.isVisible = false;
 
     const dto = {
-      fromTeamId: this.loginService.user.idTeam,
+      fromTeamId: this.user.teams[0].id,
       targetPlayerIds: playersOut, // Array de IDs de jugadores entrantes
       offeredPlayerIds: playersIn, // Array de IDs de jugadores ofrecidos
     };
@@ -237,6 +237,7 @@ export class SearchPlayersComponent implements OnInit {
     this.userSerivce.getUserByID(id).subscribe({
       next: (resp) => {
         this.user = resp.data.user;
+        console.log(this.user)
       },
     });
   }

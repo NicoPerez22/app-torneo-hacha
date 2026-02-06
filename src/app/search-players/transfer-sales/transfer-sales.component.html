@@ -69,19 +69,19 @@
                   </span>
                 </td>
                 <td class="d-none d-lg-table-cell">
-                  <div class="team-actions">
+                  <div class="team-actions" *ngIf="offer.status !== 'rejected'">
                     <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1"
                       (click)="onActionBird(offer.id, 'approve')">
                       <i class="fa fa-check"></i>
                     </button>
-                    <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1"
+                    <button class="btn-action btn-delete"
                       (click)="onActionBird(offer.id, 'reject')">
                       <i class="fa fa-times"></i>
                     </button>
-                    <button class="btn-action btn-edit" *ngIf="offer.status == 'pending'"
+                    <!-- <button class="btn-action btn-edit"
                       (click)="onActionBird(offer.id, 'cancel')">
                       <i class="fa fa-trash"></i>
-                    </button>
+                    </button> -->
                   </div>
                 </td>
               </tr>

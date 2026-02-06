@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   @Input() user: any;
+  @Input() team: any;
 
   isScrolled = false;
 
@@ -18,7 +19,7 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router, public loginService: LoginService) {}
 
   ngOnInit(): void {
-    console.log(this.user)
+    console.log(this.team)
   }
 
   @HostListener('window:scroll', [])

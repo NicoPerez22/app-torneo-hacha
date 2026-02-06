@@ -17,6 +17,7 @@ import { UserService } from './service/user.service';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   userActive: any;
+  teamActive: any;
 
   constructor(
     private userSerivce: UserService,
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.userSerivce.getUserByID(id).subscribe({
       next: (resp) => {
         this.userActive = resp.data.user;
+        this.teamActive = resp.data;
       },
     });
   }

@@ -26,6 +26,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription = new Subscription();
   private readonly INITIAL_PAGE = 1;
+  private readonly MAX_VISIBLE_PAGES = 5;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,8 +46,36 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(page: number): void {
-    this.currentPage = page;
-    this.loadRounds(page);
+    this.goToPage(page);
+  }
+
+  goToPage(page: number): void {
+    const total = this.pagination?.totalPages ?? 0;
+    if (!total) return;
+    const next = Math.max(1, Math.min(total, page));
+    if (next === this.currentPage) return;
+    this.currentPage = next;
+    this.loadRounds(next);
+  }
+
+  get visiblePages(): number[] {
+    const total = this.pagination?.totalPages ?? 0;
+    if (total <= 1) return total ? [1] : [];
+
+    const max = this.MAX_VISIBLE_PAGES;
+    const current = this.currentPage || 1;
+
+    let start = Math.max(1, current - Math.floor(max / 2));
+    let end = Math.min(total, start + max - 1);
+    start = Math.max(1, end - max + 1);
+
+    const pages: number[] = [];
+    for (let p = start; p <= end; p++) pages.push(p);
+    return pages;
+  }
+
+  get isGroupStage(): boolean {
+    return this.tournament?.format?.id === 2;
   }
 
   private loadTournamentData(): void {
@@ -107,6 +136,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
           this.rounds = results.rounds.data?.groups || [];
           this.pagination = results.rounds.data?.pagination;
           this.tournament = results.tournament.data;
+          this.currentPage = this.pagination?.page ?? this.INITIAL_PAGE;
   
           this.rankingTables = results.ranking.data?.tables || [];
         },
@@ -131,6 +161,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.rounds = response.data?.groups || [];
           this.pagination = response.data?.pagination;
+          this.currentPage = this.pagination?.page ?? page;
         },
       });
 

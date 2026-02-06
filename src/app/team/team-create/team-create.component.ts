@@ -1,5 +1,5 @@
 import { ToastrService } from 'ngx-toastr';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TeamService } from 'src/app/service/team.service';
 import { FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { UploadService } from 'src/app/service/upload.service';
@@ -12,10 +12,14 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   styleUrls: ['./team-create.component.css'],
 })
 export class TeamCreateComponent implements OnInit {
+  @Input() teamData: any
+
   form: FormGroup;
   images: Array<any> = [];
   team: Team = new Team();
   showSpinner: boolean = false;
+
+  isEdit: boolean = false;
 
   constructor(
     private teamService: TeamService,
@@ -27,12 +31,41 @@ export class TeamCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this._initForm();
+
+    if(this.teamData){
+      console.log(this.teamData)  
+      this.form.patchValue({ ...this.teamData })
+      this.isEdit = true;
+    }
   }
 
   onSubmit() {
     const form = this.form.getRawValue();
-    this.team.name = form.name;
-    this.team.idLogo ? this.team.idLogo = this.images[0].id : null;
+
+    this.team.name = form.name; 
+    this.team.idLogo = this.images[0]?.id || null;
+    this.team.id = this.teamData.id || null;
+
+
+    if(this.isEdit){
+      this.teamService.updateTeam(this.team).subscribe({
+        next: (resp) => {
+          if (resp.data) {
+            this._onClean();
+            this.NzModalService.closeAll();
+            this.toastr.success(resp?.message);
+          } else {
+            this.toastr.error(resp?.message);
+          }
+        },
+  
+        error: (err) => {
+          this.toastr.error(err);
+        },
+      })
+
+      return;
+    }
 
     this.teamService.createTeam(this.team).subscribe({
       next: (resp) => {
