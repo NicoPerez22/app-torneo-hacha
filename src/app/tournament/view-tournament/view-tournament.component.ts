@@ -28,6 +28,27 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   private readonly INITIAL_PAGE = 1;
   private readonly MAX_VISIBLE_PAGES = 5;
 
+  /**
+   * Configurable desde TS:
+   * - `from`: posición inicial (1-indexed, inclusive)
+   * - `to`: posición final (inclusive). Si no se define, se calcula con `toEndOffset` o queda "sin límite".
+   * - `toEndOffset`: posición final relativa al final: end = total - toEndOffset
+   * - `last`: cantidad de posiciones desde el final (ej: last=1 => último)
+   *
+   * Defaults replican tu lógica anterior:
+   * - top: 1
+   * - mid: 2..(total-2)
+   * - promo: 9..(total-2)
+   * - bottom: último
+   */
+  positionBadgeConfig = {
+    top: { from: null, to: null },
+    mid: { from: null, to: null },
+    promoUp: { from: null, to: null },
+    promo: { from: null, to: null },
+    bottom: { last: null },
+  } as const;
+
   constructor(
     private route: ActivatedRoute,
     private tournamentService: TournamentService,
@@ -47,6 +68,18 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   onPageChange(page: number): void {
     this.goToPage(page);
+  }
+
+  getPositionBadgeClass(index: number, total: number): string {
+    const pos = index + 1; // 1-indexed
+
+    // prioridad para evitar solapamientos
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.top)) return 'top';
+    if (this._matchesLast(pos, total, this.positionBadgeConfig.bottom)) return 'bottom';
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.promo)) return 'promo';
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.mid)) return 'mid';
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.promoUp)) return 'promoUp';
+    return '';
   }
 
   goToPage(page: number): void {
@@ -139,6 +172,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
           this.currentPage = this.pagination?.page ?? this.INITIAL_PAGE;
   
           this.rankingTables = results.ranking.data?.tables || [];
+          this._getPositionBadgeClass(this.tournamentId);
         },
         error: (error) => {
           this.handleError('Error al cargar los datos del torneo', error);
@@ -171,5 +205,66 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   private handleError(message: string, error: unknown): void {
     this.toastrService.error(message, TOURNAMENT_CONSTANTS.ERROR_TITLE);
     console.error(message, error);
+  }
+
+  private _matchesLast(pos: number, total: number, cfg?: { last?: number }): boolean {
+    const last = cfg?.last ?? 0;
+    if (!last || total <= 0) return false;
+    return pos > total - last;
+  }
+
+  private _matchesRange(
+    pos: number,
+    total: number,
+    cfg?: { from?: number; to?: number; toEndOffset?: number },
+  ): boolean {
+    if (!cfg) return false;
+    const from = cfg.from ?? 1;
+    const to = this._resolveTo(total, cfg);
+    return pos >= from && pos <= to;
+  }
+
+  private _resolveTo(total: number, cfg: { to?: number; toEndOffset?: number }): number {
+    if (typeof cfg.to === 'number') return cfg.to;
+    if (typeof cfg.toEndOffset === 'number') return Math.max(1, total - cfg.toEndOffset);
+    return Number.POSITIVE_INFINITY;
+  }
+
+  private _getPositionBadgeClass(id) {
+    if(id == 1){
+      this.positionBadgeConfig = {
+        top: { from: 1, to: 1 },
+        promoUp: { from: null, to: null },
+        mid: { from: 2, to: 8 },
+        promo: { from: 9, to: 11 },
+        bottom: { last: 1 },
+      } as const;
+
+      return;
+    }
+
+    if(id == 2){
+      this.positionBadgeConfig = {
+        top: { from: 1, to: 1 },
+        promoUp: { from: 2, to: 4 },
+        mid: { from: 5, to: 8 },
+        promo: { from: 8, to: 9 },
+        bottom: { last: 1 },
+      } as const;
+
+      return;
+    }
+
+    if(id == 3){
+      this.positionBadgeConfig = {
+        top: { from: 1, to: 1 },
+        promoUp: { from: 2, to: 3 },
+        mid: { from: 4, to: 10 },
+        promo: { from: 0, to: 0 },
+        bottom: { last: 0 },
+      } as const;
+
+      return;
+    }
   }
 }

@@ -41,11 +41,10 @@
                     <tbody>
                       <tr *ngFor="let rank of table.rows; let i = index">
                         <td>
-                          <span class="position-badge" [ngClass]="{
-                        'top': i < 3,
-                        'mid': i >= 3 && i < table.rows.length - 2,
-                        'bottom': i >= table.rows.length - 2
-                      }">
+                          <span
+                            class="position-badge"
+                            [ngClass]="getPositionBadgeClass(i, table.rows.length)"
+                          >
                             {{ i + 1 }}
                           </span>
                         </td>

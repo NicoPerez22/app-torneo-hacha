@@ -26,6 +26,7 @@ type TransferOfferVM = {
 export class TransferSalesComponent implements OnInit {
   title: string = "Mis Ofertas";
   subTitle: string = "Aqui puedes vizualizar todas tus ofertas";
+  isAdmin: boolean = false;
 
   private readonly teamService = inject(TeamService);
   private readonly activatedRoute = inject(ActivatedRoute);
@@ -42,6 +43,7 @@ export class TransferSalesComponent implements OnInit {
     if (isAdmin) {
       this.title = "Comprobar ofertas";
       this.subTitle = "Comproba todas las ofertas del mercado";
+      this.isAdmin = true;
 
       this._getAllOffers();
       return;
