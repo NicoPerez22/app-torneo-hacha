@@ -111,6 +111,20 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     return this.tournament?.format?.id === 2;
   }
 
+  getPlayed(rank: any): number {
+    // soporta distintas variantes de backend: played/pj/matchesPlayed
+    const rawPlayed = rank?.played ?? rank?.pj ?? rank?.matchesPlayed;
+    if (rawPlayed != null && rawPlayed !== '') {
+      const n = typeof rawPlayed === 'number' ? rawPlayed : Number(rawPlayed);
+      if (Number.isFinite(n)) return n;
+    }
+
+    const wins = Number(rank?.wins ?? 0) || 0;
+    const draws = Number(rank?.draws ?? 0) || 0;
+    const losses = Number(rank?.losses ?? 0) || 0;
+    return wins + draws + losses;
+  }
+
   private loadTournamentData(): void {
     this.isLoading = true;
   

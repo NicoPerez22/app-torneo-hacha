@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private loginService: LoginService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -40,13 +40,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     const loginSub = this.authService.login(this.form.getRawValue()).subscribe({
       next: (resp) => {
-        if (resp.httpCode === 200) {
-          this.toastrService.success('Bienvenido');
-          this.loginService.login(resp.data, resp.data.token);
-          this.router.navigate(['/home']);
-        } else {
-          this.toastrService.error('Usuario o contraseña incorrectos');
+        if (resp.code == -1) {
+          this.toastrService.error(resp.message,'Error');
+          return;
         }
+
+        this.toastrService.success('Inicio de sesión correctamente','Exito');
+        this.loginService.login(resp.data, resp.data.token);
+        this.router.navigate(['/home']);
       },
       error: () => {
         this.toastrService.error('No se pudo ingresar, la conexión falló');

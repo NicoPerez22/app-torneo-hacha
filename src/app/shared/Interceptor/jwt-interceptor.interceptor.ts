@@ -1,5 +1,4 @@
 import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { Injectable } from '@angular/core';
 import {
   HttpRequest,
@@ -8,21 +7,22 @@ import {
   HttpInterceptor,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { LoginService } from 'src/app/service/login.service';
 
 @Injectable()
 export class JwtInterceptorInterceptor implements HttpInterceptor {
-  constructor(private cookieService: CookieService, private router: Router) {}
+  constructor(private loginService: LoginService, private router: Router) {}
 
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
-    const token: string = window.sessionStorage.getItem('token');
+    const token = this.loginService.token;
     let req = request;
-    if (token) {
+    if (token && this.loginService.isLogged()) {
       req = request.clone({
         setHeaders: {
-          authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
     }

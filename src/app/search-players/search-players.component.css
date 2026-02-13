@@ -78,6 +78,52 @@
 }
 
 /* ============================================
+    PAGINATION
+    ============================================ */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+::ng-deep .ngx-pagination {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0;
+  margin: 0;
+}
+
+::ng-deep .ngx-pagination li {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::ng-deep .ngx-pagination li a,
+::ng-deep .ngx-pagination li span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+}
+
+::ng-deep .ngx-pagination li.current {
+  background: linear-gradient(
+    90deg,
+    rgba(25, 38, 133, 1) 0%,
+    rgba(29, 101, 253, 1) 100%
+  );
+  border-color: transparent;
+}
+
+::ng-deep .ngx-pagination li.current span {
+  color: white;
+}
+
+::ng-deep .ngx-pagination li:hover:not(.current):not(.disabled) {
+  background: rgba(29, 101, 253, 0.2);
+}
+
+/* ============================================
    PLAYER CARD
    ============================================ */
 .player-card {

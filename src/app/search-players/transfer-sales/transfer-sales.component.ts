@@ -37,6 +37,11 @@ export class TransferSalesComponent implements OnInit {
 
   transferOffer: Array<TransferOfferVM> = [];
 
+  // pagination (ngx-pagination)
+  offersPage: number = 1;
+  readonly offersPerPage: number = 8;
+  readonly offersPaginationId = "transfer-sales-offers";
+
   ngOnInit(): void {
     const { isAdmin } = this.activatedRoute.snapshot.data;
 
@@ -65,6 +70,7 @@ export class TransferSalesComponent implements OnInit {
     this.teamService.getTransferOffer(this.loginService.user.idTeam).subscribe({
       next: (resp) => {
         this.transferOffer = this._normalizeOffers(resp?.data);
+        this.offersPage = 1;
       },
     });
   }
@@ -73,6 +79,7 @@ export class TransferSalesComponent implements OnInit {
     this.teamService.getAllOferrs().subscribe({
       next: (resp) => {
         this.transferOffer = this._normalizeOffers(resp?.data);
+        this.offersPage = 1;
       },
     });
   }

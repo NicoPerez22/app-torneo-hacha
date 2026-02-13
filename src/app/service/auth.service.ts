@@ -26,7 +26,8 @@ export class AuthService {
   }
 
   clean(): void {
-    window.sessionStorage.clear();
+    // Evitar limpiar toda la sesión: solo lo que maneja auth.
+    sessionStorage.removeItem(this.USER_KEY);
   }
 
   saveUser(user: any): void {
@@ -35,12 +36,15 @@ export class AuthService {
   }
 
   getUser(): any {
-    const user = localStorage.getItem(this.USER_KEY);
-    if (user) {
-      this.setUserObservable = JSON.parse(user);
+    const user = sessionStorage.getItem(this.USER_KEY);
+    if (!user) return null;
+    try {
+      const parsed = JSON.parse(user);
+      this.setUserObservable = parsed;
+      return parsed;
+    } catch {
+      return null;
     }
-
-    return JSON.parse(user);
   }
 
   isLoggedIn(): boolean {

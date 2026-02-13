@@ -29,12 +29,13 @@
                         <th>POS</th>
                         <th style="text-align: left;">Equipo</th>
                         <th>PTS</th>
-                        <th class="d-none d-sm-table-cell">PG</th>
-                        <th class="d-none d-md-table-cell">PE</th>
-                        <th class="d-none d-md-table-cell">PP</th>
+                        <th>PJ</th>
+                        <th>PG</th>
+                        <th>PE</th>
+                        <th>PP</th>
                         <th class="d-none d-lg-table-cell">GF</th>
                         <th class="d-none d-lg-table-cell">GC</th>
-                        <th class="d-none d-sm-table-cell">DIF</th>
+                        <th>DIF</th>
                       </tr>
                     </thead>
 
@@ -58,12 +59,13 @@
                         </td>
 
                         <td><span class="points-badge">{{ rank.points }}</span></td>
-                        <td class="d-none d-sm-table-cell">{{ rank.wins }}</td>
-                        <td class="d-none d-md-table-cell">{{ rank.draws }}</td>
-                        <td class="d-none d-md-table-cell">{{ rank.losses }}</td>
+                        <td>{{ getPlayed(rank) }}</td>
+                        <td>{{ rank.wins }}</td>
+                        <td>{{ rank.draws }}</td>
+                        <td>{{ rank.losses }}</td>
                         <td class="d-none d-lg-table-cell">{{ rank.goalsFor }}</td>
                         <td class="d-none d-lg-table-cell">{{ rank.goalsAgainst }}</td>
-                        <td class="d-none d-sm-table-cell">{{ rank.goalDifference }}</td>
+                        <td>{{ rank.goalDifference }}</td>
                       </tr>
                     </tbody>
                   </table>

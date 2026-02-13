@@ -25,7 +25,13 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let offer of transferOffer; let i = index">
+              <tr
+                *ngFor="
+                  let offer of transferOffer
+                    | paginate: { id: offersPaginationId, itemsPerPage: offersPerPage, currentPage: offersPage };
+                  let i = index
+                "
+              >
                 <td>
                   <div class="team-cell">
                     <img [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
@@ -95,7 +101,13 @@
 
   <!-- MOBILE -->
   <div class="d-block d-md-none d-flex align-items-center justify-content-center flex-column gap-4">
-    <ng-container *ngFor="let offer of transferOffer; let i = index">
+    <ng-container
+      *ngFor="
+        let offer of transferOffer
+          | paginate: { id: offersPaginationId, itemsPerPage: offersPerPage, currentPage: offersPage };
+        let i = index
+      "
+    >
       <div class="offer-card-mobile">
         <div class="offer-card-header">
           <div class="offer-title">Oferta {{ offer?.id ? ('#' + offer.id) : (i + 1) }}</div>
@@ -172,5 +184,14 @@
       </div>
     </ng-container>
 
+  </div>
+
+  <div class="pagination-wrapper" *ngIf="(transferOffer?.length || 0) > offersPerPage">
+    <pagination-controls
+      [id]="offersPaginationId"
+      (pageChange)="offersPage = $event"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+    ></pagination-controls>
   </div>
 </div>

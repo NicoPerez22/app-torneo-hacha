@@ -33,7 +33,13 @@
 
   <!-- Grid de cards -->
   <div class="players-grid" *ngIf="playersList?.length > 0">
-    <div class="player-card" *ngFor="let player of playersList">
+    <div
+      class="player-card"
+      *ngFor="
+        let player of playersList
+          | paginate: { id: playersPaginationId, itemsPerPage: playersPerPage, currentPage: playersPage }
+      "
+    >
       <div class="player-card-inner">
         <!-- Glow effect -->
         <div class="card-glow"></div>
@@ -88,7 +94,7 @@
           </div>
 
           <!-- Footer -->
-          <div class="player-footer" *ngIf="user.teams[0].id !== player.team.id">
+          <div class="player-footer" *ngIf="user?.teams?.[0]?.id !== player?.team?.id">
             <button class="btn-offer" (click)="onBird(player)">
               <i class="bi bi-hand-thumbs-up me-2"></i>
               Ofertar
@@ -98,278 +104,13 @@
       </div>
     </div>
   </div>
+
+  <div class="pagination-wrapper" *ngIf="(playersList?.length || 0) > playersPerPage">
+    <pagination-controls
+      [id]="playersPaginationId"
+      (pageChange)="playersPage = $event"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+    ></pagination-controls>
+  </div>
 </div>
-
-<nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="modalTitle"
-  [nzContent]="modalContent"
-  [nzFooter]="modalFooter"
-  [nzWidth]="'95vw'"
-  [nzStyle]="{ maxWidth: '1000px' }"
-  [nzBodyStyle]="{ padding: '16px' }"
-  [nzCentered]="true"
-  (nzOnCancel)="handleCancel()"
-  [nzWrapClassName]="'transfer-modal-wrap'"
-  nzClassName="transfer-modal"
->
-  <ng-template #modalTitle>
-    <div class="modal-title-custom">
-      <i class="bi bi-arrow-left-right"></i>
-      <span>Oferta de transferencia</span>
-    </div>
-  </ng-template>
-
-  <ng-template #modalContent>
-    <div class="transfer-modal-scroll" cdkScrollable>
-    <!-- Encabezado con equipos -->
-    <div class="teams-header-container">
-      <div class="team-header-card incoming">
-        <div class="team-header-badge">RECIBO</div>
-        <img
-          [src]="player?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-          [alt]="player?.team?.name"
-          class="team-header-logo"
-        />
-        <div class="team-header-info">
-          <span class="team-header-name">{{ player?.team?.name }}</span>
-        </div>
-      </div>
-
-      <div class="exchange-icon-container">
-        <i class="bi bi-arrow-left-right"></i>
-      </div>
-
-      <div class="team-header-card outgoing">
-        <div class="team-header-badge">OFREZCO</div>
-        <img
-          [src]="team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-          [alt]="team?.name"
-          class="team-header-logo"
-        />
-        <div class="team-header-info">
-          <span class="team-header-name">{{ team?.name }}</span>
-        </div>
-      </div>
-    </div>
-
-    <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
-      <div class="transfer-columns">
-        <!-- Jugadores Entrantes (del equipo objetivo) -->
-        <div class="transfer-column incoming-column">
-          <div class="column-header">
-            <span class="column-title">Jugadores que quiero</span>
-            <span class="selection-badge">Máx. {{ MAX_PLAYERS_SELECTION }}</span>
-          </div>
-          
-          <nz-form-item>
-            <nz-form-control nzErrorTip="Selecciona al menos un jugador">
-              <div class="transfer-ms" (click)="stopPropagation($event)">
-                <button type="button" class="transfer-ms-trigger" (click)="togglePlayersOutOpen($event)">
-                  <div class="transfer-ms-tags" *ngIf="form.get('playersOut').value?.length; else playersOutPlaceholder">
-                    <span class="transfer-ms-tag" *ngFor="let id of form.get('playersOut').value">
-                      <span class="transfer-ms-tag-text">{{ getLabel(findById('playersOut', id)) }}</span>
-                      <button
-                        type="button"
-                        class="transfer-ms-tag-remove"
-                        (click)="removeSelected('playersOut', id, $event)"
-                        aria-label="Quitar"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  </div>
-                  <ng-template #playersOutPlaceholder>
-                    <span class="transfer-ms-placeholder">Toca para seleccionar...</span>
-                  </ng-template>
-                  <i class="bi bi-chevron-down transfer-ms-arrow"></i>
-                </button>
-
-                <div class="transfer-ms-menu" *ngIf="playersOutOpen">
-                  <div class="transfer-ms-search">
-                    <input
-                      type="text"
-                      class="form-control transfer-ms-search-input"
-                      placeholder="Buscar..."
-                      [(ngModel)]="playersOutSearch"
-                      [ngModelOptions]="{ standalone: true }"
-                      (click)="stopPropagation($event)"
-                    />
-                  </div>
-                  <div class="transfer-ms-options">
-                    <button
-                      type="button"
-                      class="transfer-ms-option"
-                      *ngFor="let item of getFilteredOptions('playersOut')"
-                      (click)="toggleSelected('playersOut', item.id, $event)"
-                    >
-                      <div class="transfer-ms-option-main">
-                        <div class="transfer-ms-option-text">
-                          <div class="transfer-ms-option-title">{{ item.name }} {{ item.lastName }} - {{ item.valoration }}</div>
-                          <div class="transfer-ms-option-sub">{{ item.position }}</div>
-                        </div>
-                        <i class="bi bi-check-lg transfer-ms-check" *ngIf="isSelected('playersOut', item.id)"></i>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </nz-form-control>
-          </nz-form-item>
-          
-          <!-- Preview de jugadores entrantes seleccionados -->
-          <div class="selected-players-preview" *ngIf="form.get('playersOut').value?.length > 0">
-            <div class="preview-players">
-              <div class="preview-player" *ngFor="let playerId of form.get('playersOut').value">
-                <ng-container *ngFor="let p of targetTeamPlayers">
-                  <ng-container *ngIf="p.id === playerId">
-                    <img 
-                      [src]="p?.photo?.secureUrl || '../../../assets/images/player-default.png'" 
-                      [alt]="p.name"
-                      class="preview-player-photo"
-                    />
-                    <div class="preview-player-info">
-                      <span class="preview-player-name">{{ p.name }} {{ p.lastName }} - {{ p.valoration }}</span>
-                      <span class="preview-player-position">{{ p.position }}</span>
-                    </div>
-                  </ng-container>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-
-          <!-- Empty state -->
-          <div class="empty-selection" *ngIf="!form.get('playersOut').value?.length">
-            <i class="bi bi-person-plus"></i>
-            <span>Selecciona jugadores</span>
-          </div>
-        </div>
-
-        <!-- Jugadores de Salida (de mi equipo) -->
-        <div class="transfer-column outgoing-column">
-          <div class="column-header">
-            <span class="column-title">Jugadores que ofrezco</span>
-            <span class="selection-badge">Máx. {{ MAX_PLAYERS_SELECTION }}</span>
-          </div>
-
-          <nz-form-item>
-            <nz-form-control nzErrorTip="Selecciona al menos un jugador">
-              <div class="transfer-ms" (click)="stopPropagation($event)">
-                <button type="button" class="transfer-ms-trigger" (click)="togglePlayersInOpen($event)">
-                  <div class="transfer-ms-tags" *ngIf="form.get('playersIn').value?.length; else playersInPlaceholder">
-                    <span class="transfer-ms-tag" *ngFor="let id of form.get('playersIn').value">
-                      <span class="transfer-ms-tag-text">{{ getLabel(findById('playersIn', id)) }}</span>
-                      <button
-                        type="button"
-                        class="transfer-ms-tag-remove"
-                        (click)="removeSelected('playersIn', id, $event)"
-                        aria-label="Quitar"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  </div>
-                  <ng-template #playersInPlaceholder>
-                    <span class="transfer-ms-placeholder">Toca para seleccionar...</span>
-                  </ng-template>
-                  <i class="bi bi-chevron-down transfer-ms-arrow"></i>
-                </button>
-
-                <div class="transfer-ms-menu" *ngIf="playersInOpen">
-                  <div class="transfer-ms-search">
-                    <input
-                      type="text"
-                      class="form-control transfer-ms-search-input"
-                      placeholder="Buscar..."
-                      [(ngModel)]="playersInSearch"
-                      [ngModelOptions]="{ standalone: true }"
-                      (click)="stopPropagation($event)"
-                    />
-                  </div>
-                  <div class="transfer-ms-options">
-                    <button
-                      type="button"
-                      class="transfer-ms-option"
-                      *ngFor="let item of getFilteredOptions('playersIn')"
-                      (click)="toggleSelected('playersIn', item.id, $event)"
-                    >
-                      <div class="transfer-ms-option-main">
-                        <div class="transfer-ms-option-text">
-                          <div class="transfer-ms-option-title">{{ item.name }} {{ item.lastName }} - {{ item.valoration }}</div>
-                          <div class="transfer-ms-option-sub">{{ item.position }}</div>
-                        </div>
-                        <i class="bi bi-check-lg transfer-ms-check" *ngIf="isSelected('playersIn', item.id)"></i>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </nz-form-control>
-          </nz-form-item>
-
-          <!-- Preview de jugadores de salida seleccionados -->
-          <div class="selected-players-preview" *ngIf="form.get('playersIn').value?.length > 0">
-            <div class="preview-players">
-              <div class="preview-player" *ngFor="let playerId of form.get('playersIn').value">
-                <ng-container *ngFor="let p of myPlayers">
-                  <ng-container *ngIf="p.id === playerId">
-                    <img 
-                      [src]="p?.photo?.secureUrl || '../../../assets/images/player-default.png'" 
-                      [alt]="p.name"
-                      class="preview-player-photo"
-                    />
-                    <div class="preview-player-info">
-                      <span class="preview-player-name">{{ p.name }} {{ p.lastName }} - {{ p.valoration }}</span>
-                      <span class="preview-player-position">{{ p.position }}</span>
-                    </div>
-                  </ng-container>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-
-          <!-- Empty state -->
-          <div class="empty-selection" *ngIf="!form.get('playersIn').value?.length">
-            <i class="bi bi-person-dash"></i>
-            <span>Selecciona jugadores</span>
-          </div>
-        </div>
-      </div>
-    </form>
-
-    <!-- Resumen del intercambio -->
-    <div class="exchange-summary" *ngIf="form.get('playersOut').value?.length > 0 && form.get('playersIn').value?.length > 0">
-      <div class="summary-content">
-        <div class="summary-item incoming">
-          <i class="bi bi-arrow-down-circle-fill"></i>
-          <strong>{{ form.get('playersOut').value?.length }}</strong>
-          <span>entrante(s)</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-item outgoing">
-          <i class="bi bi-arrow-up-circle-fill"></i>
-          <strong>{{ form.get('playersIn').value?.length }}</strong>
-          <span>saliente(s)</span>
-        </div>
-      </div>
-    </div>
-    </div>
-  </ng-template>
-
-  <ng-template #modalFooter>
-    <div class="modal-footer-custom">
-      <button class="btn-cancel" (click)="handleCancel()">
-        <i class="bi bi-x-lg"></i>
-        <span>Cancelar</span>
-      </button>
-      <button 
-        class="btn-confirm" 
-        (click)="onSubmit()"
-        [disabled]="!form.get('playersOut').value?.length || !form.get('playersIn').value?.length"
-      >
-        <i class="bi bi-check-lg"></i>
-        <span>Confirmar Oferta</span>
-      </button>
-    </div>
-  </ng-template>
-</nz-modal>

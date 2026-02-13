@@ -7,6 +7,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { ManagerComponent } from './manager/manager.component';
 import { ToastrService } from 'ngx-toastr';
 import { ResultsComponent } from './results/results.component';
+import { TradeComponent } from 'src/app/shared/components/trade/trade.component';
 
 @Component({
   selector: 'app-my-team',
@@ -113,6 +114,27 @@ export class MyTeamComponent implements OnInit {
       if (result === true) {
         this._getTeamById(this.params.id);
       }
+    });
+  }
+
+  onBuyPlayer(player) {
+    const playerForTrade = {
+      ...player,
+      // En este screen el jugador viene del equipo "myTeam" (ruta /team/:id),
+      // pero no siempre incluye player.team. Lo agregamos para que el modal funcione.
+      team: this.myTeam,
+    };
+
+    this.modalService.create({
+      nzContent: TradeComponent,
+      nzComponentParams: { player: playerForTrade },
+      nzFooter: null,
+      nzWidth: '95vw',
+      nzStyle: { maxWidth: '1000px' },
+      nzBodyStyle: { padding: '16px' },
+      nzCentered: true,
+      nzWrapClassName: 'transfer-modal-wrap',
+      nzClassName: 'transfer-modal',
     });
   }
 

@@ -55,17 +55,17 @@
                           </button>
                         </ng-container>
 
-                      <!-- <ng-container
+                      <ng-container
                         *ngIf="!player.loading && user.id !== myTeam?.owner?.id"
                       >
                         <button
                           type="button"
                           class="btn-exchange"
-                          (click)="onChangePlayer(player)"
+                          (click)="onBuyPlayer(player)"
                         >
                           <i class="fa fa-dollar"></i>
                         </button>
-                      </ng-container> -->
+                      </ng-container>
 
                         <ng-container *ngIf="player.loading">
                           <div class="spinner-container">

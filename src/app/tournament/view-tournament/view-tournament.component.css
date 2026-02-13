@@ -119,6 +119,7 @@
 
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
@@ -446,6 +447,11 @@
     padding: 0.5rem 0.35rem;
   }
 
+  /* Forzar scroll horizontal y evitar que quede todo apretado */
+  .table {
+    min-width: 560px;
+  }
+
   .team-logo {
     width: 26px;
     height: 26px;
@@ -475,6 +481,10 @@
   .table tbody td {
     font-size: 0.75rem;
     padding: 0.45rem 0.3rem;
+  }
+
+  .table {
+    min-width: 560px;
   }
 
   .team-logo {

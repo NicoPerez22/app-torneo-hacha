@@ -18,9 +18,11 @@ import { TableComponent } from './components/table/table.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { TradeComponent } from './components/trade/trade.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
-  declarations: [HeaderComponent, TableComponent],
+  declarations: [HeaderComponent, TableComponent, TradeComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -28,6 +30,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     NgxSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
+    ScrollingModule,
     NzCardModule,
     NzInputModule,
     NzSelectModule,
@@ -48,6 +51,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     NgxSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
+    ScrollingModule,
     NzCardModule,
     NzInputModule,
     NzSelectModule,
