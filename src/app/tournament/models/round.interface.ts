@@ -1,5 +1,15 @@
 export interface Match {
   id?: number;
+  idRound?: number;
+  tournamentId?: number;
+  matchday?: number;
+  groupNumber?: number | null;
+  round?: number;
+  state?: number;
+  homeTeamId?: number;
+  awayTeamId?: number;
+  homeIdLogo?: number;
+  awayIdLogo?: number;
   homeTeamName: string;
   awayTeamName: string;
   homeGoals: number | null;
@@ -11,20 +21,24 @@ export interface Match {
 }
 
 export interface Round {
-  groupNumber: number;
+  groupNumber: number | null;
   rounds: Match[];
 }
 
 export interface RoundsResponse {
   data: {
     groups: Round[];
-    pagination: Pagination;
+    pagination: Pagination | null;
   };
 }
 
 export interface Pagination {
   page: number;
-  pageSize: number;
+  pageSize?: number;
+  perPage?: number;
   totalItems: number;
   totalPages: number;
+  formatId?: number;
+  unitType?: string;
+  unitValue?: number;
 }

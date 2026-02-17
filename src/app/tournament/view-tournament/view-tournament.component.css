@@ -527,3 +527,164 @@
     min-width: 20px;
   }
 }
+
+/* ============================================
+   KNOCKOUT BRACKET (ELIMINACIÓN DIRECTA)
+   ============================================ */
+.knockout-empty {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.knockout-bracket {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.knockout-stage {
+  flex: 0 0 280px;
+  min-width: 280px;
+  background: linear-gradient(
+    135deg,
+    rgba(22, 33, 44, 0.95) 0%,
+    rgba(30, 42, 56, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.75rem;
+}
+
+.knockout-stage-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.knockout-stage-title {
+  margin: 0;
+  color: white;
+  font-family: "Lexend Deca", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.knockout-stage-meta {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.knockout-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.knockout-match {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.knockout-match:hover {
+  background: rgba(29, 101, 253, 0.08);
+  border-color: rgba(29, 101, 253, 0.25);
+}
+
+.knockout-team-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.knockout-team {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.knockout-team img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.knockout-team-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.knockout-score {
+  background: linear-gradient(135deg, rgba(25, 38, 133, 0.5) 0%, rgba(29, 101, 253, 0.3) 100%);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  min-width: 28px;
+  text-align: center;
+}
+
+.knockout-divider {
+  height: 1px;
+  margin: 0.6rem 0;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.knockout-match-footer {
+  margin-top: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.knockout-status {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.knockout-date {
+  color: rgba(255, 255, 255, 0.55);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+@media (max-width: 768px) {
+  .knockout-bracket {
+    flex-direction: column;
+    overflow-x: visible;
+    padding: 0;
+  }
+
+  .knockout-stage {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .knockout-date {
+    max-width: 55vw;
+  }
+}

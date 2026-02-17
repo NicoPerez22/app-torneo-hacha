@@ -14,119 +14,282 @@
     <nz-tabset nzCentered>
       <!-- Tab: Tabla de posiciones -->
       <!-- Tab: Tabla de posiciones -->
-      <nz-tab nzTitle="Tabla de posiciones">
-        <div class="row g-3">
-          <!-- Tabla(s) -->
-          <div class="col-12 col-lg-8">
+      <nz-tab [nzTitle]="isKnockout ? 'Cruces' : 'Tabla de posiciones'">
+        <ng-container *ngIf="!isKnockout; else knockoutTpl">
+          <ng-container *ngIf="isGroupStage; else leagueTpl">
+            <!-- FASE DE GRUPOS: por cada grupo mostramos tabla + fecha -->
             <div class="group-card mb-3" *ngFor="let table of rankingTables">
-              <h6 class="group-title" *ngIf="table.groupName">{{ table.groupName }}</h6>
+              <h6 class="group-title">
+                {{ table.groupName || (table.groupNumber != null ? ('Grupo ' + table.groupNumber) : 'Grupo') }}
+                <span style="margin-left: 0.5rem; opacity: 0.7; font-weight: 500;">
+                  · {{ getGroupStageMatchdayLabel(table.groupNumber) }}
+                </span>
+              </h6>
 
-              <div class="table-card">
-                <div class="table-wrapper">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>POS</th>
-                        <th style="text-align: left;">Equipo</th>
-                        <th>PTS</th>
-                        <th>PJ</th>
-                        <th>PG</th>
-                        <th>PE</th>
-                        <th>PP</th>
-                        <th class="d-none d-lg-table-cell">GF</th>
-                        <th class="d-none d-lg-table-cell">GC</th>
-                        <th>DIF</th>
-                      </tr>
-                    </thead>
+              <div class="row g-3">
+                <div class="col-12 col-lg-8">
+                  <div class="table-card">
+                    <div class="table-wrapper">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>POS</th>
+                            <th style="text-align: left;">Equipo</th>
+                            <th>PTS</th>
+                            <th>PJ</th>
+                            <th>PG</th>
+                            <th>PE</th>
+                            <th>PP</th>
+                            <th class="d-none d-lg-table-cell">GF</th>
+                            <th class="d-none d-lg-table-cell">GC</th>
+                            <th>DIF</th>
+                          </tr>
+                        </thead>
 
-                    <tbody>
-                      <tr *ngFor="let rank of table.rows; let i = index">
-                        <td>
-                          <span
-                            class="position-badge"
-                            [ngClass]="getPositionBadgeClass(i, table.rows.length)"
-                          >
-                            {{ i + 1 }}
-                          </span>
-                        </td>
+                        <tbody>
+                          <tr *ngFor="let rank of table.rows; let i = index">
+                            <td>
+                              <span
+                                class="position-badge"
+                                [ngClass]="getPositionBadgeClass(i, table.rows.length)"
+                              >
+                                {{ i + 1 }}
+                              </span>
+                            </td>
 
-                        <td>
-                          <div class="team-cell">
-                            <img [src]="rank?.logoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
-                              class="team-logo" />
-                            <span class="team-name-text">{{ rank.teamName }}</span>
-                          </div>
-                        </td>
+                            <td>
+                              <div class="team-cell">
+                                <img [src]="rank?.logoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                                  class="team-logo" />
+                                <span class="team-name-text">{{ rank.teamName }}</span>
+                              </div>
+                            </td>
 
-                        <td><span class="points-badge">{{ rank.points }}</span></td>
-                        <td>{{ getPlayed(rank) }}</td>
-                        <td>{{ rank.wins }}</td>
-                        <td>{{ rank.draws }}</td>
-                        <td>{{ rank.losses }}</td>
-                        <td class="d-none d-lg-table-cell">{{ rank.goalsFor }}</td>
-                        <td class="d-none d-lg-table-cell">{{ rank.goalsAgainst }}</td>
-                        <td>{{ rank.goalDifference }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                            <td><span class="points-badge">{{ rank.points }}</span></td>
+                            <td>{{ getPlayed(rank) }}</td>
+                            <td>{{ rank.wins }}</td>
+                            <td>{{ rank.draws }}</td>
+                            <td>{{ rank.losses }}</td>
+                            <td class="d-none d-lg-table-cell">{{ rank.goalsFor }}</td>
+                            <td class="d-none d-lg-table-cell">{{ rank.goalsAgainst }}</td>
+                            <td>{{ rank.goalDifference }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                  <div class="fixtures-container">
+                    <ul class="matches-list">
+                      <li class="match-item" *ngIf="isGroupStagePageLoading(table.groupNumber)">
+                        <div style="width: 100%; text-align: center; color: rgba(255,255,255,0.7);">
+                          Cargando...
+                        </div>
+                      </li>
+                      <li
+                        class="match-item"
+                        *ngFor="let match of getGroupStageMatches(table.groupNumber)"
+                      >
+                        <div class="team left">
+                          <img [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
+                          <span>{{ match.homeTeamName }}</span>
+                        </div>
+
+                        <div class="vs">
+                          <span>{{ match.homeGoals ?? '-' }}</span>
+                          VS
+                          <span>{{ match.awayGoals ?? '-' }}</span>
+                        </div>
+
+                        <div class="team right">
+                          <span>{{ match.awayTeamName }}</span>
+                          <img [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="pagination-wrapper mt-2" *ngIf="groupStageTotalPages > 1">
+                    <ul class="ngx-pagination">
+                      <li [class.disabled]="getGroupStageCurrentPage(table.groupNumber) === 1">
+                        <a (click)="goToGroupStagePage(table.groupNumber, getGroupStageCurrentPage(table.groupNumber) - 1)">Anterior</a>
+                      </li>
+
+                      <li
+                        *ngFor="let p of getGroupStageVisiblePagesForGroup(table.groupNumber)"
+                        [class.current]="p === getGroupStageCurrentPage(table.groupNumber)"
+                      >
+                        <span *ngIf="p === getGroupStageCurrentPage(table.groupNumber)">{{ p }}</span>
+                        <a *ngIf="p !== getGroupStageCurrentPage(table.groupNumber)" (click)="goToGroupStagePage(table.groupNumber, p)">{{ p }}</a>
+                      </li>
+
+                      <li [class.disabled]="getGroupStageCurrentPage(table.groupNumber) === groupStageTotalPages">
+                        <a (click)="goToGroupStagePage(table.groupNumber, getGroupStageCurrentPage(table.groupNumber) + 1)">Siguiente</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #leagueTpl>
+            <div class="row g-3">
+              <!-- Tabla(s) -->
+              <div class="col-12 col-lg-8">
+                <div class="group-card mb-3" *ngFor="let table of rankingTables">
+                  <h6 class="group-title">
+                    {{ table.groupName || (table.groupNumber != null ? ('Grupo ' + table.groupNumber) : 'Tabla') }}
+                  </h6>
+
+                  <div class="table-card">
+                    <div class="table-wrapper">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>POS</th>
+                            <th style="text-align: left;">Equipo</th>
+                            <th>PTS</th>
+                            <th>PJ</th>
+                            <th>PG</th>
+                            <th>PE</th>
+                            <th>PP</th>
+                            <th class="d-none d-lg-table-cell">GF</th>
+                            <th class="d-none d-lg-table-cell">GC</th>
+                            <th>DIF</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <tr *ngFor="let rank of table.rows; let i = index">
+                            <td>
+                              <span
+                                class="position-badge"
+                                [ngClass]="getPositionBadgeClass(i, table.rows.length)"
+                              >
+                                {{ i + 1 }}
+                              </span>
+                            </td>
+
+                            <td>
+                              <div class="team-cell">
+                                <img [src]="rank?.logoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
+                                  class="team-logo" />
+                                <span class="team-name-text">{{ rank.teamName }}</span>
+                              </div>
+                            </td>
+
+                            <td><span class="points-badge">{{ rank.points }}</span></td>
+                            <td>{{ getPlayed(rank) }}</td>
+                            <td>{{ rank.wins }}</td>
+                            <td>{{ rank.draws }}</td>
+                            <td>{{ rank.losses }}</td>
+                            <td class="d-none d-lg-table-cell">{{ rank.goalsFor }}</td>
+                            <td class="d-none d-lg-table-cell">{{ rank.goalsAgainst }}</td>
+                            <td>{{ rank.goalDifference }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fixtures -->
+              <div class="col-12 col-lg-4">
+                <div class="fixtures-container">
+                  <div class="group-card" *ngFor="let group of rounds">
+                    
+                    <h6 class="group-title">
+                      {{ 'Fecha ' + (pagination?.page ?? currentPage) }}
+                    </h6>
+
+                    <ul class="matches-list">
+                      <li class="match-item" *ngFor="let match of group.rounds">
+                        <div class="team left">
+                          <img [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
+                          <span>{{ match.homeTeamName }}</span>
+                        </div>
+
+                        <div class="vs">
+                          <span>{{ match.homeGoals ?? '-' }}</span>
+                          VS
+                          <span>{{ match.awayGoals ?? '-' }}</span>
+                        </div>
+
+                        <div class="team right">
+                          <span>{{ match.awayTeamName }}</span>
+                          <img [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="pagination-wrapper" *ngIf="pagination && pagination.totalPages > 1">
+                  <ul class="ngx-pagination">
+                    <li [class.disabled]="currentPage === 1">
+                      <a (click)="goToPage(currentPage - 1)">Anterior</a>
+                    </li>
+
+                    <li *ngFor="let p of visiblePages" [class.current]="p === currentPage">
+                      <span *ngIf="p === currentPage">{{ p }}</span>
+                      <a *ngIf="p !== currentPage" (click)="goToPage(p)">{{ p }}</a>
+                    </li>
+
+                    <li [class.disabled]="currentPage === pagination?.totalPages">
+                      <a (click)="goToPage(currentPage + 1)">Siguiente</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ng-container>
+
+        <ng-template #knockoutTpl>
+          <div class="knockout-empty" *ngIf="!knockoutStages?.length">
+            No hay cruces disponibles todavía.
+          </div>
+
+          <div class="knockout-bracket" *ngIf="knockoutStages?.length">
+            <div class="knockout-stage" *ngFor="let stage of knockoutStages">
+              <div class="knockout-stage-header">
+                <h6 class="knockout-stage-title">{{ stage.title }}</h6>
+                <span class="knockout-stage-meta">{{ stage.matches.length }} partido(s)</span>
+              </div>
+
+              <div class="knockout-matches">
+                <div class="knockout-match" *ngFor="let match of stage.matches">
+                  <div class="knockout-team-row">
+                    <div class="knockout-team">
+                      <img [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
+                      <span class="knockout-team-name">{{ match.homeTeamName || 'TBD' }}</span>
+                    </div>
+                    <span class="knockout-score">{{ match.homeGoals ?? '-' }}</span>
+                  </div>
+
+                  <div class="knockout-divider"></div>
+
+                  <div class="knockout-team-row">
+                    <div class="knockout-team">
+                      <img [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
+                      <span class="knockout-team-name">{{ match.awayTeamName || 'TBD' }}</span>
+                    </div>
+                    <span class="knockout-score">{{ match.awayGoals ?? '-' }}</span>
+                  </div>
+
+                  <div class="knockout-match-footer" *ngIf="match.status || match.date">
+                    <span class="knockout-status" *ngIf="match.status">{{ match.status }}</span>
+                    <span class="knockout-date" *ngIf="match.date">{{ match.date }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Fixtures (los dejé igual) -->
-          <div class="col-12 col-lg-4">
-            <div class="fixtures-container">
-              <div class="group-card" *ngFor="let group of rounds">
-                
-                <h6 class="group-title">
-                  {{
-                    isGroupStage
-                      ? ('Grupo ' + group.groupNumber)
-                      : ('Fecha ' + (pagination?.page ?? currentPage))
-                  }}
-                </h6>
-
-                <ul class="matches-list">
-                  <li class="match-item" *ngFor="let match of group.rounds">
-                    <div class="team left">
-                      <img [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
-                      <span>{{ match.homeTeamName }}</span>
-                    </div>
-
-                    <div class="vs">
-                      <span>{{ match.homeGoals ?? '-' }}</span>
-                      VS
-                      <span>{{ match.awayGoals ?? '-' }}</span>
-                    </div>
-
-                    <div class="team right">
-                      <span>{{ match.awayTeamName }}</span>
-                      <img [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="pagination-wrapper" *ngIf="pagination && pagination.totalPages > 1">
-              <ul class="ngx-pagination">
-                <li [class.disabled]="currentPage === 1">
-                  <a (click)="goToPage(currentPage - 1)">Anterior</a>
-                </li>
-
-                <li *ngFor="let p of visiblePages" [class.current]="p === currentPage">
-                  <span *ngIf="p === currentPage">{{ p }}</span>
-                  <a *ngIf="p !== currentPage" (click)="goToPage(p)">{{ p }}</a>
-                </li>
-
-                <li [class.disabled]="currentPage === pagination?.totalPages">
-                  <a (click)="goToPage(currentPage + 1)">Siguiente</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        </ng-template>
       </nz-tab>
 
       <!-- Tab: Goleadores -->
