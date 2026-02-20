@@ -23,6 +23,7 @@ export interface Match {
 export interface Round {
   groupNumber: number | null;
   rounds: Match[];
+  tournament: any;
 }
 
 export interface RoundsResponse {

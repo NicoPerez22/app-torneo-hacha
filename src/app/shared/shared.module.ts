@@ -20,9 +20,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { TradeComponent } from './components/trade/trade.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatchComponent } from '../team/my-team/match/match.component';
 
 @NgModule({
-  declarations: [HeaderComponent, TableComponent, TradeComponent],
+  declarations: [HeaderComponent, TableComponent, TradeComponent, MatchComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -48,6 +49,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     CommonModule,
     HeaderComponent,
     TableComponent,
+    MatchComponent,
     NgxSpinnerModule,
     FormsModule,
     ReactiveFormsModule,

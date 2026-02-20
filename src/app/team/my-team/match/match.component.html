@@ -1,89 +1,105 @@
-<div class="list-card">
-    <div class="card-custom">
-
-        <div class="match-header">
-            <div class="">
-                <div>
-                    <h6>Fecha 10</h6>
-                </div>
-            </div>
-            <h6>-</h6>
-            <div class="">
-                <div>
-                    <h6>23 de octubre 2023</h6>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="match">
-            <div>
-                <img src="../../../../assets/images/GELP.png" width="80" height="80">
-            </div>
-    
-            <div>
-                <h6>Gimnasia eSports</h6>
-            </div>
-    
-            <div>
-                <h5>VS</h5>
-            </div>
-    
-            <div>
-                <h6>Hacha y tiza eSports</h6>
-            </div>
-    
-            <div>
-                <img src="../../../../assets/images/HYT-IESA.png" width="80" height="80">
-            </div>
-        </div>
-
+<div class="container">
+  <div class="reports-header" *ngIf="title || subtitle">
+    <div class="header-content">
+      <h2 class="reports-title" *ngIf="title">{{ title }}</h2>
+      <p class="reports-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
     </div>
+  </div>
 
-    <div class="card-custom">
+  <div class="empty-state" *ngIf="!loading && (!items || items.length === 0)">
+    <i class="bi bi-clipboard-data empty-icon"></i>
+    <h3>No hay reportes para revisar</h3>
+    <p>Cuando existan reportes pendientes, van a aparecer acá.</p>
+  </div>
 
-        <div class="match-header">
-            <div class="">
-                <div>
-                    <h6>Fecha 10</h6>
-                </div>
-            </div>
-            <h6>-</h6>
-            <div class="">
-                <div>
-                    <h6>23 de octubre 2023</h6>
-                </div>
-            </div>
+  <div class="loading-state" *ngIf="loading">
+    <nz-spin nzSimple></nz-spin>
+  </div>
+
+  <ul class="matches-list" *ngIf="!loading && items?.length">
+    <li class="match-card" *ngFor="let item of items; trackBy: trackById">
+      <div class="match-card-top">
+        <div class="match-meta">
+          <div class="meta-title">
+            <span class="meta-tournament" *ngIf="item.tournamentName">{{ item.tournamentName }}</span>
+            <span class="meta-sep" *ngIf="item.tournamentName && item.roundLabel">·</span>
+            <span class="meta-round" *ngIf="item.roundLabel">{{ item.roundLabel }}</span>
+          </div>
+          <div class="meta-sub" *ngIf="item.createdAt">
+            {{ item.createdAt | date: 'medium' }}
+          </div>
         </div>
 
+        <span
+          class="status-badge"
+          [ngClass]="{
+            pending: (item.status || 'pending') === 'pending',
+            approved: (item.status || 'pending') === 'approved',
+            rejected: (item.status || 'pending') === 'rejected'
+          }"
+        >
+          {{ getStatusLabel(item.status) }}
+        </span>
+      </div>
 
-        <div class="match">
-            <div>
-                <img src="../../../../assets/images/GELP.png" width="80" height="80">
-            </div>
-    
-            <div>
-                <h6>Gimnasia eSports</h6>
-            </div>
-    
-            <div>
-                <h5>VS</h5>
-            </div>
-    
-            <div>
-                <h6>Hacha y tiza eSports</h6>
-            </div>
-    
-            <div>
-                <img src="../../../../assets/images/HYT-IESA.png" width="80" height="80">
-            </div>
+      <div class="match-item">
+        <div class="team left">
+          <img
+            [src]="item.homeLogoUrl || fallbackLogoUrl"
+            alt="Equipo local"
+            loading="lazy"
+          />
+          <span>{{ item.homeName }}</span>
         </div>
 
-    </div>
+        <div class="vs" aria-label="Marcador">
+          <span>{{ item.homeGoals ?? '-' }}</span>
+          <small>VS</small>
+          <span>{{ item.awayGoals ?? '-' }}</span>
+        </div>
 
-    <div class="text-center">
-        <button class="btn btn-primary">
-            Ver mas partidos
-        </button>
-    </div>
+        <div class="team right">
+          <span>{{ item.awayName }}</span>
+          <img
+            [src]="item.awayLogoUrl || fallbackLogoUrl"
+            alt="Equipo visitante"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="actions">
+          <button
+            type="button"
+            class="btn-action btn-view"
+            (click)="view.emit(item)"
+            aria-label="Ver reporte"
+          >
+            <i class="fa fa-eye"></i>
+          </button>
+
+          <button
+            *ngIf="isAdmin"
+            type="button"
+            class="btn-action btn-approve"
+            (click)="approve.emit(item)"
+            [disabled]="(item.status || 'pending') !== 'pending'"
+            aria-label="Aprobar reporte"
+          >
+            <i class="fa fa-check"></i>
+          </button>
+
+          <button
+            *ngIf="isAdmin"
+            type="button"
+            class="btn-action btn-reject"
+            (click)="reject.emit(item)"
+            [disabled]="(item.status || 'pending') !== 'pending'"
+            aria-label="Rechazar reporte"
+          >
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
 </div>

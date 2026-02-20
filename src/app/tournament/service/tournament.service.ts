@@ -25,6 +25,10 @@ export class TournamentService {
   private readonly DELETE_TOURNAMENT = `${this.TOURNAMENT_ENDPOINT}/delete/{id}`;
   private readonly REPORT_MATCH = `${this.TOURNAMENT_ENDPOINT}/report`;
   private readonly GET_TEAMS_ID_ROUND = `${this.TOURNAMENT_ENDPOINT}/{roundId}/teams`;
+  private readonly ROUND_REPORT_PREVIEW = `${this.TOURNAMENT_ENDPOINT}/preview`;
+  private readonly MATCH_REPORT_DRAFTS = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts`;
+  private readonly MATCH_REPORT_DRAFT_DETAIL = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}`;
+  private readonly MATCH_REPORT_DRAFT_REVIEW = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}/review`;
 
   constructor(private http: HttpClient) {}
 
@@ -78,5 +82,43 @@ export class TournamentService {
   getTeamsByIdRound(id: number): Observable<any> {
     const url = `${this.API_URL}${this.GET_TEAMS_ID_ROUND}`.replace('{roundId}', id.toString());
     return this.http.get<any>(url);
+  }
+
+  getRoundReportPreview(report): Observable<any> {
+    const url = `${this.API_URL}${this.ROUND_REPORT_PREVIEW}`;
+    return this.http.post<any>(url, report);
+  }
+
+  /**
+   * Reportes (drafts) generados por partidos (vista admin).
+   * API: GET /tournament/admin/match-report-drafts?status=&tournamentId=
+   */
+  listMatchReportDrafts(params?: { status?: string | null; tournamentId?: number | null }): Observable<any> {
+    const url = `${this.API_URL}${this.MATCH_REPORT_DRAFTS}`;
+    const httpParams: any = {};
+    if (params?.status) httpParams.status = params.status;
+    if (params?.tournamentId != null) httpParams.tournamentId = String(params.tournamentId);
+    return this.http.get<any>(url, { params: httpParams });
+  }
+
+  /**
+   * Detalle del draft (para preview).
+   * API: GET /tournament/admin/match-report-drafts/:draftId
+   */
+  getMatchReportDraftDetail(draftId: number): Observable<any> {
+    const url = `${this.API_URL}${this.MATCH_REPORT_DRAFT_DETAIL}`.replace('{draftId}', String(draftId));
+    return this.http.get<any>(url);
+  }
+
+  /**
+   * Aprobar/Rechazar draft (vista admin).
+   * API: POST /tournament/admin/match-report-drafts/:draftId/review
+   */
+  reviewMatchReportDraft(
+    draftId: number,
+    dto: { adminId: number; action: 'approve' | 'reject'; reviewNote?: string },
+  ): Observable<any> {
+    const url = `${this.API_URL}${this.MATCH_REPORT_DRAFT_REVIEW}`.replace('{draftId}', String(draftId));
+    return this.http.post<any>(url, dto);
   }
 }

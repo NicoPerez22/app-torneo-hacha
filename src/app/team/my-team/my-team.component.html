@@ -135,32 +135,48 @@
                     <div class="group-card">
                       <ul class="matches-list">
                         <li
-                          class="match-item"
+                          class="fixture-match"
                           *ngFor="
                             let match of (myTeam?.rounds || [])
                               | paginate: { id: 'my-team-rounds', itemsPerPage: roundsPerPage, currentPage: p }
                           "
                         >
-                          <div class="team left">
-                            <img [src]="match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Home Team" />
-                            <span>{{ match.home }}</span>
-                          </div>
-
-                          <div class="vs">
-                            <span>{{ match.homeGoals ?? '-' }}</span>
-                            VS
-                            <span>{{ match.awayGoals ?? '-' }}</span>
-                          </div>
-
-                          <div class="team right">
-                            <span>{{ match.away }}</span>
-                            <img [src]="match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'" alt="Away Team" />
-                          </div>
-
-                          <div class="team-actions">
-                            <button class="btn-action btn-edit" (click)="onReport(match)">
+                          <div class="fixture-header">
+                            <span class="fixture-tournament">{{ match.tournament.name }} - Fecha: {{ match.round }}</span>
+                            <button
+                              class="btn-action btn-edit fixture-report"
+                              (click)="onReport(match)"
+                              type="button"
+                              aria-label="Reportar partido"
+                            >
                               <i class="fa fa-pencil"></i>
                             </button>
+                          </div>
+
+                          <div class="fixture-content">
+                            <div class="fixture-team fixture-team--home">
+                              <img
+                                [src]="match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'"
+                                alt="Equipo local"
+                                loading="lazy"
+                              />
+                              <span class="fixture-team-name">{{ match.home }}</span>
+                            </div>
+
+                            <div class="fixture-score" aria-label="Marcador">
+                              <span class="fixture-score-value">{{ match.homeGoals ?? '-' }}</span>
+                              <span class="fixture-score-sep">VS</span>
+                              <span class="fixture-score-value">{{ match.awayGoals ?? '-' }}</span>
+                            </div>
+
+                            <div class="fixture-team fixture-team--away">
+                              <span class="fixture-team-name">{{ match.away }}</span>
+                              <img
+                                [src]="match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'"
+                                alt="Equipo visitante"
+                                loading="lazy"
+                              />
+                            </div>
                           </div>
                         </li>
                       </ul>

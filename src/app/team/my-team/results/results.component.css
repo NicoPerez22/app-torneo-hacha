@@ -1,7 +1,86 @@
-/* === Match Report Modal - basado en estilos de tournament.component === */
-.match-report-modal {
+/* === Match Report Modal - alineado a Trade modal === */
+.match-report {
   font-family: 'Lexend Deca', system-ui, sans-serif;
   color: rgba(255, 255, 255, 0.9);
+}
+
+/* Modal container (NgZorro) */
+::ng-deep .match-report-modal .ant-modal-content {
+  background: #1a2332 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Evitamos scroll en el wrap del modal; el scroll vive en el body */
+::ng-deep .match-report-modal-wrap {
+  overflow: hidden;
+}
+
+.match-report-scroll {
+  max-height: min(70vh, calc(100dvh - 260px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Modal Title / Footer (mismo look & feel que Trade) */
+.modal-title-custom {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.modal-title-custom i {
+  color: #339af0;
+}
+
+.modal-footer-custom {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: stretch;
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.btn-cancel,
+.btn-confirm {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-cancel:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-confirm {
+  background: linear-gradient(90deg, #e67700 0%, #fd7e14 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(230, 119, 0, 0.3);
+}
+
+.btn-confirm:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Card base (misma vibra que .tournament-card-inner) */
@@ -165,10 +244,21 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   padding: 0.6rem 0.75rem;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .input-dark::placeholder {
   color: rgba(255, 255, 255, 0.92);
+}
+
+/* Select options (limitado por navegador, pero ayuda en la mayoría) */
+select.input-dark option {
+  background: #1a2332;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+select.input-dark option:disabled {
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .input-dark:focus {

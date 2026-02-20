@@ -9,6 +9,7 @@ import { FiltersComponent } from './filters/filters.component';
 import { InputComponent } from './filters/input/input.component';
 import { SelectComponent } from './filters/select/select.component';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { ReportsApprovalComponent } from './reports-approval/reports-approval.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
     FiltersComponent,
     InputComponent,
     SelectComponent,
+    ReportsApprovalComponent,
   ],
   imports: [
     CommonModule,

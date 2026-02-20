@@ -1,6 +1,14 @@
 import { LoginService } from 'src/app/service/login.service';
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -16,10 +24,14 @@ export class HeaderComponent implements OnInit {
   @ViewChild('mainNav') mainNav?: ElementRef<HTMLElement>;
   @ViewChild('navToggler') navToggler?: ElementRef<HTMLElement>;
 
-  constructor(private router: Router, public loginService: LoginService) {}
+  constructor(
+    private router: Router,
+    public loginService: LoginService,
+    public authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
-    console.log(this.team)
+    console.log(this.authService?.getUser())
   }
 
   @HostListener('window:scroll', [])
@@ -36,7 +48,6 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToTeam() {
-    console.log(this.user)
     this.router.navigate(['/equipos/' + this.user?.teams[0]?.id]);
   }
 
@@ -51,7 +62,9 @@ export class HeaderComponent implements OnInit {
     const bs = w?.bootstrap;
 
     if (bs?.Collapse?.getOrCreateInstance) {
-      const instance = bs.Collapse.getOrCreateInstance(collapseEl, { toggle: false });
+      const instance = bs.Collapse.getOrCreateInstance(collapseEl, {
+        toggle: false,
+      });
       instance.hide();
       return;
     }

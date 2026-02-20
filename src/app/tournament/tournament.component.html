@@ -8,10 +8,16 @@
       </h1>
       <p class="tournaments-subtitle">Descubre y participa en los mejores torneos</p>
     </div>
-    <button class="btn-create-tournament" (click)="onCreate()" *ngIf="authService?.getUser()?.idRol == 1">
-      <i class="bi bi-plus-circle me-2"></i>
-      Crear Torneo
-    </button>
+    <div class="header-actions" *ngIf="authService?.getUser()?.idRol == 1">
+      <button class="btn-create-tournament btn-secondary" (click)="onReviewReports()">
+        <i class="bi bi-clipboard-check me-2"></i>
+        Reportes
+      </button>
+      <button class="btn-create-tournament" *ngIf="authService?.getUser()?.idRol == 1" (click)="onCreate()">
+        <i class="bi bi-plus-circle me-2"></i>
+        Crear Torneo
+      </button>
+    </div>
   </div>
 
   <!-- Empty State -->

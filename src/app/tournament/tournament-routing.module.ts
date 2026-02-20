@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CreateTournammentComponent } from './create-tournamment/create-tournamment.component';
+import { ReportsApprovalComponent } from './reports-approval/reports-approval.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,11 @@ const routes: Routes = [
   {
     path: 'create',
     component: CreateTournammentComponent
+  },
+
+  {
+    path: 'comprobar-reportes',
+    component: ReportsApprovalComponent,
   },
 ]
 

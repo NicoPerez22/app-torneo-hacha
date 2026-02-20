@@ -1,0 +1,149 @@
+<div class="container">
+  <div class="tournaments-header">
+    <div class="header-content">
+      <h1 class="tournaments-title text-info">
+        <i class="bi bi-clipboard-check me-2"></i>
+        Reportes de partidos
+      </h1>
+      <p class="tournaments-subtitle">
+        Reportes generados que requieren aprobación de un administrador
+      </p>
+    </div>
+  </div>
+
+  <div class="admin-warning" *ngIf="!isAdmin">
+    <i class="bi bi-shield-exclamation"></i>
+    <div>
+      <div class="admin-warning-title">Acceso limitado</div>
+      <div class="admin-warning-sub">
+        Podés ver los reportes, pero solo un admin puede aprobar o rechazar.
+      </div>
+    </div>
+  </div>
+
+  <div class="filters-card">
+    <div class="filters-row">
+      <div class="filter-item">
+        <label class="filter-label">Estado</label>
+        <select class="form-select input-dark" [(ngModel)]="statusFilter" (change)="onApplyFilters()">
+          <option value="pending">Pendientes</option>
+          <option value="approved">Aprobados</option>
+          <option value="rejected">Rechazados</option>
+        </select>
+      </div>
+
+      <div class="filter-item">
+        <label class="filter-label">Torneo (ID)</label>
+        <input
+          type="number"
+          class="form-control input-dark"
+          placeholder="Ej: 31"
+          [(ngModel)]="tournamentIdFilter"
+          (keyup.enter)="onApplyFilters()"
+        />
+      </div>
+
+      <div class="filter-actions">
+        <button type="button" class="btn-filter" (click)="onApplyFilters()">
+          <i class="bi bi-funnel me-2"></i>
+          Filtrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-match
+    [title]="'Pendientes de aprobación'"
+    [subtitle]="'Revisá el resultado y confirmá la validez del reporte.'"
+    [items]="reports | paginate: { id: paginationId, itemsPerPage: perPage, currentPage: page }"
+    [isAdmin]="isAdmin"
+    [loading]="loading"
+    (view)="onView($event)"
+    (approve)="onApprove($event)"
+    (reject)="onReject($event)"
+  ></app-match>
+
+  <div class="pagination-wrapper" *ngIf="totalItems > perPage">
+    <pagination-controls
+      [id]="paginationId"
+      (pageChange)="onPageChange($event)"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+    ></pagination-controls>
+  </div>
+
+  <ng-template #previewTpl>
+    <div class="preview-wrap">
+      <div class="match-card match-summary">
+        <div class="preview-meta mb-3">
+          <div class="preview-meta-title">
+            <span *ngIf="selectedDetail?.tournamentName">{{ selectedDetail?.tournamentName }}</span>
+            <span *ngIf="selectedDetail?.tournamentName && selectedDetail?.roundLabel">·</span>
+            <span *ngIf="selectedDetail?.roundLabel">{{ selectedDetail?.roundLabel }}</span>
+          </div>
+          <span class="status-badge" [ngClass]="selectedDetail?.status">
+            {{
+              selectedDetail?.status === 'approved'
+                ? 'Aprobado'
+                : selectedDetail?.status === 'rejected'
+                  ? 'Rechazado'
+                  : 'Pendiente'
+            }}
+          </span>
+        </div>
+
+        <div class="preview-teams">
+          <div class="team-block team-home">
+            <img class="team-logo" [src]="selectedDetail?.homeLogoUrl || 'assets/images/player-default.png'" alt="Home" />
+            <span class="team-text">{{ selectedDetail?.homeName || selected?.homeName }}</span>
+          </div>
+
+          <div class="score-block">
+            <span class="score-pill">{{ selectedDetail?.homeGoals ?? selected?.homeGoals ?? '-' }}</span>
+            <span class="score-sep">VS</span>
+            <span class="score-pill">{{ selectedDetail?.awayGoals ?? selected?.awayGoals ?? '-' }}</span>
+          </div>
+
+          <div class="team-block team-away">
+            <span class="team-text">{{ selectedDetail?.awayName || selected?.awayName }}</span>
+            <img class="team-logo" [src]="selectedDetail?.awayLogoUrl || 'assets/images/player-default.png'" alt="Away" />
+          </div>
+        </div>
+      </div>
+
+      <div class="match-card" *ngIf="previewLoading">
+        <div class="loading-state">
+          <nz-spin nzSimple></nz-spin>
+        </div>
+      </div>
+
+      <div class="match-card" *ngIf="!previewLoading">
+        <div class="events-header">
+          <h6 class="section-title mb-0">Eventos</h6>
+          <span class="section-meta">{{ selectedDetail?.events?.length || 0 }} evento(s)</span>
+        </div>
+
+        <div class="events-empty" *ngIf="(selectedDetail?.events?.length || 0) === 0">
+          No hay eventos para mostrar.
+        </div>
+
+        <div class="events-list" *ngIf="(selectedDetail?.events?.length || 0) > 0">
+          <div class="event-row" *ngFor="let ev of selectedDetail?.events">
+            <span class="event-minute">{{ ev?.minute ?? ev?.min ?? '—' }}'</span>
+            <span class="event-type">{{ ev?.eventType ?? ev?.type ?? 'Evento' }}</span>
+            <span class="event-player">{{ ev?.playerName ?? ev?.player?.name ?? ev?.playerId ?? '—' }}</span>
+            <span class="event-team">{{ ev?.teamName ?? ev?.team?.name ?? ev?.teamId ?? '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer-custom">
+      <button type="button" class="btn-cancel" (click)="closePreview()">
+        <i class="bi bi-x-lg"></i>
+        <span>Cerrar</span>
+      </button>
+    </div>
+  </ng-template>
+</div>
+

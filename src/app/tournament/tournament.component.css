@@ -59,6 +59,25 @@
   box-shadow: 0 4px 15px rgba(25, 38, 133, 0.3);
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: rgba(29, 101, 253, 1);
+  border: 2px solid rgba(29, 101, 253, 0.55);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: rgba(29, 101, 253, 0.12);
+  border-color: rgba(29, 101, 253, 1);
+  box-shadow: 0 6px 20px rgba(25, 38, 133, 0.35);
+}
+
 .btn-create-tournament:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(25, 38, 133, 0.5);
@@ -368,6 +387,10 @@
   .btn-create-tournament {
     width: 100%;
     justify-content: center;
+  }
+
+  .header-actions {
+    width: 100%;
   }
 
   .tournaments-grid {

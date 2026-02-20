@@ -21,14 +21,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor(
     private userSerivce: UserService,
-    public loginService: LoginService
+    public loginService: LoginService,
+    public authService: AuthService,
   ) {}
 
   @ViewChild('hdr', { static: true }) hdr!: ElementRef<HTMLElement>;
   headerH = 0;
 
   ngOnInit(): void {
-    this._getProfile(this.loginService.user.id)
+    this._getProfile(this.authService?.getUser()?.id)
   }
 
   ngAfterViewInit(): void {

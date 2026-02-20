@@ -99,15 +99,17 @@ export class MyTeamComponent implements OnInit {
 
   onReport(value){
     const modal = this.modalService.create({
-      nzTitle: 'Reportar Partido',
       nzContent: ResultsComponent,
-      nzWidth: 1200,
       nzComponentParams: {
         match: value
       },
-      nzOnOk: () => {
-        modal.componentInstance.onSubmit();
-      }
+      nzFooter: null,
+      nzWidth: '95vw',
+      nzStyle: { maxWidth: '1100px' },
+      nzBodyStyle: { padding: '16px' },
+      nzCentered: true,
+      nzWrapClassName: 'match-report-modal-wrap',
+      nzClassName: 'match-report-modal',
     });
 
     modal.afterClose.subscribe((result) => {

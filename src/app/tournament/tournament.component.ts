@@ -62,6 +62,10 @@ export class TournamentComponent implements OnInit, OnDestroy {
     this.subscriptions.add(afterCloseSub);
   }
 
+  onReviewReports(): void {
+    this.router.navigate(['/tournament/comprobar-reportes']);
+  }
+
   private loadTournaments(): void {
     const tournamentSub = this.tournamentService
       .getTournament()
