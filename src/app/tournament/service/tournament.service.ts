@@ -21,6 +21,8 @@ export class TournamentService {
   private readonly FORMATS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/formats`;
   private readonly RANKING_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/ranking`;
   private readonly RANKING_GROUPS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/groups`;
+  private readonly HIGHLIGHTS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/highlights`;
+  private readonly CARDS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/cards`;
   private readonly ROUNDS_PAGINATION_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/{page}`;
   private readonly DELETE_TOURNAMENT = `${this.TOURNAMENT_ENDPOINT}/delete/{id}`;
   private readonly REPORT_MATCH = `${this.TOURNAMENT_ENDPOINT}/report`;
@@ -67,6 +69,16 @@ export class TournamentService {
   getRankingGroups(id: number): Observable<RankingTablesResponse> {
     const url = `${this.API_URL}${this.RANKING_GROUPS_ENDPOINT}`.replace('{id}', id.toString());
     return this.http.get<RankingTablesResponse>(url);
+  }
+
+  getTournamentHighlights(id: number): Observable<{ data: any[] }> {
+    const url = `${this.API_URL}${this.HIGHLIGHTS_ENDPOINT}`.replace('{id}', String(id));
+    return this.http.get<{ data: any[] }>(url);
+  }
+
+  getTournamentCards(id: number): Observable<{ data: any[] }> {
+    const url = `${this.API_URL}${this.CARDS_ENDPOINT}`.replace('{id}', String(id));
+    return this.http.get<{ data: any[] }>(url);
   }
 
   deleteTournament(id: number): Observable<RankingTablesResponse> {

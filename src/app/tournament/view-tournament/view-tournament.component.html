@@ -11,7 +11,7 @@
 
   <!-- Tabs Section -->
   <div class="tabs-container">
-    <nz-tabset nzCentered>
+    <nz-tabset nzCentered (nzSelectedIndexChange)="onTabSelectedIndexChange($event)">
       <!-- Tab: Tabla de posiciones -->
       <!-- Tab: Tabla de posiciones -->
       <nz-tab [nzTitle]="isKnockout ? 'Cruces' : 'Tabla de posiciones'">
@@ -298,6 +298,9 @@
           <div class="col-12">
             <div class="table-card">
               <div class="table-wrapper">
+                <div *ngIf="isLoadingHighlights" style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">
+                  Cargando...
+                </div>
                 <table class="table">
                   <thead>
                     <tr>
@@ -305,34 +308,38 @@
                       <th style="text-align: left;">Jugador</th>
                       <th>PJ</th>
                       <th>Goles</th>
-                      <th class="d-none d-sm-table-cell">Asist.</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let player of tournament?.teams; let i = index">
+                    <tr *ngFor="let player of highlights; let i = index">
                       <td>
                         <span class="position-badge" [ngClass]="{
-                            'top': i < 3,
-                            'mid': i >= 3
+                            'top': i < 1,
+                            'mid': i >= 1
                           }">
                           {{ i + 1 }}
                         </span>
                       </td>
                       <td>
                         <div class="team-cell">
-                          <img [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                          <img [src]="player?.teamLogo || '../../../assets/images/player-default.png'"
                             alt="Player" class="team-logo" />
-                          <span class="team-name-text">{{ player.name }}</span>
+                          <span class="team-name-text">
+                            {{ (player?.name || player?.playerName || player?.player?.name || '-') }}
+                            {{ (player?.lastName || player?.player?.lastName || '') }}
+                          </span>
                         </div>
                       </td>
-                      <td>12</td>
+                      <td>{{ player?.played ?? player?.matchesPlayed ?? player?.pj ?? '-' }}</td>
                       <td>
-                        <span class="points-badge">12</span>
+                        <span class="points-badge">{{ player?.goals ?? player?.goles ?? player?.goal ?? '-' }}</span>
                       </td>
-                      <td class="d-none d-sm-table-cell">12</td>
                     </tr>
                   </tbody>
                 </table>
+                <div *ngIf="!isLoadingHighlights && (!highlights || highlights.length === 0)" style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">
+                  Sin datos para mostrar.
+                </div>
               </div>
             </div>
           </div>
@@ -340,11 +347,14 @@
       </nz-tab>
 
       <!-- Tab: Tarjetas -->
-      <nz-tab nzTitle="Tarjetas">
+      <!-- <nz-tab nzTitle="Tarjetas">
         <div class="row">
           <div class="col-12">
             <div class="table-card">
               <div class="table-wrapper">
+                <div *ngIf="isLoadingCards" style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">
+                  Cargando...
+                </div>
                 <table class="table">
                   <thead>
                     <tr>
@@ -354,24 +364,30 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let player of tournament?.teams; let i = index">
+                    <tr *ngFor="let card of cards; let i = index">
                       <td>
                         <div class="team-cell">
-                          <img [src]="player?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                          <img [src]="card?.teamLogo || '../../../assets/images/player-default.png'"
                             alt="Player" class="team-logo" />
-                          <span class="team-name-text">{{ player.name }}</span>
+                          <span class="team-name-text">
+                            {{ (card?.name || card?.playerName || card?.player?.name || '-') }}
+                            {{ (card?.lastName || card?.player?.lastName || '') }}
+                          </span>
                         </div>
                       </td>
-                      <td>{{ i + 1 }}</td>
-                      <td class="d-none d-sm-table-cell">12</td>
+                      <td>{{ card?.reason || card?.motive || card?.type || card?.cardType || '-' }}</td>
+                      <td class="d-none d-sm-table-cell">{{ card?.sanction || card?.suspension || card?.penalty || card?.matchBan || '-' }}</td>
                     </tr>
                   </tbody>
                 </table>
+                <div *ngIf="!isLoadingCards && (!cards || cards.length === 0)" style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">
+                  Sin datos para mostrar.
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </nz-tab>
+      </nz-tab> -->
     </nz-tabset>
   </div>
 </div>

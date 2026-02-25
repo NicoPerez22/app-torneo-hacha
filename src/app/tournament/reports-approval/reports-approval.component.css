@@ -291,10 +291,18 @@ select.input-dark option {
   font-size: 0.95rem;
 }
 
+.events-pagination {
+  margin-top: 0.75rem;
+}
+
 .events-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .event-row {
@@ -307,6 +315,7 @@ select.input-dark option {
   border: 1px solid rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.88);
   font-size: 0.9rem;
+  align-items: center;
 }
 
 .event-minute {
@@ -376,6 +385,22 @@ select.input-dark option {
 
   .event-minute {
     grid-area: min;
+  }
+
+  .event-type {
+    grid-area: type;
+  }
+
+  .event-player {
+    grid-area: player;
+  }
+
+  .event-team {
+    grid-area: team;
+  }
+
+  .events-list {
+    max-height: min(46vh, 360px);
   }
 }
 

@@ -149,10 +149,10 @@ export class ResultsComponent implements OnInit {
 
   private _createEventForm(): FormGroup {
     return this.fb.group({
-      minute: [
-        null,
-        [Validators.required, Validators.min(0), Validators.max(120)],
-      ],
+      // minute: [
+      //   null,
+      //   [Validators.required, Validators.min(0), Validators.max(120)],
+      // ],
       eventType: ['', Validators.required],
       teamId: [null, Validators.required],
       playerId: [null],

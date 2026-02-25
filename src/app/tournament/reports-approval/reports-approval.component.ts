@@ -42,6 +42,11 @@ export class ReportsApprovalComponent {
   readonly paginationId = 'match-reports-approval';
   totalItems = 0;
 
+  // pagination (events dentro del preview)
+  eventsPage = 1;
+  readonly eventsPerPage = 6;
+  readonly eventsPaginationId = 'match-report-events';
+
   selected?: MatchReportCardVM;
   selectedDetail?: ReportDetailVM;
   previewModal?: NzModalRef;
@@ -69,10 +74,15 @@ export class ReportsApprovalComponent {
     this.loadDrafts();
   }
 
+  onEventsPageChange(next: number) {
+    this.eventsPage = next;
+  }
+
   onView(item: MatchReportCardVM) {
     this.selected = item;
     this.selectedDetail = undefined;
     this.previewLoading = true;
+    this.eventsPage = 1;
 
     const draftId = Number(item?.reportId);
     if (!Number.isFinite(draftId)) {
@@ -85,12 +95,14 @@ export class ReportsApprovalComponent {
       next: (resp) => {
         const raw = resp?.data ?? resp ?? {};
         this.selectedDetail = this._normalizeDetail(raw, item);
+        this.eventsPage = 1;
         this.previewLoading = false;
         this.openPreviewModal();
       },
       error: () => {
         this.previewLoading = false;
         this.selectedDetail = this._normalizeDetail({}, item);
+        this.eventsPage = 1;
         this.openPreviewModal();
         this.toastr.warning('No se pudo cargar el detalle del reporte', 'Atención');
       },

@@ -32,6 +32,13 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   rounds: Round[] = [];
   rankingTables: RankingTable[] = [];
   knockoutStages: KnockoutStage[] = [];
+
+  highlights: any[] = [];
+  cards: any[] = [];
+  isLoadingHighlights = false;
+  isLoadingCards = false;
+  private hasLoadedHighlights = false;
+  private hasLoadedCards = false;
   // Fase de grupos: cache por matchday (page) y paginado independiente por grupo
   private groupStageCache = new Map<number, RoundsResponse>();
   private groupStageLoadingPages = new Set<number>();
@@ -42,6 +49,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private readonly INITIAL_PAGE = 1;
   private readonly MAX_VISIBLE_PAGES = 5;
+  private readonly TAB_INDEX_HIGHLIGHTS = 1;
+  private readonly TAB_INDEX_CARDS = 2;
 
   /**
    * Configurable desde TS:
@@ -79,6 +88,11 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  onTabSelectedIndexChange(index: number): void {
+    if (index === this.TAB_INDEX_HIGHLIGHTS) this._loadHighlights();
+    if (index === this.TAB_INDEX_CARDS) this._loadCards();
   }
 
   onPageChange(page: number): void {
@@ -229,6 +243,12 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   private loadTournamentData(): void {
     this.isLoading = true;
+    this.highlights = [];
+    this.cards = [];
+    this.hasLoadedHighlights = false;
+    this.hasLoadedCards = false;
+    this.isLoadingHighlights = false;
+    this.isLoadingCards = false;
   
     const loadSub = this.tournamentService
       .getTournamentByID(this.tournamentId)
@@ -359,6 +379,58 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       });
   
     this.subscriptions.add(loadSub);
+  }
+
+  private _loadHighlights(): void {
+    if (!this.tournamentId) return;
+    if (this.hasLoadedHighlights || this.isLoadingHighlights) return;
+
+    this.isLoadingHighlights = true;
+    const sub = this.tournamentService
+      .getTournamentHighlights(this.tournamentId)
+      .pipe(
+        catchError((error) => {
+          this.handleError('Error al cargar los goleadores', error);
+          return of({ data: [] as any[] });
+        }),
+        finalize(() => {
+          this.isLoadingHighlights = false;
+        }),
+      )
+      .subscribe({
+        next: (resp) => {
+          this.highlights = resp?.data ?? [];
+          this.hasLoadedHighlights = true;
+        },
+      });
+
+    this.subscriptions.add(sub);
+  }
+
+  private _loadCards(): void {
+    if (!this.tournamentId) return;
+    if (this.hasLoadedCards || this.isLoadingCards) return;
+
+    this.isLoadingCards = true;
+    const sub = this.tournamentService
+      .getTournamentCards(this.tournamentId)
+      .pipe(
+        catchError((error) => {
+          this.handleError('Error al cargar las tarjetas', error);
+          return of({ data: [] as any[] });
+        }),
+        finalize(() => {
+          this.isLoadingCards = false;
+        }),
+      )
+      .subscribe({
+        next: (resp) => {
+          this.cards = resp?.data ?? [];
+          this.hasLoadedCards = true;
+        },
+      });
+
+    this.subscriptions.add(sub);
   }
 
   private loadRounds(page: number): void {

@@ -128,12 +128,27 @@
         </div>
 
         <div class="events-list" *ngIf="(selectedDetail?.events?.length || 0) > 0">
-          <div class="event-row" *ngFor="let ev of selectedDetail?.events">
+          <div
+            class="event-row"
+            *ngFor="
+              let ev of (selectedDetail?.events || [])
+                | paginate: { id: eventsPaginationId, itemsPerPage: eventsPerPage, currentPage: eventsPage }
+            "
+          >
             <span class="event-minute">{{ ev?.minute ?? ev?.min ?? '—' }}'</span>
             <span class="event-type">{{ ev?.eventType ?? ev?.type ?? 'Evento' }}</span>
             <span class="event-player">{{ ev?.playerName ?? ev?.player?.name ?? ev?.playerId ?? '—' }}</span>
             <span class="event-team">{{ ev?.teamName ?? ev?.team?.name ?? ev?.teamId ?? '—' }}</span>
           </div>
+        </div>
+
+        <div class="events-pagination pagination-wrapper" *ngIf="(selectedDetail?.events?.length || 0) > eventsPerPage">
+          <pagination-controls
+            [id]="eventsPaginationId"
+            (pageChange)="onEventsPageChange($event)"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+          ></pagination-controls>
         </div>
       </div>
     </div>
