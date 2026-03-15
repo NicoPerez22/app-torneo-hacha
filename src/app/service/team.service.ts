@@ -138,4 +138,9 @@ export class TeamService {
     const url = this.API_URL + `player/${id}/${idAdmin}/review`;
     return this.http.post<any>(url, rewieOffer);
   }
+
+  getRoundMyTeam(id): Observable<any> {
+    const url = this.API_URL + `tournament/team/${id}/rounds`;
+    return this.http.get<any>(url);
+  }
 }

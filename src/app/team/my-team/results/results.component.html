@@ -10,19 +10,32 @@
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 match-summary-row">
         <!-- Home -->
         <div class="team-name team-home team-block">
-          <img class="team-logo" [src]="match?.homeLogo?.secureUrl" width="70" alt="Home Team" />
-          <span class="team-text">{{ match?.home }}</span>
+          <img
+            class="team-logo"
+            [src]="match?.homeLogoUrl || match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'"
+            width="70"
+            alt="Home Team"
+          />
+          <span class="team-text">{{ match?.homeTeamName || match?.home }}</span>
         </div>
 
         <!-- Score -->
         <div class="score-wrap score-block d-flex align-items-center gap-3 flex-wrap justify-content-center">
-          <button type="button" class="btn-icon btn-icon-outline" aria-label="Restar gol local"
-            (click)="removeGoal(form.controls['homeGoals'])">
+          <button
+            type="button"
+            class="btn-icon btn-icon-outline"
+            aria-label="Restar gol local"
+            (click)="removeGoal(form.controls['homeGoals'])"
+          >
             <i class="fa fa-minus"></i>
           </button>
 
-          <button type="button" class="btn-icon btn-icon-outline" aria-label="Sumar gol local"
-            (click)="addGoal(form.controls['homeGoals'])">
+          <button
+            type="button"
+            class="btn-icon btn-icon-outline"
+            aria-label="Sumar gol local"
+            (click)="addGoal(form.controls['homeGoals'])"
+          >
             <i class="fa fa-plus"></i>
           </button>
 
@@ -38,116 +51,164 @@
             <div class="score-value">{{ form.get('awayGoals')?.value }}</div>
           </div>
 
-          <button type="button" class="btn-icon btn-icon-outline" aria-label="Sumar gol visitante"
-            (click)="addGoal(form.controls['awayGoals'])">
+          <button
+            type="button"
+            class="btn-icon btn-icon-outline"
+            aria-label="Sumar gol visitante"
+            (click)="addGoal(form.controls['awayGoals'])"
+          >
             <i class="fa fa-plus"></i>
           </button>
 
-          <button type="button" class="btn-icon btn-icon-outline" aria-label="Restar gol visitante"
-            (click)="removeGoal(form.controls['awayGoals'])">
+          <button
+            type="button"
+            class="btn-icon btn-icon-outline"
+            aria-label="Restar gol visitante"
+            (click)="removeGoal(form.controls['awayGoals'])"
+          >
             <i class="fa fa-minus"></i>
           </button>
         </div>
 
         <!-- Away -->
         <div class="team-name team-away team-block">
-          <span class="team-text">{{ match?.away }}</span>
-          <img class="team-logo" [src]="match?.awayLogo?.secureUrl" width="70" alt="Away Team" />
+          <span class="team-text">{{ match?.awayTeamName || match?.away }}</span>
+          <img
+            class="team-logo"
+            [src]="match?.awayLogoUrl || match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'"
+            width="70"
+            alt="Away Team"
+          />
         </div>
       </div>
+    </div>
 
-      <div class="d-flex gap-2 mt-3 flex-wrap">
-        <button type="button" class="btn-ghost ms-auto" (click)="addEvent()">
-          <i class="bi bi-plus-circle me-2"></i>
-          Agregar evento
-        </button>
+    <div class="match-card mb-3" *ngIf="isLoadingPlayers">
+      <div class="text-center" style="color: rgba(255,255,255,0.75);">
+        Cargando jugadores...
       </div>
     </div>
 
-    <!-- Events Header -->
-    <div class="events-header d-flex align-items-center justify-content-between mb-2">
-      <h6 class="mb-0 section-title">Eventos del partido</h6>
-      <span class="section-meta">{{ eventsArray.length }} evento(s)</span>
-    </div>
+    <div class="match-card mb-3" *ngIf="!isLoadingPlayers">
+      <nz-tabset nzCentered class="report-player-tabs">
+        <nz-tab [nzTitle]="(match?.homeTeamName || match?.home || 'Local') + ' (' + homePlayersControls.length + ')'">
+          <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+            <h6 class="mb-0 section-title">Jugadores · {{ match?.homeTeamName || match?.home }}</h6>
+            <span class="section-meta">{{ homePlayersControls.length }} jugador(es)</span>
+          </div>
 
-    <!-- Events List -->
-    <div class="vstack gap-2" formArrayName="events">
-      <!-- Event item -->
-      <div
-        class="match-card match-event"
-        *ngFor="let ev of eventsControls; let i = index"
-        [formGroupName]="i"
-      >
-        <div class="row g-3 align-items-end">
-          <!-- <div class="col-12 col-md-2">
-            <label class="form-label field-label mb-1">Min</label>
-            <input
-              type="number"
-              class="form-control input-dark"
-              min="0"
-              max="120"
-              placeholder="0"
-              formControlName="minute"
-            />
-            <div class="text-danger small" *ngIf="eventsArray.at(i).get('minute')?.touched && eventsArray.at(i).get('minute')?.invalid">
-              Minuto inválido (0–120)
+          <div class="players-table" formArrayName="homePlayers">
+            <div class="player-row player-row--head">
+              <div class="c-name">Jugador</div>
+              <div class="c-num">Goles</div>
+              <div class="c-num">Amarillas</div>
+              <div class="c-check">Roja</div>
+              <div class="c-check">Lesionado</div>
             </div>
-          </div> -->
 
-          <div class="col-12 col-md-2">
-            <label class="form-label field-label mb-1">Tipo</label>
+            <div class="player-row" *ngFor="let row of homePlayersControls; let i = index" [formGroupName]="i">
+              <div class="c-name">
+                <span class="player-name">{{ row.get('name')?.value }} {{ row.get('lastName')?.value }}</span>
+              </div>
 
-            <select class="form-select input-dark" formControlName="eventType">
-              <option value="" selected disabled>— Seleccionar —</option>
-              <option *ngFor="let t of eventTypes" [value]="t.value">
-                {{ t.label }}
-              </option>
-            </select>
+              <div class="c-num">
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control input-dark input-mini"
+                  formControlName="goals"
+                  (blur)="clampNonNegative(i, 'home')"
+                />
+              </div>
+
+              <div class="c-num">
+                <input
+                  type="number"
+                  min="0"
+                  max="2"
+                  class="form-control input-dark input-mini"
+                  formControlName="yellow"
+                  (blur)="clampYellow(i, 'home')"
+                />
+                <div class="text-danger small mt-1" *ngIf="homePlayersArray.at(i).get('yellow')?.touched && homePlayersArray.at(i).get('yellow')?.invalid">
+                  Máximo 2
+                </div>
+              </div>
+
+              <div class="c-check">
+                <span class="check-wrap">
+                  <input type="checkbox" class="form-check-input checkbox-dark" formControlName="red" />
+                </span>
+              </div>
+
+              <div class="c-check">
+                <span class="check-wrap">
+                  <input type="checkbox" class="form-check-input checkbox-dark" formControlName="injured" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </nz-tab>
+
+        <nz-tab [nzTitle]="(match?.awayTeamName || match?.away || 'Visitante') + ' (' + awayPlayersControls.length + ')'">
+          <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+            <h6 class="mb-0 section-title">Jugadores · {{ match?.awayTeamName || match?.away }}</h6>
+            <span class="section-meta">{{ awayPlayersControls.length }} jugador(es)</span>
           </div>
 
-          <div class="col-12 col-md-3">
-            <label class="form-label field-label mb-1">Equipo</label>
+          <div class="players-table" formArrayName="awayPlayers">
+            <div class="player-row player-row--head">
+              <div class="c-name">Jugador</div>
+              <div class="c-num">Goles</div>
+              <div class="c-num">Amarillas</div>
+              <div class="c-check">Roja</div>
+              <div class="c-check">Lesionado</div>
+            </div>
 
-            <select
-              class="form-select input-dark"
-              formControlName="teamId"
-              (change)="onTeamChange(i)"
-            >
-              <option value="" selected disabled>— Seleccionar —</option>
-              <option *ngFor="let t of teams" [value]="t.id">
-                {{ t.name }}
-              </option>
-            </select>
+            <div class="player-row" *ngFor="let row of awayPlayersControls; let i = index" [formGroupName]="i">
+              <div class="c-name">
+                <span class="player-name">{{ row.get('name')?.value }} {{ row.get('lastName')?.value }}</span>
+              </div>
+
+              <div class="c-num">
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control input-dark input-mini"
+                  formControlName="goals"
+                  (blur)="clampNonNegative(i, 'away')"
+                />
+              </div>
+
+              <div class="c-num">
+                <input
+                  type="number"
+                  min="0"
+                  max="2"
+                  class="form-control input-dark input-mini"
+                  formControlName="yellow"
+                  (blur)="clampYellow(i, 'away')"
+                />
+                <div class="text-danger small mt-1" *ngIf="awayPlayersArray.at(i).get('yellow')?.touched && awayPlayersArray.at(i).get('yellow')?.invalid">
+                  Máximo 2
+                </div>
+              </div>
+
+              <div class="c-check">
+                <span class="check-wrap">
+                  <input type="checkbox" class="form-check-input checkbox-dark" formControlName="red" />
+                </span>
+              </div>
+
+              <div class="c-check">
+                <span class="check-wrap">
+                  <input type="checkbox" class="form-check-input checkbox-dark" formControlName="injured" />
+                </span>
+              </div>
+            </div>
           </div>
-
-          <div class="col-12 col-md-4">
-            <label class="form-label field-label mb-1">Jugador</label>
-
-            <select
-              class="form-select input-dark"
-              formControlName="playerId"
-              [disabled]="!eventsArray.at(i).get('teamId')?.value"
-            >
-              <option value="" selected disabled>— Seleccionar —</option>
-              <option *ngFor="let p of getPlayersForRow(i)" [value]="p.id">
-                {{ p.name }} {{ p.lastName }}
-              </option>
-            </select>
-          </div>
-
-          <div class="col-12 col-md-1 d-grid">
-            <button
-              type="button"
-              class="btn-icon btn-icon-danger"
-              aria-label="Eliminar evento"
-              (click)="removeEvent(i)"
-              [disabled]="eventsArray.length <= 1"
-            >
-              <i class="fa fa-times"></i>
-            </button>
-          </div>
-        </div>
-      </div>
+        </nz-tab>
+      </nz-tabset>
     </div>
   </form>
 </div>

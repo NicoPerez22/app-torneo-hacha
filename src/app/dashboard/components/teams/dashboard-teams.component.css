@@ -1,0 +1,22 @@
+.team-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.team-logo {
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.team-name {
+  font-weight: 800;
+  color: #fff;
+}
+
+.team-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+}
+

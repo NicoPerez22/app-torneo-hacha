@@ -1,0 +1,117 @@
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card-custom p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="kpi-label">Usuarios</div>
+          <div class="kpi-value">{{ resume?.totalUsers ?? '—' }}</div>
+        </div>
+        <div class="kpi-icon">
+          <i class="fa fa-user"></i>
+        </div>
+      </div>
+      <div class="kpi-sub">Pendiente de integrar métricas</div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card-custom p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="kpi-label">Equipos</div>
+          <div class="kpi-value">{{ resume?.totalTeams ?? '—' }}</div>
+        </div>
+        <div class="kpi-icon">
+          <i class="fa fa-shield"></i>
+        </div>
+      </div>
+      <div class="kpi-sub">Altas, bajas y estado general</div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card-custom p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="kpi-label">Torneos</div>
+          <div class="kpi-value">{{ resume?.totalTournaments ?? '—' }}</div>
+        </div>
+        <div class="kpi-icon">
+          <i class="fa fa-trophy"></i>
+        </div>
+      </div>
+      <div class="kpi-sub">Activos y próximos</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-0">
+  <div class="col-12 col-xl-8">
+    <div class="card-custom p-3">
+      <div class="section-title">Acciones rápidas</div>
+      <div class="row g-2 mt-1">
+        <div class="col-12 col-md-6">
+          <button
+            class="quick-action"
+            type="button"
+            [routerLink]="['/dashboard', 'teams']"
+          >
+            <i class="fa fa-shield me-2"></i> Gestionar equipos
+            <span class="ms-auto"><i class="fa fa-angle-right"></i></span>
+          </button>
+        </div>
+        <div class="col-12 col-md-6">
+          <button
+            class="quick-action"
+            type="button"
+            [routerLink]="['/dashboard', 'tournaments']"
+          >
+            <i class="fa fa-trophy me-2"></i> Gestionar torneos
+            <span class="ms-auto"><i class="fa fa-angle-right"></i></span>
+          </button>
+        </div>
+        <div class="col-12 col-md-6">
+          <button
+            class="quick-action"
+            type="button"
+            [routerLink]="['/dashboard', 'reports']"
+          >
+            <i class="fa fa-bar-chart me-2"></i> Ver reportes
+            <span class="ms-auto"><i class="fa fa-angle-right"></i></span>
+          </button>
+        </div>
+        <div class="col-12 col-md-6">
+          <button
+            class="quick-action"
+            type="button"
+            [routerLink]="['/dashboard', 'settings']"
+          >
+            <i class="fa fa-cog me-2"></i> Ajustes
+            <span class="ms-auto"><i class="fa fa-angle-right"></i></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <div class="card-custom p-3">
+      <div class="section-title">Estado del sistema</div>
+      <div class="status-list mt-2">
+        <div class="status-item">
+          <span class="badge-soft ok">API</span>
+          <span class="status-text">Sin chequeo configurado</span>
+        </div>
+        <div class="status-item">
+          <span class="badge-soft warn">Cache</span>
+          <span class="status-text">Pendiente</span>
+        </div>
+        <div class="status-item">
+          <span class="badge-soft info">Jobs</span>
+          <span class="status-text">Pendiente</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

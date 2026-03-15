@@ -19,6 +19,7 @@ export class MyTeamComponent implements OnInit {
   params: any;
 
   spinner: boolean = true;
+  rounds: Array<any> = [];
 
   teamsList: Array<any> = [];
   user: any;
@@ -43,6 +44,7 @@ export class MyTeamComponent implements OnInit {
     this.user = this.authService.getUser();
 
     this._getTeamById(this.params.id);
+    this.getRounds();
   }
 
   openModalSearchPlayers() {
@@ -154,6 +156,18 @@ export class MyTeamComponent implements OnInit {
       error: () => {
       },
     });
+  }
+
+  getRounds(){
+    this.teamService.getRoundMyTeam(this.params.id).subscribe({
+      next: (res) => {
+        this.rounds = res.data;
+      },
+
+      error: () => {
+        this.toastrService.error('No se pudieron obtener las fechas del equipo', 'Error')
+      },
+    }); 
   }
 
   private _assignTransferPlayer(id, isTransfer) {

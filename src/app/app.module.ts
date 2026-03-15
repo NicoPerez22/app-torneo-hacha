@@ -1,7 +1,7 @@
 import { ROOT_REDUCERS } from './state/app.state';
 import { JwtInterceptorInterceptor } from './shared/Interceptor/jwt-interceptor.interceptor';
 import { LoadingInterceptor } from './shared/Interceptor/loading.interceptor';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, isDevMode } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -13,8 +13,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { es_ES } from 'ng-zorro-antd/i18n';
+import { NZ_I18N, es_ES } from 'ng-zorro-antd/i18n';
 import es from '@angular/common/locales/es';
 import { FormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';

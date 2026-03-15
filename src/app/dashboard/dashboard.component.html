@@ -1,0 +1,81 @@
+<div class="dashboard">
+  <!-- overlay mobile -->
+  <button
+    type="button"
+    class="sidebar-overlay d-lg-none"
+    [class.show]="isSidebarOpen"
+    (click)="closeSidebar()"
+    aria-label="Cerrar menú lateral"
+  ></button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="isSidebarOpen">
+    <div class="sidebar-header">
+      <div class="brand">
+        <img
+          src="assets/images/seaneternos2.png"
+          alt="Sean Eternos"
+          class="brand-logo"
+        />
+        <div class="brand-text">
+          <div class="brand-title">Dashboard</div>
+          <div class="brand-subtitle">Administración</div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-light d-lg-none"
+        (click)="closeSidebar()"
+        aria-label="Cerrar menú"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a
+        *ngFor="let item of menuItems"
+        class="nav-item"
+        [routerLink]="[item.path]"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeSidebar()"
+      >
+        <i class="nav-icon" [class]="item.iconClass"></i>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="hint">
+        <span class="dot"></span>
+        <span>Acceso solo administradores</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <section class="main">
+    <div class="main-topbar">
+      <button
+        type="button"
+        class="btn btn-outline-light d-lg-none"
+        (click)="toggleSidebar()"
+        aria-label="Abrir menú"
+      >
+        <i class="fa fa-bars me-2"></i> Menú
+      </button>
+
+      <div class="breadcrumbs">
+        <span class="crumb">Admin</span>
+        <span class="sep">/</span>
+        <span class="crumb active">{{ activeLabel }}</span>
+      </div>
+    </div>
+
+    <div class="container-fluid py-3">
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+</div>

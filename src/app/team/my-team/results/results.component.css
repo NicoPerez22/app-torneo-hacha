@@ -59,8 +59,8 @@
 }
 
 .btn-cancel {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
+  background: #223045;
+  color: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -69,9 +69,9 @@
 }
 
 .btn-confirm {
-  background: linear-gradient(90deg, #e67700 0%, #fd7e14 100%);
+  background: linear-gradient(90deg, #b45309 0%, #9a3412 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(230, 119, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(180, 83, 9, 0.35);
 }
 
 .btn-confirm:active:not(:disabled) {
@@ -240,11 +240,11 @@
 .input-dark,
 .input-dark.form-control,
 .input-dark.form-select {
-  background: rgba(255, 255, 255, 0.04);
+  background: #1f2a3a;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   padding: 0.6rem 0.75rem;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.96);
 }
 
 .input-dark::placeholder {
@@ -409,4 +409,102 @@ select.input-dark option:disabled {
     width: 36px;
     height: 36px;
   }
+}
+
+/* ===== Players grid (carga rápida de eventos) ===== */
+.players-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 80px 92px 70px 90px;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.55rem 0.6rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.player-row--head {
+  background: #223045;
+  border-color: rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.player-name {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.input-mini {
+  text-align: center;
+  padding: 0.45rem 0.55rem !important;
+  border-radius: 12px !important;
+}
+
+.check-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.checkbox-dark {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Responsive: colapsa a scroll horizontal */
+@media (max-width: 768px) {
+  .players-table {
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .player-row {
+    min-width: 560px;
+  }
+}
+
+/* ===== Tabs (NgZorro) styling inside dark modal ===== */
+::ng-deep .report-player-tabs .ant-tabs-nav::before {
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+::ng-deep .report-player-tabs .ant-tabs-tab {
+  color: rgba(255, 255, 255, 0.88) !important;
+  font-weight: 600;
+}
+
+::ng-deep .report-player-tabs .ant-tabs-tab:hover {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+::ng-deep .report-player-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: white !important;
+}
+
+::ng-deep .report-player-tabs .ant-tabs-ink-bar {
+  background: rgba(29, 101, 253, 0.95) !important;
+}
+
+::ng-deep .report-player-tabs .ant-tabs-content {
+  margin-top: 0.75rem;
 }

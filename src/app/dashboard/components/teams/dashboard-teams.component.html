@@ -1,0 +1,62 @@
+<div class="card-custom p-3">
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div>
+      <div class="section-title">Gestión de equipos</div>
+      <div class="section-sub">
+        Listado general para acciones administrativas (aprobación/edición/auditoría).
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-outline-light" (click)="reload()">
+      <span *ngIf="!loading"><i class="fa fa-refresh me-2"></i>Refrescar</span>
+      <span *ngIf="loading" class="d-inline-flex align-items-center gap-2">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        Cargando
+      </span>
+    </button>
+  </div>
+
+  <div class="mt-3" *ngIf="teams?.length; else empty">
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-xl-4" *ngFor="let team of teams">
+        <div class="team-card p-3">
+          <div class="d-flex align-items-center gap-3">
+            <img
+              class="team-logo"
+              [src]="team?.logo?.secureUrl || 'assets/images/profile.png'"
+              [alt]="team?.name"
+              width="48"
+              height="48"
+            />
+            <div class="min-w-0">
+              <div class="team-name text-truncate">{{ team?.name }}</div>
+              <div class="team-sub text-truncate">
+                Manager: {{ team?.owner?.name }} {{ team?.owner?.lastName }}
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-3">
+            <a
+              class="btn btn-sm btn-outline-light flex-grow-1"
+              [routerLink]="['/equipos', team?.id]"
+            >
+              Ver equipo
+            </a>
+            <button class="btn btn-sm btn-outline-info" type="button" disabled>
+              Admin
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #empty>
+    <div class="mt-3 text-light-50">
+      <span *ngIf="loading">Cargando equipos…</span>
+      <span *ngIf="!loading">No hay equipos para mostrar.</span>
+    </div>
+  </ng-template>
+</div>
+

@@ -148,6 +148,17 @@
             <i class="fa fa-ban me-1" aria-hidden="true"></i> Inhabilitados
           </a>
         </li>
+
+        <li class="nav-item" *ngIf="user?.idRol == 1">
+          <a
+            class="nav-link"
+            routerLink="/dashboard"
+            routerLinkActive="active"
+            (click)="collapseMobileMenu()"
+          >
+            <i class="fa fa-dashboard me-1" aria-hidden="true"></i> Dashboard
+          </a>
+        </li>
       </ul>
     </div>
   </div>

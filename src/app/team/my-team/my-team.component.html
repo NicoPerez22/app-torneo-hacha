@@ -137,13 +137,14 @@
                         <li
                           class="fixture-match"
                           *ngFor="
-                            let match of (myTeam?.rounds || [])
+                            let match of (rounds || [])
                               | paginate: { id: 'my-team-rounds', itemsPerPage: roundsPerPage, currentPage: p }
                           "
                         >
                           <div class="fixture-header">
-                            <span class="fixture-tournament">{{ match.tournament.name }} - Fecha: {{ match.round }}</span>
+                            <span class="fixture-tournament">{{ match.tournamentName }} - Fecha {{ match.round }}</span>
                             <button
+                              *ngIf="match.state == 0"
                               class="btn-action btn-edit fixture-report"
                               (click)="onReport(match)"
                               type="button"
@@ -156,11 +157,11 @@
                           <div class="fixture-content">
                             <div class="fixture-team fixture-team--home">
                               <img
-                                [src]="match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'"
+                                [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'"
                                 alt="Equipo local"
                                 loading="lazy"
                               />
-                              <span class="fixture-team-name">{{ match.home }}</span>
+                              <span class="fixture-team-name">{{ match.homeTeamName }}</span>
                             </div>
 
                             <div class="fixture-score" aria-label="Marcador">
@@ -170,9 +171,9 @@
                             </div>
 
                             <div class="fixture-team fixture-team--away">
-                              <span class="fixture-team-name">{{ match.away }}</span>
+                              <span class="fixture-team-name">{{ match.awayTeamName }}</span>
                               <img
-                                [src]="match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'"
+                                [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'"
                                 alt="Equipo visitante"
                                 loading="lazy"
                               />
@@ -182,7 +183,7 @@
                       </ul>
                     </div>
 
-                    <div class="pagination-wrapper" *ngIf="(myTeam?.rounds?.length || 0) > roundsPerPage">
+                    <div class="pagination-wrapper" *ngIf="(rounds?.length || 0) > roundsPerPage">
                       <pagination-controls
                         id="my-team-rounds"
                         (pageChange)="p = $event"

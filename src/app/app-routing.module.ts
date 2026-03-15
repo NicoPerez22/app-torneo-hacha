@@ -10,6 +10,12 @@ const routes: Routes = [
       import('../app/auth/auth.module').then((m) => m.AuthModule),
   },
   {
+    path: 'dashboard',
+    canActivate: [userGuard],
+    loadChildren: () =>
+      import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+  },
+  {
     path: 'home',
     canActivate: [userGuard],
     loadChildren: () =>
