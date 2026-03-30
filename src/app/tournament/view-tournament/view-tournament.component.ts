@@ -4,7 +4,12 @@ import { TournamentService } from '../service/tournament.service';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { Tournament } from '../models/tournament.interface';
-import { Match, Round, Pagination, RoundsResponse } from '../models/round.interface';
+import {
+  Match,
+  Round,
+  Pagination,
+  RoundsResponse,
+} from '../models/round.interface';
 import { ToastrService } from 'ngx-toastr';
 import { TOURNAMENT_CONSTANTS } from '../constants/tournament.constants';
 import { RankingTable } from '../models/ranking.interface';
@@ -106,11 +111,16 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     const pos = index + 1; // 1-indexed
 
     // prioridad para evitar solapamientos
-    if (this._matchesRange(pos, total, this.positionBadgeConfig.top)) return 'top';
-    if (this._matchesLast(pos, total, this.positionBadgeConfig.bottom)) return 'bottom';
-    if (this._matchesRange(pos, total, this.positionBadgeConfig.promo)) return 'promo';
-    if (this._matchesRange(pos, total, this.positionBadgeConfig.mid)) return 'mid';
-    if (this._matchesRange(pos, total, this.positionBadgeConfig.promoUp)) return 'promoUp';
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.top))
+      return 'top';
+    if (this._matchesLast(pos, total, this.positionBadgeConfig.bottom))
+      return 'bottom';
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.promo))
+      return 'promo';
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.mid))
+      return 'mid';
+    if (this._matchesRange(pos, total, this.positionBadgeConfig.promoUp))
+      return 'promoUp';
     return '';
   }
 
@@ -157,13 +167,20 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   getGroupStageCurrentPage(groupNumber: number | null): number {
     const key = String(groupNumber ?? 'null');
-    return this.groupStagePageByGroup[key] ?? (this.pagination?.page ?? this.INITIAL_PAGE);
+    return (
+      this.groupStagePageByGroup[key] ??
+      this.pagination?.page ??
+      this.INITIAL_PAGE
+    );
   }
 
   getGroupStageMatchdayLabel(groupNumber: number | null): string {
     const page = this.getGroupStageCurrentPage(groupNumber);
     const cached = this.groupStageCache.get(page);
-    const value = cached?.data?.pagination?.unitValue ?? cached?.data?.pagination?.page ?? page;
+    const value =
+      cached?.data?.pagination?.unitValue ??
+      cached?.data?.pagination?.page ??
+      page;
     return `Fecha ${value ?? page}`;
   }
 
@@ -222,7 +239,11 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   getGroupMatchdayLabel(group: Round): string {
     const fromMatch = group?.rounds?.find((m) => m?.matchday != null)?.matchday;
-    const value = fromMatch ?? this.pagination?.unitValue ?? this.pagination?.page ?? this.currentPage;
+    const value =
+      fromMatch ??
+      this.pagination?.unitValue ??
+      this.pagination?.page ??
+      this.currentPage;
     return `Fecha ${value ?? 1}`;
   }
 
@@ -266,7 +287,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     this.isLoadingCards = false;
     this.isLoadingKnockoutStages = false;
     this.hasLoadedKnockoutStages = false;
-  
+
     const loadSub = this.tournamentService
       .getTournamentByID(this.tournamentId)
       .pipe(
@@ -274,77 +295,108 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
           this.handleError('Error al cargar los datos del torneo', error);
           return of({ data: null });
         }),
-  
+
         switchMap((tournamentRes) => {
           const tournament = tournamentRes?.data;
-  
+
           if (!tournament) {
             return forkJoin({
-              rounds: of({ kind: 'single', response: { data: { groups: [], pagination: null } } as RoundsResponse } as RoundsLoadResult),
+              rounds: of({
+                kind: 'single',
+                response: {
+                  data: { groups: [], pagination: null },
+                } as RoundsResponse,
+              } as RoundsLoadResult),
               ranking: of({ data: { tables: [] } }),
               tournament: of({ data: null }),
             });
           }
-  
+
           const isGroupStage = tournament?.format?.id === 2;
           const isKnockout = this._isKnockoutFormat(tournament);
-  
+
           const ranking$ = isKnockout
             ? of({ data: { tables: [] } })
-            : (isGroupStage
-                ? this.tournamentService.getRankingGroups(this.tournamentId)
-                : this.tournamentService.getRankingLeague(this.tournamentId));
+            : isGroupStage
+            ? this.tournamentService.getRankingGroups(this.tournamentId)
+            : this.tournamentService.getRankingLeague(this.tournamentId);
 
           const rounds$ = this.tournamentService
             .getRoundsPagination(this.tournamentId, this.INITIAL_PAGE)
             .pipe(
               switchMap((firstPageRes) => {
-                const totalPages = firstPageRes?.data?.pagination?.totalPages ?? 1;
-                const safeTotalPages = Number.isFinite(totalPages) && totalPages > 0 ? totalPages : 1;
+                const totalPages =
+                  firstPageRes?.data?.pagination?.totalPages ?? 1;
+                const safeTotalPages =
+                  Number.isFinite(totalPages) && totalPages > 0
+                    ? totalPages
+                    : 1;
 
                 if (!isKnockout || safeTotalPages <= 1) {
-                  return of({ kind: 'single', response: firstPageRes } as RoundsLoadResult);
+                  return of({
+                    kind: 'single',
+                    response: firstPageRes,
+                  } as RoundsLoadResult);
                 }
 
-                const others$ = Array.from({ length: safeTotalPages - 1 }, (_, idx) => idx + 2).map((page) =>
-                  this.tournamentService.getRoundsPagination(this.tournamentId, page).pipe(
-                    catchError((error) => {
-                      this.handleError('Error al cargar las fechas del torneo', error);
-                      // si falla una página, no rompemos todo el bracket
-                      return of(null as unknown as RoundsResponse);
-                    }),
-                  ),
+                const others$ = Array.from(
+                  { length: safeTotalPages - 1 },
+                  (_, idx) => idx + 2,
+                ).map((page) =>
+                  this.tournamentService
+                    .getRoundsPagination(this.tournamentId, page)
+                    .pipe(
+                      catchError((error) => {
+                        this.handleError(
+                          'Error al cargar las fechas del torneo',
+                          error,
+                        );
+                        // si falla una página, no rompemos todo el bracket
+                        return of(null as unknown as RoundsResponse);
+                      }),
+                    ),
                 );
 
                 return forkJoin([of(firstPageRes), ...others$]).pipe(
                   map((pages) => pages.filter(Boolean) as RoundsResponse[]),
-                  map((pages) => ({
-                    kind: 'pages',
-                    pages,
-                    pagination: firstPageRes?.data?.pagination,
-                  }) as RoundsLoadResult),
+                  map(
+                    (pages) =>
+                      ({
+                        kind: 'pages',
+                        pages,
+                        pagination: firstPageRes?.data?.pagination,
+                      } as RoundsLoadResult),
+                  ),
                 );
               }),
               catchError((error) => {
-                this.handleError('Error al cargar las fechas del torneo', error);
-                return of({ kind: 'single', response: { data: { groups: [], pagination: null } } as RoundsResponse } as RoundsLoadResult);
+                this.handleError(
+                  'Error al cargar las fechas del torneo',
+                  error,
+                );
+                return of({
+                  kind: 'single',
+                  response: {
+                    data: { groups: [], pagination: null },
+                  } as RoundsResponse,
+                } as RoundsLoadResult);
               }),
             );
-  
+
           return forkJoin({
             rounds: rounds$,
-  
+
             ranking: ranking$.pipe(
               catchError((error) => {
                 this.handleError('Error al cargar el ranking', error);
                 return of({ data: { tables: [] } });
               }),
             ),
-  
+
             tournament: of({ data: tournament }),
           });
         }),
-  
+
         finalize(() => {
           this.isLoading = false;
         }),
@@ -362,12 +414,18 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
             this.rounds = results.rounds.response.data?.groups || [];
             this.pagination = results.rounds.response.data?.pagination;
             if (this._isKnockoutFormat(results.tournament.data)) {
-              this.knockoutStages = this._buildKnockoutStages([results.rounds.response]);
-              this.hasLoadedKnockoutStages = (this.knockoutStages?.length ?? 0) > 0;
+              this.knockoutStages = this._buildKnockoutStages([
+                results.rounds.response,
+              ]);
+              this.hasLoadedKnockoutStages =
+                (this.knockoutStages?.length ?? 0) > 0;
             }
             if (results.tournament.data?.format?.id === 2) {
-              const page = results.rounds.response.data?.pagination?.page ?? this.INITIAL_PAGE;
-              const total = results.rounds.response.data?.pagination?.totalPages ?? 0;
+              const page =
+                results.rounds.response.data?.pagination?.page ??
+                this.INITIAL_PAGE;
+              const total =
+                results.rounds.response.data?.pagination?.totalPages ?? 0;
               this.groupStageTotalPages = Number.isFinite(total) ? total : 0;
               if (this._isGroupStageRoundsResponse(results.rounds.response)) {
                 this.groupStageCache.set(page, results.rounds.response);
@@ -385,13 +443,16 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
             this.pagination = results.rounds.pagination;
             // para no romper nada que dependa de `rounds`, dejamos el primer page como referencia
             this.rounds = results.rounds.pages?.[0]?.data?.groups || [];
-            this.knockoutStages = this._buildKnockoutStages(results.rounds.pages || []);
-            this.hasLoadedKnockoutStages = (this.knockoutStages?.length ?? 0) > 0;
+            this.knockoutStages = this._buildKnockoutStages(
+              results.rounds.pages || [],
+            );
+            this.hasLoadedKnockoutStages =
+              (this.knockoutStages?.length ?? 0) > 0;
           }
 
           this.tournament = results.tournament.data;
           this.currentPage = this.pagination?.page ?? this.INITIAL_PAGE;
-  
+
           this.rankingTables = results.ranking.data?.tables || [];
           this._getPositionBadgeClass(this.tournamentId);
         },
@@ -399,7 +460,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
           this.handleError('Error al cargar los datos del torneo', error);
         },
       });
-  
+
     this.subscriptions.add(loadSub);
   }
 
@@ -413,7 +474,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     const sub = this.tournamentService
       .getRoundsKo(this.tournamentId)
       .pipe(
-        map((resp) => this._koMatchesToRoundsPages(resp?.data ?? [])),
+        map((resp) => this._koDataToRoundsPages(resp?.data ?? [])),
         catchError((error) => {
           this.handleError('Error al cargar los cruces', error);
           return of([] as RoundsResponse[]);
@@ -430,6 +491,164 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       });
 
     this.subscriptions.add(sub);
+  }
+
+  private _koDataToRoundsPages(data: any[]): RoundsResponse[] {
+    const safe = (data || []).filter(Boolean);
+    if (!safe.length) return [];
+
+    // Nuevo formato (bracket): { tieId, round, teamA, teamB, matches: [...] }
+    if (safe[0]?.matches && safe[0]?.teamA && safe[0]?.teamB) {
+      return this._koBracketTiesToRoundsPages(safe as any[]);
+    }
+
+    // Formato legacy: lista plana de partidos (Match[])
+    return this._koMatchesToRoundsPages(safe as Match[]);
+  }
+
+  private _koBracketTiesToRoundsPages(ties: any[]): RoundsResponse[] {
+    const byRound = new Map<number, any[]>();
+    for (const t of ties || []) {
+      const key = typeof t?.round === 'number' && Number.isFinite(t.round) ? t.round : -1;
+      const list = byRound.get(key) ?? [];
+      list.push(t);
+      byRound.set(key, list);
+    }
+
+    const roundKeys = Array.from(byRound.keys()).sort((a, b) => a - b);
+
+    return roundKeys.map((roundKey) => {
+      const stageTies = byRound.get(roundKey) ?? [];
+      const stageMatches = stageTies.map((t) => this._tieToGlobalMatch(t)).filter(Boolean) as Match[];
+
+      return {
+        data: {
+          groups: [
+            {
+              groupNumber: null,
+              rounds: stageMatches,
+              tournament: null,
+            },
+          ],
+          pagination: null,
+        },
+      } as RoundsResponse;
+    });
+  }
+
+  private _tieToGlobalMatch(tie: any): Match | null {
+    const teamA = tie?.teamA;
+    const teamB = tie?.teamB;
+    if (!teamA?.id || !teamB?.id) return null;
+
+    const normalizeGoals = (m: any): { homeGoals: number | null; awayGoals: number | null } => {
+      const state = m?.state;
+      const hg = m?.homeGoals;
+      const ag = m?.awayGoals;
+      if (state === 0 && hg === 0 && ag === 0) return { homeGoals: null, awayGoals: null };
+      return { homeGoals: hg ?? null, awayGoals: ag ?? null };
+    };
+
+    const rawMatches = Array.isArray(tie?.matches) ? tie.matches : [];
+    const legs: Match[] = rawMatches.map((m: any) => {
+      const homeId = m?.homeTeamId;
+      const awayId = m?.awayTeamId;
+      const homeRef = homeId === teamA.id ? teamA : (homeId === teamB.id ? teamB : null);
+      const awayRef = awayId === teamA.id ? teamA : (awayId === teamB.id ? teamB : null);
+      const goals = normalizeGoals(m);
+
+      return {
+        id: m?.id,
+        idRound: m?.idRound,
+        tournamentId: m?.tournamentId,
+        stage: 'KO',
+        matchday: m?.matchday ?? null,
+        groupNumber: null,
+        round: tie?.round ?? m?.matchday ?? null,
+        state: m?.state,
+        homeTeamId: homeId,
+        awayTeamId: awayId,
+        homeTeamName: homeRef?.name ?? 'TBD',
+        awayTeamName: awayRef?.name ?? 'TBD',
+        homeGoals: goals.homeGoals,
+        awayGoals: goals.awayGoals,
+        homeLogoUrl: homeRef?.logo ?? null,
+        awayLogoUrl: awayRef?.logo ?? null,
+      } as any;
+    });
+
+    const isTwoLegged = tie?.tieId != null;
+
+    // Si es ida/vuelta y falta la vuelta, agregamos placeholder para que SIEMPRE se vea.
+    if (isTwoLegged && legs.length < 2) {
+      legs.push({
+        id: undefined,
+        stage: 'KO',
+        matchday: null,
+        groupNumber: null,
+        round: tie?.round ?? null,
+        state: 0,
+        homeTeamId: teamB.id,
+        awayTeamId: teamA.id,
+        homeTeamName: teamB.name,
+        awayTeamName: teamA.name,
+        homeGoals: null,
+        awayGoals: null,
+        homeLogoUrl: teamB.logo,
+        awayLogoUrl: teamA.logo,
+        isPlaceholder: true,
+      } as any);
+    }
+
+    // El "global" se muestra con orientación TeamA vs TeamB
+    const baseHomeId = teamA.id;
+    const baseAwayId = teamB.id;
+
+    const allScoresPresent =
+      legs.length >= 2 &&
+      legs.every(
+        (l) =>
+          !(l as any)?.isPlaceholder &&
+          l?.homeGoals != null &&
+          l?.awayGoals != null,
+      );
+    let aggHome: number | null = null;
+    let aggAway: number | null = null;
+
+    if (isTwoLegged && allScoresPresent) {
+      const totals = new Map<number, number>();
+      for (const l of legs) {
+        if ((l as any)?.isPlaceholder) continue;
+        totals.set(l.homeTeamId!, (totals.get(l.homeTeamId!) ?? 0) + (l.homeGoals ?? 0));
+        totals.set(l.awayTeamId!, (totals.get(l.awayTeamId!) ?? 0) + (l.awayGoals ?? 0));
+      }
+      aggHome = totals.get(baseHomeId) ?? 0;
+      aggAway = totals.get(baseAwayId) ?? 0;
+    }
+
+    if (!isTwoLegged) {
+      // partido único: si viene uno, lo usamos tal cual
+      return legs[0] ?? null;
+    }
+
+    return {
+      id: undefined,
+      stage: 'KO',
+      matchday: null,
+      groupNumber: null,
+      round: tie?.round ?? null,
+      state: legs.some((l) => l?.state) ? legs[0]?.state : 0,
+      homeTeamId: teamA.id,
+      awayTeamId: teamB.id,
+      homeTeamName: teamA.name,
+      awayTeamName: teamB.name,
+      homeGoals: aggHome,
+      awayGoals: aggAway,
+      homeLogoUrl: teamA.logo,
+      awayLogoUrl: teamB.logo,
+      legs,
+      isTwoLegged: true,
+    } as any;
   }
 
   private _loadHighlights(): void {
@@ -491,7 +710,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     // Agrupamos por `round` (viene en el payload KO). Cada "round" se considera una etapa del bracket.
     const byRound = new Map<number, Match[]>();
     for (const m of safeMatches) {
-      const key = typeof m?.round === 'number' && Number.isFinite(m.round) ? m.round : -1;
+      const key =
+        typeof m?.round === 'number' && Number.isFinite(m.round) ? m.round : -1;
       const list = byRound.get(key) ?? [];
       list.push(m);
       byRound.set(key, list);
@@ -526,7 +746,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         catchError((error) => {
           this.handleError('Error al cargar las fechas', error);
           return of({ data: { groups: [], pagination: this.pagination } });
-        })
+        }),
       )
       .subscribe({
         next: (response) => {
@@ -544,7 +764,11 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     console.error(message, error);
   }
 
-  private _matchesLast(pos: number, total: number, cfg?: { last?: number }): boolean {
+  private _matchesLast(
+    pos: number,
+    total: number,
+    cfg?: { last?: number },
+  ): boolean {
     const last = cfg?.last ?? 0;
     if (!last || total <= 0) return false;
     return pos > total - last;
@@ -561,14 +785,18 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     return pos >= from && pos <= to;
   }
 
-  private _resolveTo(total: number, cfg: { to?: number; toEndOffset?: number }): number {
+  private _resolveTo(
+    total: number,
+    cfg: { to?: number; toEndOffset?: number },
+  ): number {
     if (typeof cfg.to === 'number') return cfg.to;
-    if (typeof cfg.toEndOffset === 'number') return Math.max(1, total - cfg.toEndOffset);
+    if (typeof cfg.toEndOffset === 'number')
+      return Math.max(1, total - cfg.toEndOffset);
     return Number.POSITIVE_INFINITY;
   }
 
   private _getPositionBadgeClass(id) {
-    if(id == 1){
+    if (id == 1) {
       this.positionBadgeConfig = {
         top: { from: 1, to: 1 },
         promoUp: { from: null, to: null },
@@ -580,7 +808,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if(id == 2){
+    if (id == 2) {
       this.positionBadgeConfig = {
         top: { from: 1, to: 1 },
         promoUp: { from: 2, to: 4 },
@@ -592,7 +820,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if(id == 3){
+    if (id == 3) {
       this.positionBadgeConfig = {
         top: { from: 1, to: 1 },
         promoUp: { from: 2, to: 3 },
@@ -621,12 +849,18 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     // Preferimos `stage` si viene desde backend:
     // - GROUP => fase de grupos
     // - cualquier otro valor => eliminación directa
-    const matchesWithStage = matches.filter((m) => m?.stage != null && String(m.stage).trim() !== '');
+    const matchesWithStage = matches.filter(
+      (m) => m?.stage != null && String(m.stage).trim() !== '',
+    );
     if (matchesWithStage.length) {
-      return matchesWithStage.some((m) => String(m.stage).toUpperCase() !== 'GROUP');
+      return matchesWithStage.some(
+        (m) => String(m.stage).toUpperCase() !== 'GROUP',
+      );
     }
 
-    const groupsAllNull = groups.length ? groups.every((g) => g?.groupNumber == null) : true;
+    const groupsAllNull = groups.length
+      ? groups.every((g) => g?.groupNumber == null)
+      : true;
     const matchesAllNull = matches.every((m) => m?.groupNumber == null);
     return groupsAllNull && matchesAllNull;
   }
@@ -636,9 +870,13 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     const groups = res?.data?.groups || [];
     const matches = this._flattenMatchesFromRoundsResponse(res);
 
-    const matchesWithStage = matches.filter((m) => m?.stage != null && String(m.stage).trim() !== '');
+    const matchesWithStage = matches.filter(
+      (m) => m?.stage != null && String(m.stage).trim() !== '',
+    );
     if (matchesWithStage.length) {
-      return matchesWithStage.some((m) => String(m.stage).toUpperCase() === 'GROUP');
+      return matchesWithStage.some(
+        (m) => String(m.stage).toUpperCase() === 'GROUP',
+      );
     }
 
     if (groups.some((g) => g?.groupNumber != null)) return true;
@@ -646,7 +884,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   }
 
   private _ensureGroupStagePageLoaded(page: number): void {
-    if (this.groupStageCache.has(page) || this.groupStageLoadingPages.has(page)) return;
+    if (this.groupStageCache.has(page) || this.groupStageLoadingPages.has(page))
+      return;
     this.groupStageLoadingPages.add(page);
 
     const sub = this.tournamentService
@@ -670,16 +909,22 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
             // Si algún grupo quedó apuntando a una página inválida, lo clampamos.
             for (const key of Object.keys(this.groupStagePageByGroup)) {
               const current = this.groupStagePageByGroup[key];
-              if (typeof current === 'number' && current > this.groupStageTotalPages) {
-                this.groupStagePageByGroup[key] = this.groupStageTotalPages || this.INITIAL_PAGE;
+              if (
+                typeof current === 'number' &&
+                current > this.groupStageTotalPages
+              ) {
+                this.groupStagePageByGroup[key] =
+                  this.groupStageTotalPages || this.INITIAL_PAGE;
               }
             }
             return;
           }
 
           this.groupStageCache.set(page, res);
-          const total = res?.data?.pagination?.totalPages ?? this.groupStageTotalPages;
-          if (typeof total === 'number' && total > 0) this.groupStageTotalPages = total;
+          const total =
+            res?.data?.pagination?.totalPages ?? this.groupStageTotalPages;
+          if (typeof total === 'number' && total > 0)
+            this.groupStageTotalPages = total;
         },
       });
 
@@ -692,7 +937,10 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     return matches.filter(Boolean) as Match[];
   }
 
-  private _getStageTitleByMatchCount(matchCount: number, fallbackIndex: number): string {
+  private _getStageTitleByMatchCount(
+    matchCount: number,
+    fallbackIndex: number,
+  ): string {
     switch (matchCount) {
       case 1:
         return 'Final';
@@ -722,7 +970,10 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       .filter((s) => s.matchCount > 0);
 
     // Orden: mayor cantidad de partidos primero (rondas iniciales a la izquierda)
-    rawStages.sort((a, b) => b.matchCount - a.matchCount || a.originalIndex - b.originalIndex);
+    rawStages.sort(
+      (a, b) =>
+        b.matchCount - a.matchCount || a.originalIndex - b.originalIndex,
+    );
 
     return rawStages.map((s, displayIndex) => ({
       title: this._getStageTitleByMatchCount(s.matchCount, displayIndex + 1),

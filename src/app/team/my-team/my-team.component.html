@@ -32,19 +32,22 @@
       <div class="table-card">
         <div class="table-wrapper">
           <div class="p-3">
-            <div class="row justify-content-center">
-
-            </div>
+            <div class="row justify-content-center"></div>
             <div class="tabs-container">
               <nz-tabset nzCentered style="color: white">
                 <nz-tab nzTitle="Jugadores">
                   <div class="players-grid-compact">
-                    <div class="player-card-compact" *ngFor="let player of playersTeamsList">
+                    <div
+                      class="player-card-compact"
+                      *ngFor="let player of playersTeamsList"
+                    >
                       <div class="player-card-compact-inner">
                         <div class="card-glow-compact"></div>
 
                         <ng-container
-                          *ngIf="!player.loading && user.id === myTeam?.owner?.id"
+                          *ngIf="
+                            !player.loading && user.id === myTeam?.owner?.id
+                          "
                         >
                           <button
                             type="button"
@@ -55,21 +58,25 @@
                           </button>
                         </ng-container>
 
-                      <ng-container
-                        *ngIf="!player.loading && user.id !== myTeam?.owner?.id"
-                      >
-                        <button
-                          type="button"
-                          class="btn-exchange"
-                          (click)="onBuyPlayer(player)"
+                        <ng-container
+                          *ngIf="
+                            !player.loading && user.id !== myTeam?.owner?.id
+                          "
                         >
-                          <i class="fa fa-dollar"></i>
-                        </button>
-                      </ng-container>
+                          <button
+                            type="button"
+                            class="btn-exchange"
+                            (click)="onBuyPlayer(player)"
+                          >
+                            <i class="fa fa-dollar"></i>
+                          </button>
+                        </ng-container>
 
                         <ng-container *ngIf="player.loading">
                           <div class="spinner-container">
-                            <div class="spinner-border spinner-border-sm text-info"></div>
+                            <div
+                              class="spinner-border spinner-border-sm text-info"
+                            ></div>
                           </div>
                         </ng-container>
 
@@ -88,7 +95,11 @@
                         <div class="player-status">
                           <span
                             class="status-badge-compact"
-                            [ngClass]="player.isHabilitado ? 'status-enabled' : 'status-disabled'"
+                            [ngClass]="
+                              player.isHabilitado
+                                ? 'status-enabled'
+                                : 'status-disabled'
+                            "
                           >
                             {{ player.isHabilitado ? 'Activo' : 'Inactivo' }}
                           </span>
@@ -103,9 +114,19 @@
                             class="position-badge-compact"
                             [ngClass]="{
                               'pos-gk': player?.position == 'POR',
-                              'pos-defence': ['LD', 'DFC', 'LI'].includes(player?.position),
-                              'pos-midfield': ['MCO', 'MCD', 'MC', 'MI', 'MD'].includes(player?.position),
-                              'pos-attack': ['DC', 'ED', 'EI'].includes(player?.position)
+                              'pos-defence': ['LD', 'DFC', 'LI'].includes(
+                                player?.position
+                              ),
+                              'pos-midfield': [
+                                'MCO',
+                                'MCD',
+                                'MC',
+                                'MI',
+                                'MD'
+                              ].includes(player?.position),
+                              'pos-attack': ['DC', 'ED', 'EI'].includes(
+                                player?.position
+                              )
                             }"
                           >
                             {{ player?.position }}
@@ -114,7 +135,9 @@
                             class="rating-badge-compact"
                             [ngClass]="{
                               'rating-low': player?.valoration < 70,
-                              'rating-medium': player?.valoration >= 70 && player?.valoration < 85,
+                              'rating-medium':
+                                player?.valoration >= 70 &&
+                                player?.valoration < 85,
                               'rating-high': player?.valoration >= 85
                             }"
                           >
@@ -122,7 +145,10 @@
                           </span>
                         </div>
 
-                        <div *ngIf="player?.isTransfer" class="transfer-badge-compact">
+                        <div
+                          *ngIf="player?.isTransfer"
+                          class="transfer-badge-compact"
+                        >
                           <span class="badge-transfer">En transferencias</span>
                         </div>
                       </div>
@@ -137,12 +163,24 @@
                         <li
                           class="fixture-match"
                           *ngFor="
-                            let match of (rounds || [])
-                              | paginate: { id: 'my-team-rounds', itemsPerPage: roundsPerPage, currentPage: p }
+                            let match of rounds || []
+                              | paginate
+                                : {
+                                    id: 'my-team-rounds',
+                                    itemsPerPage: roundsPerPage,
+                                    currentPage: p
+                                  }
                           "
                         >
                           <div class="fixture-header">
-                            <span class="fixture-tournament">{{ match.tournamentName }} - Fecha {{ match.round }}</span>
+                            <span class="fixture-tournament"
+                              >{{ match.tournamentName }} -
+                              {{
+                                match.label
+                                  ? match.label
+                                  : 'Fecha ' + match.round
+                              }}</span
+                            >
                             <button
                               *ngIf="match.state == 0"
                               class="btn-action btn-edit fixture-report"
@@ -157,23 +195,37 @@
                           <div class="fixture-content">
                             <div class="fixture-team fixture-team--home">
                               <img
-                                [src]="match?.homeLogoUrl || '../../../assets/images/player-default.png'"
+                                [src]="
+                                  match?.homeLogoUrl ||
+                                  '../../../assets/images/player-default.png'
+                                "
                                 alt="Equipo local"
                                 loading="lazy"
                               />
-                              <span class="fixture-team-name">{{ match.homeTeamName }}</span>
+                              <span class="fixture-team-name">{{
+                                match.homeTeamName
+                              }}</span>
                             </div>
 
                             <div class="fixture-score" aria-label="Marcador">
-                              <span class="fixture-score-value">{{ match.homeGoals ?? '-' }}</span>
+                              <span class="fixture-score-value">{{
+                                match.homeGoals ?? '-'
+                              }}</span>
                               <span class="fixture-score-sep">VS</span>
-                              <span class="fixture-score-value">{{ match.awayGoals ?? '-' }}</span>
+                              <span class="fixture-score-value">{{
+                                match.awayGoals ?? '-'
+                              }}</span>
                             </div>
 
                             <div class="fixture-team fixture-team--away">
-                              <span class="fixture-team-name">{{ match.awayTeamName }}</span>
+                              <span class="fixture-team-name">{{
+                                match.awayTeamName
+                              }}</span>
                               <img
-                                [src]="match?.awayLogoUrl || '../../../assets/images/player-default.png'"
+                                [src]="
+                                  match?.awayLogoUrl ||
+                                  '../../../assets/images/player-default.png'
+                                "
                                 alt="Equipo visitante"
                                 loading="lazy"
                               />
@@ -183,7 +235,10 @@
                       </ul>
                     </div>
 
-                    <div class="pagination-wrapper" *ngIf="(rounds?.length || 0) > roundsPerPage">
+                    <div
+                      class="pagination-wrapper"
+                      *ngIf="(rounds?.length || 0) > roundsPerPage"
+                    >
                       <pagination-controls
                         id="my-team-rounds"
                         (pageChange)="p = $event"

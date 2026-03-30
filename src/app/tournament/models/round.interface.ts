@@ -19,6 +19,14 @@ export interface Match {
   awayLogoUrl?: string;
   status?: string;
   date?: string;
+
+  /**
+   * Campos auxiliares (solo frontend) para llaves ida/vuelta.
+   * Cuando existen, este `Match` representa el "global" y `legs` contiene los partidos.
+   */
+  legs?: Match[];
+  isTwoLegged?: boolean;
+  isPlaceholder?: boolean;
 }
 
 export interface Round {

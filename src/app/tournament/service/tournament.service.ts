@@ -9,7 +9,7 @@ import {
   CreateTournamentRequest,
   CreateTournamentResponse 
 } from '../models/tournament.interface';
-import { Match, RoundsResponse } from '../models/round.interface';
+import { RoundsResponse } from '../models/round.interface';
 import { RankingTablesResponse } from '../models/ranking.interface';
 
 @Injectable({
@@ -66,9 +66,9 @@ export class TournamentService {
    * Cruces (eliminación directa) para torneos con formato mixto (format=2).
    * API: GET /tournament/:id/rounds/ko
    */
-  getRoundsKo(id: number): Observable<{ data: Match[] }> {
+  getRoundsKo(id: number): Observable<{ data: any[] }> {
     const url = `${this.API_URL}${this.ROUNDS_KO_ENDPOINT}`.replace('{id}', id.toString());
-    return this.http.get<{ data: Match[] }>(url);
+    return this.http.get<{ data: any[] }>(url);
   }
 
   getRankingLeague(id: number): Observable<RankingTablesResponse> {
