@@ -39,6 +39,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   isLoadingCards = false;
   private hasLoadedHighlights = false;
   private hasLoadedCards = false;
+  isLoadingKnockoutStages = false;
+  private hasLoadedKnockoutStages = false;
   // Fase de grupos: cache por matchday (page) y paginado independiente por grupo
   private groupStageCache = new Map<number, RoundsResponse>();
   private groupStageLoadingPages = new Set<number>();
@@ -49,8 +51,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private readonly INITIAL_PAGE = 1;
   private readonly MAX_VISIBLE_PAGES = 5;
-  private readonly TAB_INDEX_HIGHLIGHTS = 1;
-  private readonly TAB_INDEX_CARDS = 2;
 
   /**
    * Configurable desde TS:
@@ -91,8 +91,11 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   }
 
   onTabSelectedIndexChange(index: number): void {
-    if (index === this.TAB_INDEX_HIGHLIGHTS) this._loadHighlights();
-    if (index === this.TAB_INDEX_CARDS) this._loadCards();
+    // Formato 2: mostramos "Tabla" y "Cruces" como tabs separados
+    if (this.isGroupStage && index === 1) this._loadKnockoutStages();
+
+    if (index === this.highlightsTabIndex) this._loadHighlights();
+    if (index === this.cardsTabIndex) this._loadCards();
   }
 
   onPageChange(page: number): void {
@@ -138,6 +141,18 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   get isGroupStage(): boolean {
     return this.tournament?.format?.id === 2;
+  }
+
+  get showKnockoutTabAlongsideTable(): boolean {
+    return this.tournament?.format?.id === 2;
+  }
+
+  get highlightsTabIndex(): number {
+    return this.showKnockoutTabAlongsideTable ? 2 : 1;
+  }
+
+  get cardsTabIndex(): number {
+    return this.showKnockoutTabAlongsideTable ? 3 : 2;
   }
 
   getGroupStageCurrentPage(groupNumber: number | null): number {
@@ -249,6 +264,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     this.hasLoadedCards = false;
     this.isLoadingHighlights = false;
     this.isLoadingCards = false;
+    this.isLoadingKnockoutStages = false;
+    this.hasLoadedKnockoutStages = false;
   
     const loadSub = this.tournamentService
       .getTournamentByID(this.tournamentId)
@@ -335,6 +352,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (results) => {
           this.knockoutStages = [];
+          this.hasLoadedKnockoutStages = false;
           this.groupStageCache.clear();
           this.groupStageLoadingPages.clear();
           this.groupStageTotalPages = 0;
@@ -345,12 +363,15 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
             this.pagination = results.rounds.response.data?.pagination;
             if (this._isKnockoutFormat(results.tournament.data)) {
               this.knockoutStages = this._buildKnockoutStages([results.rounds.response]);
+              this.hasLoadedKnockoutStages = (this.knockoutStages?.length ?? 0) > 0;
             }
             if (results.tournament.data?.format?.id === 2) {
               const page = results.rounds.response.data?.pagination?.page ?? this.INITIAL_PAGE;
               const total = results.rounds.response.data?.pagination?.totalPages ?? 0;
               this.groupStageTotalPages = Number.isFinite(total) ? total : 0;
-              this.groupStageCache.set(page, results.rounds.response);
+              if (this._isGroupStageRoundsResponse(results.rounds.response)) {
+                this.groupStageCache.set(page, results.rounds.response);
+              }
 
               // Inicializamos cada grupo en la misma "fecha" actual
               const groupNumbers = (results.rounds.response.data?.groups || [])
@@ -365,6 +386,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
             // para no romper nada que dependa de `rounds`, dejamos el primer page como referencia
             this.rounds = results.rounds.pages?.[0]?.data?.groups || [];
             this.knockoutStages = this._buildKnockoutStages(results.rounds.pages || []);
+            this.hasLoadedKnockoutStages = (this.knockoutStages?.length ?? 0) > 0;
           }
 
           this.tournament = results.tournament.data;
@@ -379,6 +401,35 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       });
   
     this.subscriptions.add(loadSub);
+  }
+
+  private _loadKnockoutStages(): void {
+    if (!this.tournamentId) return;
+    if (!this.isGroupStage) return;
+    if (this.hasLoadedKnockoutStages || this.isLoadingKnockoutStages) return;
+
+    this.isLoadingKnockoutStages = true;
+
+    const sub = this.tournamentService
+      .getRoundsKo(this.tournamentId)
+      .pipe(
+        map((resp) => this._koMatchesToRoundsPages(resp?.data ?? [])),
+        catchError((error) => {
+          this.handleError('Error al cargar los cruces', error);
+          return of([] as RoundsResponse[]);
+        }),
+        finalize(() => {
+          this.isLoadingKnockoutStages = false;
+        }),
+      )
+      .subscribe({
+        next: (knockoutPages) => {
+          this.knockoutStages = this._buildKnockoutStages(knockoutPages || []);
+          this.hasLoadedKnockoutStages = true;
+        },
+      });
+
+    this.subscriptions.add(sub);
   }
 
   private _loadHighlights(): void {
@@ -431,6 +482,38 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       });
 
     this.subscriptions.add(sub);
+  }
+
+  private _koMatchesToRoundsPages(matches: Match[]): RoundsResponse[] {
+    const safeMatches = (matches || []).filter(Boolean) as Match[];
+    if (!safeMatches.length) return [];
+
+    // Agrupamos por `round` (viene en el payload KO). Cada "round" se considera una etapa del bracket.
+    const byRound = new Map<number, Match[]>();
+    for (const m of safeMatches) {
+      const key = typeof m?.round === 'number' && Number.isFinite(m.round) ? m.round : -1;
+      const list = byRound.get(key) ?? [];
+      list.push(m);
+      byRound.set(key, list);
+    }
+
+    const roundKeys = Array.from(byRound.keys()).sort((a, b) => a - b);
+
+    return roundKeys.map((roundKey) => {
+      const stageMatches = byRound.get(roundKey) ?? [];
+      return {
+        data: {
+          groups: [
+            {
+              groupNumber: null,
+              rounds: stageMatches,
+              tournament: null,
+            },
+          ],
+          pagination: null,
+        },
+      } as RoundsResponse;
+    });
   }
 
   private loadRounds(page: number): void {
@@ -529,6 +612,39 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     return format.id === 1;
   }
 
+  private _isKnockoutRoundsResponse(res?: RoundsResponse | null): boolean {
+    if (!res) return false;
+    const groups = res?.data?.groups || [];
+    const matches = this._flattenMatchesFromRoundsResponse(res);
+    if (!matches.length) return false;
+
+    // Preferimos `stage` si viene desde backend:
+    // - GROUP => fase de grupos
+    // - cualquier otro valor => eliminación directa
+    const matchesWithStage = matches.filter((m) => m?.stage != null && String(m.stage).trim() !== '');
+    if (matchesWithStage.length) {
+      return matchesWithStage.some((m) => String(m.stage).toUpperCase() !== 'GROUP');
+    }
+
+    const groupsAllNull = groups.length ? groups.every((g) => g?.groupNumber == null) : true;
+    const matchesAllNull = matches.every((m) => m?.groupNumber == null);
+    return groupsAllNull && matchesAllNull;
+  }
+
+  private _isGroupStageRoundsResponse(res?: RoundsResponse | null): boolean {
+    if (!res) return false;
+    const groups = res?.data?.groups || [];
+    const matches = this._flattenMatchesFromRoundsResponse(res);
+
+    const matchesWithStage = matches.filter((m) => m?.stage != null && String(m.stage).trim() !== '');
+    if (matchesWithStage.length) {
+      return matchesWithStage.some((m) => String(m.stage).toUpperCase() === 'GROUP');
+    }
+
+    if (groups.some((g) => g?.groupNumber != null)) return true;
+    return matches.some((m) => m?.groupNumber != null);
+  }
+
   private _ensureGroupStagePageLoaded(page: number): void {
     if (this.groupStageCache.has(page) || this.groupStageLoadingPages.has(page)) return;
     this.groupStageLoadingPages.add(page);
@@ -547,6 +663,20 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (!res) return;
+          // En formato mixto, las últimas páginas pueden ser eliminación directa.
+          // No las cacheamos como "fase de grupos" para no mostrar cruces en el panel de grupos.
+          if (this._isKnockoutRoundsResponse(res)) {
+            this.groupStageTotalPages = Math.max(0, page - 1);
+            // Si algún grupo quedó apuntando a una página inválida, lo clampamos.
+            for (const key of Object.keys(this.groupStagePageByGroup)) {
+              const current = this.groupStagePageByGroup[key];
+              if (typeof current === 'number' && current > this.groupStageTotalPages) {
+                this.groupStagePageByGroup[key] = this.groupStageTotalPages || this.INITIAL_PAGE;
+              }
+            }
+            return;
+          }
+
           this.groupStageCache.set(page, res);
           const total = res?.data?.pagination?.totalPages ?? this.groupStageTotalPages;
           if (typeof total === 'number' && total > 0) this.groupStageTotalPages = total;

@@ -2,6 +2,7 @@ export interface Match {
   id?: number;
   idRound?: number;
   tournamentId?: number;
+  stage?: string | null;
   matchday?: number;
   groupNumber?: number | null;
   round?: number;

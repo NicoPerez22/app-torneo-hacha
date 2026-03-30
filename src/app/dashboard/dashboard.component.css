@@ -137,6 +137,8 @@
 .dashboard .main {
   flex: 1 1 auto;
   min-width: 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Lexend Deca', system-ui, sans-serif;
 }
 
 .dashboard .main-topbar {
@@ -304,5 +306,208 @@
 
   .dashboard .sidebar.open {
     transform: translateX(0);
+  }
+}
+
+/* ===========================
+   Dashboard content theme
+   (mismo look que dashboard-reports)
+   Scopeado para no afectar fuera de /dashboard
+   =========================== */
+.dashboard .main .tournaments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  margin-top: 0.5rem;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.dashboard .main .header-content {
+  flex: 1;
+}
+
+.dashboard .main .tournaments-title {
+  font-family: 'Lexend Deca', system-ui, sans-serif;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.4rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard .main .tournaments-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.dashboard .main .admin-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 1rem;
+}
+
+.dashboard .main .admin-warning i {
+  color: rgba(255, 193, 7, 0.95);
+  font-size: 1.2rem;
+  margin-top: 2px;
+}
+
+.dashboard .main .admin-warning-title {
+  font-weight: 700;
+}
+
+.dashboard .main .admin-warning-sub {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.92rem;
+  margin-top: 0.15rem;
+}
+
+.dashboard .main .filters-card {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard .main .filters-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.dashboard .main .filters-row-4 {
+  grid-template-columns: 1fr 1fr 1.2fr auto;
+}
+
+.dashboard .main .filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dashboard .main .filter-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.dashboard .main .input-dark,
+.dashboard .main .input-dark.form-control,
+.dashboard .main .input-dark.form-select {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 0.6rem 0.75rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.dashboard .main select.input-dark option {
+  background: #1a2332;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.dashboard .main .input-dark:focus {
+  outline: none;
+  border-color: rgba(29, 101, 253, 0.65);
+  box-shadow: 0 0 0 0.2rem rgba(29, 101, 253, 0.15);
+}
+
+.dashboard .main .filter-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dashboard .main .btn-filter {
+  background: linear-gradient(
+    90deg,
+    rgba(25, 38, 133, 1) 0%,
+    rgba(29, 101, 253, 1) 100%
+  );
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.15rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(25, 38, 133, 0.3);
+}
+
+.dashboard .main .btn-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(25, 38, 133, 0.5);
+}
+
+.dashboard .main .match-card {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(22, 33, 44, 0.95) 0%,
+    rgba(30, 42, 56, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.dashboard .main .card-custom {
+  background: linear-gradient(
+    135deg,
+    rgba(22, 33, 44, 0.95) 0%,
+    rgba(30, 42, 56, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.dashboard .main .loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem 0;
+}
+
+.dashboard .main .reports-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.dashboard .main .report-item {
+  min-width: 0;
+}
+
+@media (max-width: 992px) {
+  .dashboard .main .reports-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard .main .filters-row-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard .main .filter-actions {
+    justify-content: stretch;
+  }
+
+  .dashboard .main .btn-filter {
+    width: 100%;
+    justify-content: center;
   }
 }

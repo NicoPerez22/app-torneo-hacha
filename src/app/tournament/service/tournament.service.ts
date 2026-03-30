@@ -9,7 +9,7 @@ import {
   CreateTournamentRequest,
   CreateTournamentResponse 
 } from '../models/tournament.interface';
-import { RoundsResponse } from '../models/round.interface';
+import { Match, RoundsResponse } from '../models/round.interface';
 import { RankingTablesResponse } from '../models/ranking.interface';
 
 @Injectable({
@@ -24,6 +24,7 @@ export class TournamentService {
   private readonly HIGHLIGHTS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/highlights`;
   private readonly CARDS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/cards`;
   private readonly ROUNDS_PAGINATION_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/{page}`;
+  private readonly ROUNDS_KO_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/rounds/ko`;
   private readonly DELETE_TOURNAMENT = `${this.TOURNAMENT_ENDPOINT}/delete/{id}`;
   private readonly REPORT_MATCH = `${this.TOURNAMENT_ENDPOINT}/report`;
   private readonly GET_TEAMS_ID_ROUND = `${this.TOURNAMENT_ENDPOINT}/{roundId}/teams`;
@@ -59,6 +60,15 @@ export class TournamentService {
       .replace('{id}', id.toString())
       .replace('{page}', page.toString());
     return this.http.get<RoundsResponse>(url);
+  }
+
+  /**
+   * Cruces (eliminación directa) para torneos con formato mixto (format=2).
+   * API: GET /tournament/:id/rounds/ko
+   */
+  getRoundsKo(id: number): Observable<{ data: Match[] }> {
+    const url = `${this.API_URL}${this.ROUNDS_KO_ENDPOINT}`.replace('{id}', id.toString());
+    return this.http.get<{ data: Match[] }>(url);
   }
 
   getRankingLeague(id: number): Observable<RankingTablesResponse> {
