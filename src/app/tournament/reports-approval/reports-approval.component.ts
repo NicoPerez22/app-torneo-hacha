@@ -104,7 +104,10 @@ export class ReportsApprovalComponent {
         this.selectedDetail = this._normalizeDetail({}, item);
         this.eventsPage = 1;
         this.openPreviewModal();
-        this.toastr.warning('No se pudo cargar el detalle del reporte', 'Atención');
+        this.toastr.warning(
+          'No se pudo cargar el detalle del reporte',
+          'Atención',
+        );
       },
     });
   }
@@ -120,14 +123,14 @@ export class ReportsApprovalComponent {
     this.tournamentService
       .reviewMatchReportDraft(draftId, { adminId, action: 'approve' })
       .subscribe({
-      next: () => {
-        this.toastr.success('Reporte aprobado correctamente', 'Éxito');
-        this.loadDrafts();
-      },
-      error: () => {
-        this.toastr.error('No se pudo aprobar el reporte', 'Error');
-      },
-    });
+        next: () => {
+          this.toastr.success('Reporte aprobado correctamente', 'Éxito');
+          this.loadDrafts();
+        },
+        error: () => {
+          this.toastr.error('No se pudo aprobar el reporte', 'Error');
+        },
+      });
   }
 
   onReject(item: MatchReportCardVM) {
@@ -141,14 +144,41 @@ export class ReportsApprovalComponent {
     this.tournamentService
       .reviewMatchReportDraft(draftId, { adminId, action: 'reject' })
       .subscribe({
-      next: () => {
-        this.toastr.success('Reporte rechazado correctamente', 'Éxito');
-        this.loadDrafts();
-      },
-      error: () => {
-        this.toastr.error('No se pudo rechazar el reporte', 'Error');
-      },
-    });
+        next: () => {
+          this.toastr.success('Reporte rechazado correctamente', 'Éxito');
+          this.loadDrafts();
+        },
+        error: () => {
+          this.toastr.error('No se pudo rechazar el reporte', 'Error');
+        },
+      });
+  }
+
+  onNullMatch(item: MatchReportCardVM) {
+    if (!this.isAdmin) return;
+    const user = this.authService.getUser();
+    const adminId = Number(user?.id);
+    if (!Number.isFinite(adminId)) return;
+    const draftId = Number(item?.reportId);
+    if (!Number.isFinite(draftId)) return;
+
+    this.tournamentService
+      .reviewMatchReportDraft(draftId, { adminId, action: 'null_match' })
+      .subscribe({
+        next: () => {
+          this.toastr.success(
+            'Reporte marcado como no jugado correctamente',
+            'Éxito',
+          );
+          this.loadDrafts();
+        },
+        error: () => {
+          this.toastr.error(
+            'No se pudo marcar el reporte como no jugado',
+            'Error',
+          );
+        },
+      });
   }
 
   closePreview() {
@@ -182,7 +212,9 @@ export class ReportsApprovalComponent {
     this.tournamentService
       .listMatchReportDrafts({
         status: this.statusFilter || null,
-        tournamentId: Number.isFinite(tournamentId as any) ? (tournamentId as number) : null,
+        tournamentId: Number.isFinite(tournamentId as any)
+          ? (tournamentId as number)
+          : null,
       })
       .subscribe({
         next: (resp) => {
@@ -190,10 +222,10 @@ export class ReportsApprovalComponent {
           const list = Array.isArray(raw)
             ? raw
             : Array.isArray(raw?.reports)
-              ? raw.reports
-              : Array.isArray(raw?.items)
-                ? raw.items
-                : [];
+            ? raw.reports
+            : Array.isArray(raw?.items)
+            ? raw.items
+            : [];
 
           this.reports = list.map((r: any) => this._normalizeCard(r));
           this.totalItems = this.reports.length;
@@ -203,7 +235,10 @@ export class ReportsApprovalComponent {
           this.reports = [];
           this.totalItems = 0;
           this.loading = false;
-          this.toastr.error('No se pudieron cargar los reportes pendientes', 'Error');
+          this.toastr.error(
+            'No se pudieron cargar los reportes pendientes',
+            'Error',
+          );
         },
       });
   }
@@ -276,12 +311,15 @@ export class ReportsApprovalComponent {
     };
   }
 
-  private _normalizeDetail(raw: any, fallback: MatchReportCardVM): ReportDetailVM {
+  private _normalizeDetail(
+    raw: any,
+    fallback: MatchReportCardVM,
+  ): ReportDetailVM {
     const events = Array.isArray(raw?.events)
       ? raw.events
       : Array.isArray(raw?.data?.events)
-        ? raw.data.events
-        : [];
+      ? raw.data.events
+      : [];
 
     return {
       id: raw?.id ?? fallback?.reportId ?? fallback?.matchId,
@@ -310,4 +348,3 @@ export class ReportsApprovalComponent {
     this.loadDrafts();
   }
 }
-

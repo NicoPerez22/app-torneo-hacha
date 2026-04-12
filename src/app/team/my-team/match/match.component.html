@@ -21,12 +21,20 @@
       <div class="match-card-top">
         <div class="match-meta">
           <div class="meta-title">
-            <span class="meta-tournament" *ngIf="item.tournamentName">{{ item.tournamentName }}</span>
-            <span class="meta-sep" *ngIf="item.tournamentName && item.roundLabel">·</span>
-            <span class="meta-round" *ngIf="item.roundLabel">{{ item.roundLabel }}</span>
+            <span class="meta-tournament" *ngIf="item.tournamentName">{{
+              item.tournamentName
+            }}</span>
+            <span
+              class="meta-sep"
+              *ngIf="item.tournamentName && item.roundLabel"
+              >·</span
+            >
+            <span class="meta-round" *ngIf="item.roundLabel">{{
+              item.roundLabel
+            }}</span>
           </div>
           <div class="meta-sub" *ngIf="item.createdAt">
-            {{ item.createdAt | date: 'medium' }}
+            {{ item.createdAt | date : 'medium' }}
           </div>
         </div>
 
@@ -35,7 +43,8 @@
           [ngClass]="{
             pending: (item.status || 'pending') === 'pending',
             approved: (item.status || 'pending') === 'approved',
-            rejected: (item.status || 'pending') === 'rejected'
+            rejected: (item.status || 'pending') === 'rejected',
+            null_match: (item.status || 'pending') === 'null_match'
           }"
         >
           {{ getStatusLabel(item.status) }}
@@ -97,6 +106,17 @@
             aria-label="Rechazar reporte"
           >
             <i class="fa fa-times"></i>
+          </button>
+
+          <button
+            *ngIf="isAdmin"
+            type="button"
+            class="btn-action btn-null-match"
+            (click)="nullMatch.emit(item)"
+            [disabled]="(item.status || 'pending') !== 'pending'"
+            aria-label="Reporte no jugado"
+          >
+            <i class="fa fa-ban"></i>
           </button>
         </div>
       </div>

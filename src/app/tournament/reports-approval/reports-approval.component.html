@@ -25,7 +25,11 @@
     <div class="filters-row">
       <div class="filter-item">
         <label class="filter-label">Estado</label>
-        <select class="form-select input-dark" [(ngModel)]="statusFilter" (change)="onApplyFilters()">
+        <select
+          class="form-select input-dark"
+          [(ngModel)]="statusFilter"
+          (change)="onApplyFilters()"
+        >
           <option value="pending">Pendientes</option>
           <option value="approved">Aprobados</option>
           <option value="rejected">Rechazados</option>
@@ -55,12 +59,17 @@
   <app-match
     [title]="'Pendientes de aprobación'"
     [subtitle]="'Revisá el resultado y confirmá la validez del reporte.'"
-    [items]="reports | paginate: { id: paginationId, itemsPerPage: perPage, currentPage: page }"
+    [items]="
+      reports
+        | paginate
+          : { id: paginationId, itemsPerPage: perPage, currentPage: page }
+    "
     [isAdmin]="isAdmin"
     [loading]="loading"
     (view)="onView($event)"
     (approve)="onApprove($event)"
     (reject)="onReject($event)"
+    (nullMatch)="onNullMatch($event)"
   ></app-match>
 
   <div class="pagination-wrapper" *ngIf="totalItems > perPage">
@@ -77,36 +86,67 @@
       <div class="match-card match-summary">
         <div class="preview-meta mb-3">
           <div class="preview-meta-title">
-            <span *ngIf="selectedDetail?.tournamentName">{{ selectedDetail?.tournamentName }}</span>
-            <span *ngIf="selectedDetail?.tournamentName && selectedDetail?.roundLabel">·</span>
-            <span *ngIf="selectedDetail?.roundLabel">{{ selectedDetail?.roundLabel }}</span>
+            <span *ngIf="selectedDetail?.tournamentName">{{
+              selectedDetail?.tournamentName
+            }}</span>
+            <span
+              *ngIf="
+                selectedDetail?.tournamentName && selectedDetail?.roundLabel
+              "
+              >·</span
+            >
+            <span *ngIf="selectedDetail?.roundLabel">{{
+              selectedDetail?.roundLabel
+            }}</span>
           </div>
           <span class="status-badge" [ngClass]="selectedDetail?.status">
             {{
               selectedDetail?.status === 'approved'
                 ? 'Aprobado'
                 : selectedDetail?.status === 'rejected'
-                  ? 'Rechazado'
-                  : 'Pendiente'
+                ? 'Rechazado'
+                : 'Pendiente'
             }}
           </span>
         </div>
 
         <div class="preview-teams">
           <div class="team-block team-home">
-            <img class="team-logo" [src]="selectedDetail?.homeLogoUrl || 'assets/images/player-default.png'" alt="Home" />
-            <span class="team-text">{{ selectedDetail?.homeName || selected?.homeName }}</span>
+            <img
+              class="team-logo"
+              [src]="
+                selectedDetail?.homeLogoUrl ||
+                'assets/images/player-default.png'
+              "
+              alt="Home"
+            />
+            <span class="team-text">{{
+              selectedDetail?.homeName || selected?.homeName
+            }}</span>
           </div>
 
           <div class="score-block">
-            <span class="score-pill">{{ selectedDetail?.homeGoals ?? selected?.homeGoals ?? '-' }}</span>
+            <span class="score-pill">{{
+              selectedDetail?.homeGoals ?? selected?.homeGoals ?? '-'
+            }}</span>
             <span class="score-sep">VS</span>
-            <span class="score-pill">{{ selectedDetail?.awayGoals ?? selected?.awayGoals ?? '-' }}</span>
+            <span class="score-pill">{{
+              selectedDetail?.awayGoals ?? selected?.awayGoals ?? '-'
+            }}</span>
           </div>
 
           <div class="team-block team-away">
-            <span class="team-text">{{ selectedDetail?.awayName || selected?.awayName }}</span>
-            <img class="team-logo" [src]="selectedDetail?.awayLogoUrl || 'assets/images/player-default.png'" alt="Away" />
+            <span class="team-text">{{
+              selectedDetail?.awayName || selected?.awayName
+            }}</span>
+            <img
+              class="team-logo"
+              [src]="
+                selectedDetail?.awayLogoUrl ||
+                'assets/images/player-default.png'
+              "
+              alt="Away"
+            />
           </div>
         </div>
       </div>
@@ -120,29 +160,53 @@
       <div class="match-card" *ngIf="!previewLoading">
         <div class="events-header">
           <h6 class="section-title mb-0">Eventos</h6>
-          <span class="section-meta">{{ selectedDetail?.events?.length || 0 }} evento(s)</span>
+          <span class="section-meta"
+            >{{ selectedDetail?.events?.length || 0 }} evento(s)</span
+          >
         </div>
 
-        <div class="events-empty" *ngIf="(selectedDetail?.events?.length || 0) === 0">
+        <div
+          class="events-empty"
+          *ngIf="(selectedDetail?.events?.length || 0) === 0"
+        >
           No hay eventos para mostrar.
         </div>
 
-        <div class="events-list" *ngIf="(selectedDetail?.events?.length || 0) > 0">
+        <div
+          class="events-list"
+          *ngIf="(selectedDetail?.events?.length || 0) > 0"
+        >
           <div
             class="event-row"
             *ngFor="
-              let ev of (selectedDetail?.events || [])
-                | paginate: { id: eventsPaginationId, itemsPerPage: eventsPerPage, currentPage: eventsPage }
+              let ev of selectedDetail?.events || []
+                | paginate
+                  : {
+                      id: eventsPaginationId,
+                      itemsPerPage: eventsPerPage,
+                      currentPage: eventsPage
+                    }
             "
           >
-            <span class="event-minute">{{ ev?.minute ?? ev?.min ?? '—' }}'</span>
-            <span class="event-type">{{ ev?.eventType ?? ev?.type ?? 'Evento' }}</span>
-            <span class="event-player">{{ ev?.playerName ?? ev?.player?.name ?? ev?.playerId ?? '—' }}</span>
-            <span class="event-team">{{ ev?.teamName ?? ev?.team?.name ?? ev?.teamId ?? '—' }}</span>
+            <span class="event-minute"
+              >{{ ev?.minute ?? ev?.min ?? '—' }}'</span
+            >
+            <span class="event-type">{{
+              ev?.eventType ?? ev?.type ?? 'Evento'
+            }}</span>
+            <span class="event-player">{{
+              ev?.playerName ?? ev?.player?.name ?? ev?.playerId ?? '—'
+            }}</span>
+            <span class="event-team">{{
+              ev?.teamName ?? ev?.team?.name ?? ev?.teamId ?? '—'
+            }}</span>
           </div>
         </div>
 
-        <div class="events-pagination pagination-wrapper" *ngIf="(selectedDetail?.events?.length || 0) > eventsPerPage">
+        <div
+          class="events-pagination pagination-wrapper"
+          *ngIf="(selectedDetail?.events?.length || 0) > eventsPerPage"
+        >
           <pagination-controls
             [id]="eventsPaginationId"
             (pageChange)="onEventsPageChange($event)"
@@ -161,4 +225,3 @@
     </div>
   </ng-template>
 </div>
-

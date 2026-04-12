@@ -24,7 +24,7 @@ export type MatchReportCardVM = {
 @Component({
   selector: 'app-match',
   templateUrl: './match.component.html',
-  styleUrls: ['./match.component.css']
+  styleUrls: ['./match.component.css'],
 })
 export class MatchComponent {
   @Input() title?: string;
@@ -36,6 +36,7 @@ export class MatchComponent {
   @Output() view = new EventEmitter<MatchReportCardVM>();
   @Output() approve = new EventEmitter<MatchReportCardVM>();
   @Output() reject = new EventEmitter<MatchReportCardVM>();
+  @Output() nullMatch = new EventEmitter<MatchReportCardVM>();
 
   readonly fallbackLogoUrl = 'assets/images/player-default.png';
 
@@ -46,6 +47,7 @@ export class MatchComponent {
     const s = String(status ?? 'pending').toLowerCase();
     if (s === 'approved') return 'Aprobado';
     if (s === 'rejected') return 'Rechazado';
+    if (s === 'null_match') return 'No jugado';
     return 'Pendiente';
   }
 }

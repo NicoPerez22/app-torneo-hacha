@@ -2,7 +2,10 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/service/auth.service';
-import { MatchReportCardVM, ReportDetailVM } from 'src/app/models/match-report.vm';
+import {
+  MatchReportCardVM,
+  ReportDetailVM,
+} from 'src/app/models/match-report.vm';
 import { MatchReportDraftsService } from 'src/app/service/match-report-drafts.service';
 
 @Component({
@@ -65,11 +68,15 @@ export class DashboardReportsComponent implements OnInit {
   }
 
   get filteredReports(): MatchReportCardVM[] {
-    const term = String(this.q || '').trim().toLowerCase();
+    const term = String(this.q || '')
+      .trim()
+      .toLowerCase();
     if (!term) return this.reports;
     return this.reports.filter((r) => {
       const a = `${r?.homeName ?? ''} ${r?.awayName ?? ''}`.toLowerCase();
-      const t = `${r?.tournamentName ?? ''} ${r?.roundLabel ?? ''}`.toLowerCase();
+      const t = `${r?.tournamentName ?? ''} ${
+        r?.roundLabel ?? ''
+      }`.toLowerCase();
       return a.includes(term) || t.includes(term);
     });
   }
@@ -97,7 +104,10 @@ export class DashboardReportsComponent implements OnInit {
         this.previewLoading = false;
         this.selectedDetail = this.matchReportDrafts.normalizeDetail({}, item);
         this.openPreviewModal();
-        this.toastr.warning('No se pudo cargar el detalle del reporte', 'Atención');
+        this.toastr.warning(
+          'No se pudo cargar el detalle del reporte',
+          'Atención',
+        );
       },
     });
   }
@@ -109,15 +119,17 @@ export class DashboardReportsComponent implements OnInit {
     const draftId = Number(item?.reportId);
     if (!Number.isFinite(adminId) || !Number.isFinite(draftId)) return;
 
-    this.matchReportDrafts.review(draftId, { adminId, action: 'approve' }).subscribe({
-      next: () => {
-        this.toastr.success('Reporte aprobado correctamente', 'Éxito');
-        this.load();
-      },
-      error: () => {
-        this.toastr.error('No se pudo aprobar el reporte', 'Error');
-      },
-    });
+    this.matchReportDrafts
+      .review(draftId, { adminId, action: 'approve' })
+      .subscribe({
+        next: () => {
+          this.toastr.success('Reporte aprobado correctamente', 'Éxito');
+          this.load();
+        },
+        error: () => {
+          this.toastr.error('No se pudo aprobar el reporte', 'Error');
+        },
+      });
   }
 
   onReject(item: MatchReportCardVM) {
@@ -127,15 +139,42 @@ export class DashboardReportsComponent implements OnInit {
     const draftId = Number(item?.reportId);
     if (!Number.isFinite(adminId) || !Number.isFinite(draftId)) return;
 
-    this.matchReportDrafts.review(draftId, { adminId, action: 'reject' }).subscribe({
-      next: () => {
-        this.toastr.success('Reporte rechazado correctamente', 'Éxito');
-        this.load();
-      },
-      error: () => {
-        this.toastr.error('No se pudo rechazar el reporte', 'Error');
-      },
-    });
+    this.matchReportDrafts
+      .review(draftId, { adminId, action: 'reject' })
+      .subscribe({
+        next: () => {
+          this.toastr.success('Reporte rechazado correctamente', 'Éxito');
+          this.load();
+        },
+        error: () => {
+          this.toastr.error('No se pudo rechazar el reporte', 'Error');
+        },
+      });
+  }
+  onNullMatch(item: MatchReportCardVM) {
+    if (!this.isAdmin) return;
+    const user = this.authService.getUser();
+    const adminId = Number(user?.id);
+    const draftId = Number(item?.reportId);
+    if (!Number.isFinite(adminId) || !Number.isFinite(draftId)) return;
+
+    this.matchReportDrafts
+      .review(draftId, { adminId, action: 'null_match' })
+      .subscribe({
+        next: () => {
+          this.toastr.success(
+            'Reporte marcado como no jugado correctamente',
+            'Éxito',
+          );
+          this.load();
+        },
+        error: () => {
+          this.toastr.error(
+            'No se pudo marcar el reporte como no jugado',
+            'Error',
+          );
+        },
+      });
   }
 
   closePreview() {
@@ -195,4 +234,3 @@ export class DashboardReportsComponent implements OnInit {
     return parts.length ? `Reporte · ${parts.join(' · ')}` : 'Reporte';
   }
 }
-

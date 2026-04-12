@@ -293,7 +293,8 @@ select.input-dark option {
   padding: 0.55rem 0.8rem;
   font-weight: 800;
   cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  transition: transform 120ms ease, background 120ms ease,
+    border-color 120ms ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -319,6 +320,11 @@ select.input-dark option {
   background: rgba(255, 107, 107, 0.1);
 }
 
+.btn-null-match {
+  border-color: rgba(156, 73, 211, 0.35);
+  background: rgba(156, 73, 211, 0.1);
+}
+
 .report-ids {
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.85rem;
@@ -334,8 +340,8 @@ select.input-dark option {
 }
 
 .mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
   color: rgba(255, 255, 255, 0.82);
 }
 
@@ -482,4 +488,3 @@ select.input-dark option {
     display: none;
   }
 }
-

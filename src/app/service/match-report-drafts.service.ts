@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { MatchReportCardVM, ReportDetailVM } from 'src/app/models/match-report.vm';
+import {
+  MatchReportCardVM,
+  ReportDetailVM,
+} from 'src/app/models/match-report.vm';
 import { TournamentService } from 'src/app/tournament/service/tournament.service';
 
 @Injectable({
@@ -9,7 +12,10 @@ import { TournamentService } from 'src/app/tournament/service/tournament.service
 export class MatchReportDraftsService {
   constructor(private readonly tournamentService: TournamentService) {}
 
-  list(params?: { status?: string | null; tournamentId?: number | null }): Observable<MatchReportCardVM[]> {
+  list(params?: {
+    status?: string | null;
+    tournamentId?: number | null;
+  }): Observable<MatchReportCardVM[]> {
     return this.tournamentService.listMatchReportDrafts(params).pipe(
       map((resp) => {
         const raw: any = (resp as any)?.data ?? resp;
@@ -19,7 +25,10 @@ export class MatchReportDraftsService {
     );
   }
 
-  detail(draftId: number, fallback?: MatchReportCardVM): Observable<ReportDetailVM> {
+  detail(
+    draftId: number,
+    fallback?: MatchReportCardVM,
+  ): Observable<ReportDetailVM> {
     return this.tournamentService.getMatchReportDraftDetail(draftId).pipe(
       map((resp) => {
         const raw: any = (resp as any)?.data ?? resp ?? {};
@@ -30,7 +39,11 @@ export class MatchReportDraftsService {
 
   review(
     draftId: number,
-    dto: { adminId: number; action: 'approve' | 'reject'; reviewNote?: string },
+    dto: {
+      adminId: number;
+      action: 'approve' | 'reject' | 'null_match';
+      reviewNote?: string;
+    },
   ): Observable<any> {
     return this.tournamentService.reviewMatchReportDraft(draftId, dto);
   }
@@ -75,8 +88,10 @@ export class MatchReportDraftsService {
       '';
 
     let round: string | null = r?.roundLabel ?? null;
-    if (!round && r?.round !== undefined && r?.round !== null) round = `Fecha ${r.round}`;
-    if (!round && r?.matchday !== undefined && r?.matchday !== null) round = `Fecha ${r.matchday}`;
+    if (!round && r?.round !== undefined && r?.round !== null)
+      round = `Fecha ${r.round}`;
+    if (!round && r?.matchday !== undefined && r?.matchday !== null)
+      round = `Fecha ${r.matchday}`;
 
     const tournamentName =
       r?.tournamentName ??
@@ -130,4 +145,3 @@ export class MatchReportDraftsService {
     return [];
   }
 }
-

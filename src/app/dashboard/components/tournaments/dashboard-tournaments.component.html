@@ -16,5 +16,59 @@
       </button>
     </div>
   </div>
+
+  <div class="section-title mt-3">Listado de torneos</div>
+  <div class="section-sub">Entrá a un torneo para ver tabla y cruces.</div>
+
+  <div class="tournament-list mt-2" *ngIf="!isLoading; else loadingTpl">
+    <div class="tournament-empty" *ngIf="tournaments.length === 0">
+      No hay torneos para mostrar.
+    </div>
+
+    <div
+      *ngFor="let t of tournaments; trackBy: trackByTournamentId"
+      class="quick-action tournament-row"
+    >
+      <a
+        class="tournament-row-link"
+        [routerLink]="['/tournament/view', t.id]"
+        [attr.aria-label]="'Ver torneo ' + t.name"
+      ></a>
+
+      <img class="tournament-logo" [src]="getTournamentLogo(t)" [alt]="'Logo ' + t.name" />
+
+      <div class="tournament-meta">
+        <div class="tournament-name">{{ t.name }}</div>
+        <div class="tournament-format">{{ t.format?.description || '—' }}</div>
+      </div>
+
+      <div class="ms-auto tournament-actions">
+        <button type="button" class="action-icon view" (click)="onView(t.id)" title="Ver" aria-label="Ver">
+          <i class="fa fa-eye"></i>
+        </button>
+        <button type="button" class="action-icon rounds" (click)="onViewRounds(t.id)" title="Ver rondas" aria-label="Ver rondas">
+          <i class="fa fa-calendar"></i>
+        </button>
+        <button type="button" class="action-icon edit" (click)="onEdit(t)" title="Editar" aria-label="Editar">
+          <i class="fa fa-pencil"></i>
+        </button>
+        <button type="button" class="action-icon delete" (click)="onDelete(t.id)" title="Eliminar" aria-label="Eliminar">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="tournament-list mt-2">
+      <div class="quick-action tournament-row is-loading" *ngFor="let _ of [1,2,3]">
+        <div class="tournament-skel-logo"></div>
+        <div class="tournament-meta">
+          <div class="tournament-skel-line w-60"></div>
+          <div class="tournament-skel-line w-40"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 </div>
 
