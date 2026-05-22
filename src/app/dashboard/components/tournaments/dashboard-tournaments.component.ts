@@ -48,10 +48,7 @@ export class DashboardTournamentsComponent implements OnInit, OnDestroy {
   }
 
   onViewRounds(id: number): void {
-    // Por ahora la vista de torneo ya incluye rondas/fechas; dejamos query param para futura navegación directa.
-    this.router.navigate(['/tournament/view', id], {
-      queryParams: { view: 'rounds' },
-    });
+    this.router.navigate(['/dashboard/tournaments', id, 'rounds']);
   }
 
   onEdit(t: Tournament): void {

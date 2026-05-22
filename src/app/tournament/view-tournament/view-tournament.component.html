@@ -685,48 +685,255 @@
         </div>
       </nz-tab>
 
+      <!-- Tab: Calendario -->
+      <!-- <nz-tab nzTitle="Calendario">
+        <div class="tcal-wrap">
+          <section class="tcal-main">
+            <header class="tcal-top">
+              <div class="tcal-brand">
+                <div class="tcal-kicker">Vista semanal</div>
+                <h2 class="tcal-title">CALENDARIO</h2>
+                <div class="tcal-brand-row" *ngIf="tournament">
+                  <img
+                    class="tcal-logo"
+                    [src]="calendarTournamentLogoSrc"
+                    [alt]="'Logo ' + (tournament?.name || 'Torneo')"
+                  />
+                  <p class="tcal-sub">{{ tournament.name }}</p>
+                </div>
+              </div>
+              <div class="tcal-nav" aria-label="Navegación por semanas">
+                <button
+                  type="button"
+                  class="tcal-nav-btn"
+                  (click)="calendarPrevWeek()"
+                  aria-label="Semana anterior"
+                >
+                  <i class="fa fa-chevron-left"></i>
+                </button>
+                <span class="tcal-range">{{ calendarWeekRangeLabel }}</span>
+                <button
+                  type="button"
+                  class="tcal-nav-btn"
+                  (click)="calendarNextWeek()"
+                  aria-label="Semana siguiente"
+                >
+                  <i class="fa fa-chevron-right"></i>
+                </button>
+              </div>
+            </header>
+
+            <div class="tcal-board">
+              <div class="tcal-dow-row">
+                <div class="tcal-dow" *ngFor="let lab of calendarDayLabels">
+                  {{ lab }}
+                </div>
+              </div>
+              <div class="tcal-cells-row">
+                <button
+                  type="button"
+                  class="tcal-cell"
+                  *ngFor="
+                    let cell of calendarWeekCells;
+                    trackBy: trackByCalendarCell
+                  "
+                  [class.tcal-cell--match]="cell.matches.length > 0"
+                  [class.tcal-cell--selected]="
+                    selectedCalendarIsoKey === cell.isoKey
+                  "
+                  [class.tcal-cell--today]="isCalendarToday(cell)"
+                  (click)="onCalendarSelectDay(cell.isoKey)"
+                >
+                  <span class="tcal-daynum">{{ cell.dayNumber }}</span>
+                  <div class="tcal-chips" *ngIf="cell.matches.length">
+                    <div
+                      class="tcal-chip"
+                      *ngFor="let m of cell.matches | slice : 0 : 2"
+                    >
+                      <div class="tcal-chip-tag">{{ calendarStageTag(m) }}</div>
+                      <div class="tcal-chip-logos">
+                        <img
+                          [src]="
+                            m.homeLogoUrl ||
+                            '../../../assets/images/player-default.png'
+                          "
+                          alt=""
+                        />
+                        <span class="tcal-chip-vs">vs</span>
+                        <img
+                          [src]="
+                            m.awayLogoUrl ||
+                            '../../../assets/images/player-default.png'
+                          "
+                          alt=""
+                        />
+                      </div>
+                      <div class="tcal-chip-names" [title]="calendarShortVs(m)">
+                        {{ calendarShortVs(m) }}
+                      </div>
+                    </div>
+                    <div class="tcal-more" *ngIf="cell.matches.length > 2">
+                      +{{ cell.matches.length - 2 }} más
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div class="tcal-undated" *ngIf="calendarMatchesWithoutDate.length">
+              <div class="tcal-undated-title">Sin fecha en el fixture</div>
+              <ul class="tcal-undated-list">
+                <li *ngFor="let m of calendarMatchesWithoutDate">
+                  {{ calendarShortVs(m) }}
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <aside class="tcal-side">
+            <div class="tcal-side-year">{{ calendarSidebarYear }}</div>
+            <div class="tcal-side-month">{{ calendarSidebarMonth }}</div>
+            <p class="tcal-side-sub">{{ calendarSidebarSubtitle }}</p>
+            <p class="tcal-side-meta" *ngIf="calendarWeekMatchCount">
+              {{ calendarWeekMatchCount }} partido(s) esta semana
+            </p>
+            <div class="tcal-side-panel">
+              <div class="tcal-side-panel-title">Cómo leerlo</div>
+              <p class="tcal-side-panel-text">
+                Cada celda es un día (domingo a sábado). Los partidos con fecha
+                cargada aparecen resaltados. Usá las flechas para moverte entre
+                semanas.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </nz-tab> -->
+
       <!-- Tab: Tarjetas -->
-      <!-- <nz-tab nzTitle="Tarjetas">
+      <nz-tab nzTitle="Tarjetas">
         <div class="row">
           <div class="col-12">
             <div class="table-card">
               <div class="table-wrapper">
-                <div *ngIf="isLoadingCards" style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">
+                <div
+                  *ngIf="isLoadingCards"
+                  style="
+                    padding: 1rem;
+                    text-align: center;
+                    color: rgba(255, 255, 255, 0.7);
+                  "
+                >
                   Cargando...
                 </div>
                 <table class="table">
                   <thead>
                     <tr>
-                      <th style="text-align: left;">Jugador</th>
-                      <th>Motivo</th>
-                      <th class="d-none d-sm-table-cell">Sanción</th>
+                      <th style="text-align: left">Jugador</th>
+                      <th class="d-none d-sm-table-cell">Motivo</th>
+                      <th class="d-none d-sm-table-cell">
+                        Cantidad de partidos
+                      </th>
+                      <th class="d-none d-sm-table-cell">Fin Sanción</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr *ngFor="let card of cards; let i = index">
                       <td>
                         <div class="team-cell">
-                          <img [src]="card?.teamLogo || '../../../assets/images/player-default.png'"
-                            alt="Player" class="team-logo" />
+                          <img
+                            [src]="
+                              card?.teamLogo ||
+                              '../../../assets/images/player-default.png'
+                            "
+                            alt="Player"
+                            class="team-logo"
+                          />
                           <span class="team-name-text">
-                            {{ (card?.name || card?.playerName || card?.player?.name || '-') }}
-                            {{ (card?.lastName || card?.player?.lastName || '') }}
+                            {{
+                              card?.name ||
+                                card?.playerName ||
+                                card?.player?.name ||
+                                '-'
+                            }}
+                            {{ card?.lastName || card?.player?.lastName || '' }}
                           </span>
                         </div>
                       </td>
-                      <td>{{ card?.reason || card?.motive || card?.type || card?.cardType || '-' }}</td>
-                      <td class="d-none d-sm-table-cell">{{ card?.sanction || card?.suspension || card?.penalty || card?.matchBan || '-' }}</td>
+
+                      <td>
+                        <div
+                          class="suspension-type-cell"
+                          *ngIf="
+                            card?.suspensionType === 'YELLOW' ||
+                              card?.suspensionType === 'DOUBLE_YELLOW' ||
+                              card?.suspensionType === 'RED';
+                            else suspensionTypeFallback
+                          "
+                        >
+                          <span
+                            class="referee-card"
+                            [class.referee-card--yellow]="
+                              card?.suspensionType === 'YELLOW' ||
+                              card?.suspensionType === 'DOUBLE_YELLOW'
+                            "
+                            [class.referee-card--red]="
+                              card?.suspensionType === 'RED'
+                            "
+                            [attr.aria-label]="
+                              card?.suspensionType === 'YELLOW'
+                                ? 'Tarjeta amarilla'
+                                : card?.suspensionType === 'DOUBLE_YELLOW'
+                                ? 'Tarjeta doble amarilla'
+                                : 'Tarjeta roja'
+                            "
+                            [title]="
+                              card?.suspensionType === 'YELLOW'
+                                ? 'Tarjeta amarilla'
+                                : card?.suspensionType === 'DOUBLE_YELLOW'
+                                ? 'Tarjeta doble amarilla'
+                                : 'Tarjeta roja'
+                            "
+                          ></span>
+                          <span class="suspension-type-label">
+                            {{
+                              card?.suspensionType === 'YELLOW'
+                                ? 'Amarilla'
+                                : card?.suspensionType === 'DOUBLE_YELLOW'
+                                ? 'Doble amarilla'
+                                : 'Roja'
+                            }}
+                          </span>
+                        </div>
+                        <ng-template #suspensionTypeFallback>
+                          {{ card?.suspensionType || '-' }}
+                        </ng-template>
+                      </td>
+
+                      <td class="d-none d-sm-table-cell">
+                        Partidos suspendido {{ card?.matchesToServe }}
+                      </td>
+
+                      <td class="d-none d-sm-table-cell">
+                        {{ card?.suspensionLabel }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
-                <div *ngIf="!isLoadingCards && (!cards || cards.length === 0)" style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">
+                <div
+                  *ngIf="!isLoadingCards && (!cards || cards.length === 0)"
+                  style="
+                    padding: 1rem;
+                    text-align: center;
+                    color: rgba(255, 255, 255, 0.7);
+                  "
+                >
                   Sin datos para mostrar.
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </nz-tab> -->
+      </nz-tab>
     </nz-tabset>
   </div>
 </div>

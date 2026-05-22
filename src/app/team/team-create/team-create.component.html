@@ -54,7 +54,7 @@
 
           <div class="row">
             <div
-              class="d-flex justify-content-center mt-5"
+              class="d-flex justify-content-center gap-4 mt-5"
               *ngIf="!images.length"
             >
               <input
@@ -69,8 +69,16 @@
                 (click)="fileInput.click()"
                 class="btn-custom-file"
               >
-                Seleccione logo
+                Nuevo logo
               </button>
+
+              <!-- <button
+                type="button"
+                (click)="onGetStoredImages()"
+                class="btn-custom-file-stored"
+              >
+                Logos almacenados
+              </button> -->
             </div>
 
             <div class="d-flex justify-content-center" *ngIf="showSpinner">

@@ -69,13 +69,23 @@
 }
 
 .btn-custom-file {
-  width: 200px;
-  height: 50px;
+  width: 160px;
+  height: 40px;
   border: solid 3px #ec8b0c;
   background: #ec8b0c;
   color: white;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 14px;
+}
+
+.btn-custom-file-stored {
+  width: 160px;
+  height: 40px;
+  border: solid 3px #2b8b05;
+  background: #2b8b05;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
 .select-logo {

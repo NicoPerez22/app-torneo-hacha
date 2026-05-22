@@ -9,6 +9,7 @@ import { DashboardReportsComponent } from './components/reports/dashboard-report
 import { DashboardSettingsComponent } from './components/settings/dashboard-settings.component';
 import { DashboardTeamsComponent } from './components/teams/dashboard-teams.component';
 import { DashboardTournamentsComponent } from './components/tournaments/dashboard-tournaments.component';
+import { TournamentRoundsComponent } from './components/tournaments/tournament-rounds.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { DashboardTournamentsComponent } from './components/tournaments/dashboar
     DashboardOverviewComponent,
     DashboardTeamsComponent,
     DashboardTournamentsComponent,
+    TournamentRoundsComponent,
     DashboardMarketComponent,
     DashboardReportsComponent,
     DashboardSettingsComponent,

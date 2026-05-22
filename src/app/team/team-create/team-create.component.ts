@@ -12,10 +12,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   styleUrls: ['./team-create.component.css'],
 })
 export class TeamCreateComponent implements OnInit {
-  @Input() teamData: any
+  @Input() teamData: any;
 
   form: FormGroup;
   images: Array<any> = [];
+  storedImages: Array<any> = [];
   team: Team = new Team();
   showSpinner: boolean = false;
 
@@ -26,15 +27,14 @@ export class TeamCreateComponent implements OnInit {
     private uploadService: UploadService,
     private fb: UntypedFormBuilder,
     private toastr: ToastrService,
-    private NzModalService: NzModalService
+    private NzModalService: NzModalService,
   ) {}
 
   ngOnInit(): void {
     this._initForm();
 
-    if(this.teamData){
-      console.log(this.teamData)  
-      this.form.patchValue({ ...this.teamData })
+    if (this.teamData) {
+      this.form.patchValue({ ...this.teamData });
       this.isEdit = true;
     }
   }
@@ -42,12 +42,11 @@ export class TeamCreateComponent implements OnInit {
   onSubmit() {
     const form = this.form.getRawValue();
 
-    this.team.name = form.name; 
+    this.team.name = form.name;
     this.team.idLogo = this.images[0]?.id || null;
-    this.team.id = this.teamData.id || null;
+    this.team.id = this.teamData?.id || null;
 
-
-    if(this.isEdit){
+    if (this.isEdit) {
       this.teamService.updateTeam(this.team).subscribe({
         next: (resp) => {
           if (resp.data) {
@@ -58,11 +57,11 @@ export class TeamCreateComponent implements OnInit {
             this.toastr.error(resp?.message);
           }
         },
-  
+
         error: (err) => {
           this.toastr.error(err);
         },
-      })
+      });
 
       return;
     }
@@ -107,6 +106,24 @@ export class TeamCreateComponent implements OnInit {
     });
   }
 
+  // onGetStoredImages() {
+  //   this._getStoredImages();
+
+  //   const modal = this.modalService.create({
+  //     nzContent: ResultsComponent,
+  //     nzComponentParams: {
+  //       match: value
+  //     },
+  //     nzFooter: null,
+  //     nzWidth: '95vw',
+  //     nzStyle: { maxWidth: '1100px' },
+  //     nzBodyStyle: { padding: '16px' },
+  //     nzCentered: true,
+  //     nzWrapClassName: 'match-report-modal-wrap',
+  //     nzClassName: 'match-report-modal',
+  //   });
+  // }
+
   private _onClean() {
     this.form.reset();
     this.images = [];
@@ -116,6 +133,18 @@ export class TeamCreateComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       abreviatura: ['', Validators.required],
+    });
+  }
+
+  private _getStoredImages() {
+    this.uploadService.getImages().subscribe({
+      next: (resp) => {
+        this.storedImages = resp;
+      },
+
+      error: (err) => {
+        console.log(err);
+      },
     });
   }
 }

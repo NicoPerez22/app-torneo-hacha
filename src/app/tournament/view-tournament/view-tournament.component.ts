@@ -23,6 +23,14 @@ type KnockoutStage = {
   matches: Match[];
 };
 
+/** Celda de un día en la vista semanal del calendario (DOM → SÁB). */
+type CalendarWeekCell = {
+  date: Date;
+  isoKey: string;
+  dayNumber: number;
+  matches: Match[];
+};
+
 @Component({
   selector: 'app-view-tournament',
   templateUrl: './view-tournament.component.html',
@@ -52,6 +60,43 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   groupStageTotalPages = 0;
   groupStagePageByGroup: Record<string, number> = {};
   isLoading = false;
+
+  /** Cabeceras de la grilla (semana empieza en domingo, como en la referencia). */
+  readonly calendarDayLabels = [
+    'DOM',
+    'LUN',
+    'MAR',
+    'MIÉ',
+    'JUE',
+    'VIE',
+    'SÁB',
+  ];
+  readonly calendarMonthNamesEs = [
+    'ENERO',
+    'FEBRERO',
+    'MARZO',
+    'ABRIL',
+    'MAYO',
+    'JUNIO',
+    'JULIO',
+    'AGOSTO',
+    'SEPTIEMBRE',
+    'OCTUBRE',
+    'NOVIEMBRE',
+    'DICIEMBRE',
+  ];
+
+  calendarWeekCells: CalendarWeekCell[] = [];
+  calendarWeekRangeLabel = '';
+  calendarSidebarYear = 0;
+  calendarSidebarMonth = '';
+  calendarSidebarSubtitle = '';
+  calendarWeekMatchCount = 0;
+  calendarMatchesWithoutDate: Match[] = [];
+  selectedCalendarIsoKey: string | null = null;
+  private calendarWeekAnchor = new Date();
+  private calendarWeekUserNavigated = false;
+  private calendarAnchorInitialized = false;
 
   private subscriptions: Subscription = new Subscription();
   private readonly INITIAL_PAGE = 1;
@@ -86,6 +131,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.tournamentId = Number(this.route.snapshot.params['id']);
+    this._resetCalendarUiState();
     if (this.tournamentId) {
       this.loadTournamentData();
     }
@@ -101,6 +147,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
     if (index === this.highlightsTabIndex) this._loadHighlights();
     if (index === this.cardsTabIndex) this._loadCards();
+    // if (index === this.calendarTabIndex) this._rebuildCalendarWeekCells();
   }
 
   onPageChange(page: number): void {
@@ -161,9 +208,17 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     return this.showKnockoutTabAlongsideTable ? 2 : 1;
   }
 
+  /**
+   * Tab "Tarjetas" deshabilitado en el template: evitamos que el índice coincida con "Calendario".
+   */
   get cardsTabIndex(): number {
-    return this.showKnockoutTabAlongsideTable ? 3 : 2;
+    return 2;
   }
+
+  /** Tab "Calendario" (después de "Goleadores"). */
+  // get calendarTabIndex(): number {
+  //   return this.showKnockoutTabAlongsideTable ? 3 : 2;
+  // }
 
   getGroupStageCurrentPage(groupNumber: number | null): number {
     const key = String(groupNumber ?? 'null');
@@ -455,6 +510,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
           this.rankingTables = results.ranking.data?.tables || [];
           this._getPositionBadgeClass(this.tournamentId);
+          this._syncCalendarAfterDataLoad();
         },
         error: (error) => {
           this.handleError('Error al cargar los datos del torneo', error);
@@ -487,6 +543,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         next: (knockoutPages) => {
           this.knockoutStages = this._buildKnockoutStages(knockoutPages || []);
           this.hasLoadedKnockoutStages = true;
+          this._syncCalendarAfterDataLoad();
         },
       });
 
@@ -509,7 +566,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   private _koBracketTiesToRoundsPages(ties: any[]): RoundsResponse[] {
     const byRound = new Map<number, any[]>();
     for (const t of ties || []) {
-      const key = typeof t?.round === 'number' && Number.isFinite(t.round) ? t.round : -1;
+      const key =
+        typeof t?.round === 'number' && Number.isFinite(t.round) ? t.round : -1;
       const list = byRound.get(key) ?? [];
       list.push(t);
       byRound.set(key, list);
@@ -519,7 +577,9 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
     return roundKeys.map((roundKey) => {
       const stageTies = byRound.get(roundKey) ?? [];
-      const stageMatches = stageTies.map((t) => this._tieToGlobalMatch(t)).filter(Boolean) as Match[];
+      const stageMatches = stageTies
+        .map((t) => this._tieToGlobalMatch(t))
+        .filter(Boolean) as Match[];
 
       return {
         data: {
@@ -541,11 +601,14 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     const teamB = tie?.teamB;
     if (!teamA?.id || !teamB?.id) return null;
 
-    const normalizeGoals = (m: any): { homeGoals: number | null; awayGoals: number | null } => {
+    const normalizeGoals = (
+      m: any,
+    ): { homeGoals: number | null; awayGoals: number | null } => {
       const state = m?.state;
       const hg = m?.homeGoals;
       const ag = m?.awayGoals;
-      if (state === 0 && hg === 0 && ag === 0) return { homeGoals: null, awayGoals: null };
+      if (state === 0 && hg === 0 && ag === 0)
+        return { homeGoals: null, awayGoals: null };
       return { homeGoals: hg ?? null, awayGoals: ag ?? null };
     };
 
@@ -553,8 +616,10 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     const legs: Match[] = rawMatches.map((m: any) => {
       const homeId = m?.homeTeamId;
       const awayId = m?.awayTeamId;
-      const homeRef = homeId === teamA.id ? teamA : (homeId === teamB.id ? teamB : null);
-      const awayRef = awayId === teamA.id ? teamA : (awayId === teamB.id ? teamB : null);
+      const homeRef =
+        homeId === teamA.id ? teamA : homeId === teamB.id ? teamB : null;
+      const awayRef =
+        awayId === teamA.id ? teamA : awayId === teamB.id ? teamB : null;
       const goals = normalizeGoals(m);
 
       return {
@@ -619,8 +684,14 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       const totals = new Map<number, number>();
       for (const l of legs) {
         if ((l as any)?.isPlaceholder) continue;
-        totals.set(l.homeTeamId!, (totals.get(l.homeTeamId!) ?? 0) + (l.homeGoals ?? 0));
-        totals.set(l.awayTeamId!, (totals.get(l.awayTeamId!) ?? 0) + (l.awayGoals ?? 0));
+        totals.set(
+          l.homeTeamId!,
+          (totals.get(l.homeTeamId!) ?? 0) + (l.homeGoals ?? 0),
+        );
+        totals.set(
+          l.awayTeamId!,
+          (totals.get(l.awayTeamId!) ?? 0) + (l.awayGoals ?? 0),
+        );
       }
       aggHome = totals.get(baseHomeId) ?? 0;
       aggAway = totals.get(baseAwayId) ?? 0;
@@ -753,6 +824,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
           this.rounds = response.data?.groups || [];
           this.pagination = response.data?.pagination;
           this.currentPage = this.pagination?.page ?? page;
+          this._syncCalendarAfterDataLoad();
         },
       });
 
@@ -925,6 +997,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
             res?.data?.pagination?.totalPages ?? this.groupStageTotalPages;
           if (typeof total === 'number' && total > 0)
             this.groupStageTotalPages = total;
+          this._syncCalendarAfterDataLoad();
         },
       });
 
@@ -979,5 +1052,290 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       title: this._getStageTitleByMatchCount(s.matchCount, displayIndex + 1),
       matches: s.matches,
     }));
+  }
+
+  calendarPrevWeek(): void {
+    this.calendarWeekUserNavigated = true;
+    this.calendarAnchorInitialized = true;
+    this.calendarWeekAnchor = this._addDaysLocal(this.calendarWeekAnchor, -7);
+    this._rebuildCalendarWeekCells();
+  }
+
+  calendarNextWeek(): void {
+    this.calendarWeekUserNavigated = true;
+    this.calendarAnchorInitialized = true;
+    this.calendarWeekAnchor = this._addDaysLocal(this.calendarWeekAnchor, 7);
+    this._rebuildCalendarWeekCells();
+  }
+
+  onCalendarSelectDay(isoKey: string): void {
+    this.selectedCalendarIsoKey =
+      this.selectedCalendarIsoKey === isoKey ? null : isoKey;
+  }
+
+  trackByCalendarCell(_: number, cell: CalendarWeekCell): string {
+    return cell.isoKey;
+  }
+
+  isCalendarToday(cell: CalendarWeekCell): boolean {
+    return cell.isoKey === this._isoDayKey(new Date());
+  }
+
+  calendarShortVs(m: Match): string {
+    const h = (m.homeTeamName || '').trim();
+    const a = (m.awayTeamName || '').trim();
+    if (h && a) return `${h} vs ${a}`;
+    return h || a || 'Partido';
+  }
+
+  calendarStageTag(m: Match): string {
+    const st = m?.stage != null ? String(m.stage).trim() : '';
+    if (!st) return 'LIGA';
+    const u = st.toUpperCase();
+    return u === 'GROUP' ? 'LIGA' : u;
+  }
+
+  get calendarTournamentLogoSrc(): string {
+    const fallback = '../../../assets/images/HYT-IESA.png';
+    const t = this.tournament as any;
+    if (!this.tournament) return fallback;
+    if (typeof t?.logo === 'string' && t.logo) return t.logo;
+    if (t?.logo?.secureUrl) return t.logo.secureUrl;
+    if (t?.logo?.url) return t.logo.url;
+    return fallback;
+  }
+
+  private _resetCalendarUiState(): void {
+    this.calendarWeekUserNavigated = false;
+    this.calendarAnchorInitialized = false;
+    this.selectedCalendarIsoKey = null;
+    this.calendarWeekAnchor = this._startOfWeekSunday(new Date());
+    this.calendarWeekCells = [];
+    this.calendarWeekRangeLabel = '';
+    this.calendarMatchesWithoutDate = [];
+    this.calendarSidebarYear = 0;
+    this.calendarSidebarMonth = '';
+    this.calendarSidebarSubtitle = '';
+    this.calendarWeekMatchCount = 0;
+  }
+
+  private _syncCalendarAfterDataLoad(): void {
+    if (!this.calendarWeekUserNavigated || !this.calendarAnchorInitialized) {
+      this._initCalendarWeekAnchorFromMatches();
+      this.calendarAnchorInitialized = true;
+    }
+    this._rebuildCalendarWeekCells();
+  }
+
+  private _initCalendarWeekAnchorFromMatches(): void {
+    const dated = this._collectMatchesWithDates();
+    if (!dated.length) {
+      this.calendarWeekAnchor = this._startOfWeekSunday(new Date());
+      return;
+    }
+    dated.sort((a, b) => a.d.getTime() - b.d.getTime());
+    this.calendarWeekAnchor = this._startOfWeekSunday(dated[0].d);
+  }
+
+  private _rebuildCalendarWeekCells(): void {
+    this.calendarWeekAnchor = this._startOfWeekSunday(this.calendarWeekAnchor);
+    const start = this.calendarWeekAnchor;
+
+    const byDay = this._getMatchMapByDayKey();
+    this.calendarMatchesWithoutDate = this._collectMatchesWithoutDate();
+    const cells: CalendarWeekCell[] = [];
+    for (let i = 0; i < 7; i++) {
+      const date = this._addDaysLocal(start, i);
+      const isoKey = this._isoDayKey(date);
+      cells.push({
+        date,
+        isoKey,
+        dayNumber: date.getDate(),
+        matches: byDay.get(isoKey) ?? [],
+      });
+    }
+    this.calendarWeekCells = cells;
+    this.calendarWeekMatchCount = cells.reduce(
+      (n, c) => n + c.matches.length,
+      0,
+    );
+
+    const end = this._addDaysLocal(start, 6);
+    this.calendarWeekRangeLabel = this._formatWeekRangeLabel(start, end);
+
+    const mid = this._addDaysLocal(start, 3);
+    this.calendarSidebarYear = mid.getFullYear();
+    this.calendarSidebarMonth = this.calendarMonthNamesEs[mid.getMonth()] ?? '';
+    this.calendarSidebarSubtitle =
+      this.tournament?.format?.description?.trim() || 'Fixture';
+
+    if (!this.selectedCalendarIsoKey) {
+      const withMatches = cells.find((c) => c.matches.length > 0);
+      if (withMatches) this.selectedCalendarIsoKey = withMatches.isoKey;
+    } else if (!cells.some((c) => c.isoKey === this.selectedCalendarIsoKey)) {
+      this.selectedCalendarIsoKey = null;
+      const withMatches = cells.find((c) => c.matches.length > 0);
+      if (withMatches) this.selectedCalendarIsoKey = withMatches.isoKey;
+    }
+  }
+
+  private _getMatchMapByDayKey(): Map<string, Match[]> {
+    const map = new Map<string, Match[]>();
+    for (const { m, d } of this._collectMatchesWithDates()) {
+      const k = this._isoDayKey(d);
+      const list = map.get(k) ?? [];
+      list.push(m);
+      map.set(k, list);
+    }
+    for (const list of map.values()) {
+      list.sort((a, b) =>
+        String(a.date ?? '').localeCompare(String(b.date ?? '')),
+      );
+    }
+    return map;
+  }
+
+  private _collectMatchesWithoutDate(): Match[] {
+    const seen = new Set<string>();
+    const out: Match[] = [];
+    for (const m of this._collectAllMatchesForCalendarExpanded()) {
+      if (this._parseMatchLocalDate(m)) continue;
+      const key = this._matchDedupeKey(m);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(m);
+    }
+    return out;
+  }
+
+  private _collectMatchesWithDates(): Array<{ m: Match; d: Date }> {
+    const out: Array<{ m: Match; d: Date }> = [];
+    const seen = new Set<string>();
+    for (const m of this._collectAllMatchesForCalendarExpanded()) {
+      const d = this._parseMatchLocalDate(m);
+      if (!d) continue;
+      const key = this._matchDedupeKey(m);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ m, d });
+    }
+    return out;
+  }
+
+  private _matchDedupeKey(m: Match): string {
+    if (m.id != null && Number.isFinite(Number(m.id))) return `id:${m.id}`;
+    return [
+      m.homeTeamId ?? '',
+      m.awayTeamId ?? '',
+      m.date ?? '',
+      m.matchday ?? '',
+      m.round ?? '',
+    ].join('|');
+  }
+
+  private _collectAllMatchesForCalendarExpanded(): Match[] {
+    const seen = new Set<string>();
+    const out: Match[] = [];
+
+    const push = (m: Match | null | undefined) => {
+      if (!m) return;
+      const k = this._matchDedupeKey(m);
+      if (seen.has(k)) return;
+      seen.add(k);
+      out.push(m);
+    };
+
+    const expand = (m: Match) => {
+      const legs = (m.legs ?? []).filter((l) => !(l as any)?.isPlaceholder);
+      if (legs.length) {
+        for (const leg of legs) push(leg);
+      } else {
+        push(m);
+      }
+    };
+
+    for (const g of this.rounds || []) {
+      for (const m of g.rounds || []) expand(m);
+    }
+    for (const st of this.knockoutStages || []) {
+      for (const m of st.matches || []) expand(m);
+    }
+    for (const res of this.groupStageCache.values()) {
+      for (const g of res?.data?.groups || []) {
+        for (const m of g.rounds || []) expand(m);
+      }
+    }
+    return out;
+  }
+
+  private _parseMatchLocalDate(m: Match): Date | null {
+    const raw = m?.date as string | number | null | undefined;
+    if (raw == null) return null;
+    if (typeof raw === 'number' && Number.isFinite(raw)) {
+      const t = new Date(raw);
+      if (!Number.isNaN(t.getTime()))
+        return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+      return null;
+    }
+    if (typeof raw !== 'string') return null;
+
+    const s = raw.trim();
+    if (!s) return null;
+
+    const direct = Date.parse(s);
+    if (!Number.isNaN(direct)) {
+      const t = new Date(direct);
+      return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    }
+
+    const parts = /^(\d{1,2})[/\-](\d{1,2})[/\-](\d{2,4})/.exec(s);
+    if (parts) {
+      const dd = Number(parts[1]);
+      const mm = Number(parts[2]) - 1;
+      let yyyy = Number(parts[3]);
+      if (yyyy < 100) yyyy += 2000;
+      const d = new Date(yyyy, mm, dd);
+      if (!Number.isNaN(d.getTime())) return d;
+    }
+    return null;
+  }
+
+  private _startOfWeekSunday(d: Date): Date {
+    const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dow = x.getDay();
+    x.setDate(x.getDate() - dow);
+    return x;
+  }
+
+  private _addDaysLocal(d: Date, days: number): Date {
+    const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    x.setDate(x.getDate() + days);
+    return x;
+  }
+
+  private _isoDayKey(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  private _formatWeekRangeLabel(start: Date, end: Date): string {
+    const sm = start.getMonth();
+    const em = end.getMonth();
+    const sy = start.getFullYear();
+    const ey = end.getFullYear();
+    const ds = start.getDate();
+    const de = end.getDate();
+    const mStart = this._monthNameTitleCase(sm);
+    const mEnd = this._monthNameTitleCase(em);
+    if (sm === em && sy === ey) return `${ds} – ${de} ${mEnd} ${ey}`;
+    if (sy === ey) return `${ds} ${mStart} – ${de} ${mEnd} ${ey}`;
+    return `${ds} ${mStart} ${sy} – ${de} ${mEnd} ${ey}`;
+  }
+
+  private _monthNameTitleCase(monthIndex: number): string {
+    const raw = this.calendarMonthNamesEs[monthIndex] ?? '';
+    return raw ? raw.charAt(0) + raw.slice(1).toLowerCase() : '';
   }
 }

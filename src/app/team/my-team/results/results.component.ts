@@ -25,7 +25,9 @@ export class ResultsComponent implements OnInit {
   private readonly tournamentService = inject(TournamentService);
   private readonly toastrService = inject(ToastrService);
   private readonly teamService = inject(TeamService);
-  private readonly modalRef = inject<NzModalRef | null>(NzModalRef, { optional: true });
+  private readonly modalRef = inject<NzModalRef | null>(NzModalRef, {
+    optional: true,
+  });
 
   ngOnInit(): void {
     this._initForm();
@@ -47,12 +49,12 @@ export class ResultsComponent implements OnInit {
 
     this.tournamentService.getRoundReportPreview(report).subscribe({
       next: () => {
-        this.toastrService.success("Partido reportado con exito", "Exito");
+        this.toastrService.success('Partido reportado con exito', 'Exito');
         this.modalRef?.close(true);
         this.isSubmitting = false;
       },
       error: () => {
-        this.toastrService.error("No se pudo reportar el partido", "Error");
+        this.toastrService.error('No se pudo reportar el partido', 'Error');
         this.isSubmitting = false;
       },
     });
@@ -118,14 +120,21 @@ export class ResultsComponent implements OnInit {
     const awayTeamId = Number(this.match?.awayTeamId);
 
     if (!Number.isFinite(homeTeamId) || !Number.isFinite(awayTeamId)) {
-      this.toastrService.error('No se pudo identificar los equipos del partido', 'Error');
+      this.toastrService.error(
+        'No se pudo identificar los equipos del partido',
+        'Error',
+      );
       return;
     }
 
     this.isLoadingPlayers = true;
     forkJoin({
-      home: this.teamService.getPlayersByIdTeam(homeTeamId).pipe(catchError(() => of({ data: [] }))),
-      away: this.teamService.getPlayersByIdTeam(awayTeamId).pipe(catchError(() => of({ data: [] }))),
+      home: this.teamService
+        .getPlayersByIdTeam(homeTeamId)
+        .pipe(catchError(() => of({ data: [] }))),
+      away: this.teamService
+        .getPlayersByIdTeam(awayTeamId)
+        .pipe(catchError(() => of({ data: [] }))),
     })
       .pipe(finalize(() => (this.isLoadingPlayers = false)))
       .subscribe({
@@ -137,7 +146,10 @@ export class ResultsComponent implements OnInit {
           this._setPlayers(this.awayPlayersArray, awayPlayers, awayTeamId);
         },
         error: () => {
-          this.toastrService.error('Error al obtener los jugadores del partido', 'Error');
+          this.toastrService.error(
+            'Error al obtener los jugadores del partido',
+            'Error',
+          );
         },
       });
   }
@@ -182,7 +194,12 @@ export class ResultsComponent implements OnInit {
         return Math.max(0, clampedMax);
       };
 
-      const addRepeated = (teamId: number, playerId: number, eventType: MatchEventType, count: number) => {
+      const addRepeated = (
+        teamId: number,
+        playerId: number,
+        eventType: MatchEventType,
+        count: number,
+      ) => {
         for (let i = 0; i < count; i++) {
           events.push({ teamId, playerId, eventType, minute: null });
         }
@@ -207,7 +224,7 @@ export class ResultsComponent implements OnInit {
 
         if (injured) {
           // Mantenemos el contrato: mismo shape de objeto (eventType string + teamId/playerId/minute)
-          events.push({ teamId, playerId, eventType: 'NOTE', minute: null });
+          events.push({ teamId, playerId, eventType: 'INJURY', minute: null });
         }
       }
 

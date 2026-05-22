@@ -1,0 +1,95 @@
+<div class="card-custom p-3">
+  <div class="rounds-toolbar">
+    <button type="button" class="back-link" (click)="onBack()">
+      <i class="fa fa-arrow-left me-2"></i> Volver a torneos
+    </button>
+  </div>
+
+  <div class="section-title mt-2">Rondas y fechas</div>
+  <div class="section-sub" *ngIf="tournament">
+    {{ tournament.name }} · {{ tournament.format?.description || '—' }}
+  </div>
+  <div class="section-sub" *ngIf="!tournament">Torneo #{{ tournamentId }}</div>
+
+  <div class="row g-2 mt-2">
+    <div class="col-12 col-md-6">
+      <button type="button" class="quick-action" (click)="onViewTournament()">
+        <i class="fa fa-trophy me-2"></i> Ver torneo (público)
+      </button>
+    </div>
+  </div>
+
+  <div class="section-title mt-3">Listado de rondas</div>
+  <div class="section-sub">
+    Gestioná reportes, edición (próximamente) y partido nulo según la fecha o jornada.
+  </div>
+
+  <div class="rounds-list mt-2" *ngIf="!isLoading; else loadingTpl">
+    <div class="rounds-empty" *ngIf="rounds.length === 0">
+      No hay rondas o fechas cargadas para este torneo todavía.
+    </div>
+
+    <div
+      *ngFor="let r of rounds; trackBy: trackByPage"
+      class="quick-action rounds-row"
+    >
+      <div class="rounds-meta">
+        <div class="rounds-label">{{ r.label }}</div>
+        <div class="rounds-hint" *ngIf="tournament?.name">
+          {{ tournament.name }}
+        </div>
+      </div>
+
+      <div class="ms-auto rounds-actions">
+        <button
+          type="button"
+          class="action-icon view"
+          (click)="onViewReports(r)"
+          title="Ver reporte"
+          aria-label="Ver reporte"
+        >
+          <i class="fa fa-file-text-o"></i>
+        </button>
+        <button
+          type="button"
+          class="action-icon report"
+          (click)="onReport(r)"
+          title="Reportar"
+          aria-label="Reportar"
+        >
+          <i class="fa fa-flag"></i>
+        </button>
+        <button
+          type="button"
+          class="action-icon edit"
+          (click)="onEdit(r)"
+          title="Editar"
+          aria-label="Editar"
+        >
+          <i class="fa fa-pencil"></i>
+        </button>
+        <button
+          type="button"
+          class="action-icon null-match"
+          (click)="onNullMatch(r)"
+          title="Partido nulo"
+          aria-label="Partido nulo"
+        >
+          <i class="fa fa-ban"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="rounds-list mt-2">
+      <div class="quick-action rounds-row is-loading" *ngFor="let _ of [1, 2, 3, 4]">
+        <div class="tournament-skel-line w-40"></div>
+        <div class="ms-auto d-flex gap-1">
+          <div class="rounds-skel-btn"></div>
+          <div class="rounds-skel-btn"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

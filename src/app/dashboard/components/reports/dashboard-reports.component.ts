@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/service/auth.service';
@@ -46,11 +47,16 @@ export class DashboardReportsComponent implements OnInit {
     private readonly toastr: ToastrService,
     private readonly authService: AuthService,
     private readonly modal: NzModalService,
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     const user = this.authService.getUser();
     this.isAdmin = user?.idRol === 1;
+    const qTid = this.route.snapshot.queryParamMap.get('tournamentId');
+    if (qTid && String(qTid).trim()) {
+      this.tournamentIdFilter = String(qTid).trim();
+    }
     this.load();
   }
 
