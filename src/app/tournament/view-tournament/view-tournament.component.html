@@ -14,8 +14,35 @@
 
   <!-- Tabs Section -->
   <div class="tabs-container">
+    <div class="tabs-mobile-picker d-md-none">
+      <button
+        type="button"
+        class="tabs-mobile-trigger"
+        nz-dropdown
+        nzTrigger="click"
+        [nzDropdownMenu]="mobileTabsMenu"
+      >
+        <span class="tabs-mobile-label">{{ activeTabLabel }}</span>
+        <i class="bi bi-three-dots-vertical tabs-mobile-icon" aria-hidden="true"></i>
+      </button>
+      <nz-dropdown-menu #mobileTabsMenu="nzDropdownMenu">
+        <ul nz-menu>
+          <li
+            nz-menu-item
+            *ngFor="let tab of tournamentTabs; let i = index"
+            [class.ant-menu-item-selected]="selectedTabIndex === i"
+            (click)="selectTab(i)"
+          >
+            {{ tab }}
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+    </div>
+
     <nz-tabset
-      nzCentered
+      class="tournament-tabset"
+      [nzCentered]="!isMobileViewport"
+      [(nzSelectedIndex)]="selectedTabIndex"
       (nzSelectedIndexChange)="onTabSelectedIndexChange($event)"
     >
       <!-- Tabs principales -->
@@ -814,29 +841,127 @@
         <div class="row">
           <div class="col-12">
             <div class="table-card">
-              <div class="table-wrapper">
-                <div
-                  *ngIf="isLoadingCards"
-                  style="
-                    padding: 1rem;
-                    text-align: center;
-                    color: rgba(255, 255, 255, 0.7);
-                  "
-                >
-                  Cargando...
+              <div
+                *ngIf="isLoadingCards"
+                class="cards-loading"
+              >
+                Cargando...
+              </div>
+
+              <!-- Vista móvil: tarjetas apiladas sin scroll horizontal -->
+              <div
+                class="cards-mobile-list d-md-none"
+                *ngIf="!isLoadingCards && cards?.length"
+              >
+                <div class="cards-mobile-item" *ngFor="let card of cards">
+                  <div class="cards-mobile-player">
+                    <img
+                      [src]="
+                        card?.teamLogo ||
+                        '../../../assets/images/player-default.png'
+                      "
+                      alt="Player"
+                      class="team-logo"
+                    />
+                    <span class="cards-mobile-name">
+                      {{
+                        card?.name ||
+                          card?.playerName ||
+                          card?.player?.name ||
+                          '-'
+                      }}
+                      {{ card?.lastName || card?.player?.lastName || '' }}
+                    </span>
+                  </div>
+
+                  <div class="cards-mobile-details">
+                    <div class="cards-mobile-row">
+                      <span class="cards-mobile-label">Tarjetas acumuladas</span>
+                      <span class="cards-mobile-value">
+                        <ng-container
+                          *ngIf="card?.yellows > 0; else yellowsMobileFallback"
+                        >
+                          <span class="suspension-type-cell">
+                            {{ card?.yellows }}
+                            <span
+                              class="referee-card referee-card--yellow"
+                            ></span>
+                          </span>
+                        </ng-container>
+                        <ng-template #yellowsMobileFallback>-</ng-template>
+                      </span>
+                    </div>
+
+                    <div class="cards-mobile-row">
+                      <span class="cards-mobile-label">Motivo</span>
+                      <span class="cards-mobile-value">
+                        <ng-container
+                          *ngIf="
+                            card?.suspensionType === 'YELLOW' ||
+                              card?.suspensionType === 'DOUBLE_YELLOW' ||
+                              card?.suspensionType === 'RED';
+                            else suspensionTypeMobileFallback
+                          "
+                        >
+                          <span class="suspension-type-cell">
+                            <span
+                              class="referee-card"
+                              [class.referee-card--yellow]="
+                                card?.suspensionType === 'YELLOW' ||
+                                card?.suspensionType === 'DOUBLE_YELLOW'
+                              "
+                              [class.referee-card--red]="
+                                card?.suspensionType === 'RED'
+                              "
+                            ></span>
+                            <span class="suspension-type-label">
+                              {{
+                                card?.suspensionType === 'YELLOW'
+                                  ? 'Amarilla'
+                                  : card?.suspensionType === 'DOUBLE_YELLOW'
+                                  ? 'Doble amarilla'
+                                  : 'Roja'
+                              }}
+                            </span>
+                          </span>
+                        </ng-container>
+                        <ng-template #suspensionTypeMobileFallback>
+                          {{ card?.suspensionType || '-' }}
+                        </ng-template>
+                      </span>
+                    </div>
+
+                    <div class="cards-mobile-row">
+                      <span class="cards-mobile-label">Partidos suspendido</span>
+                      <span class="cards-mobile-value">
+                        {{
+                          card?.matchesToServe > 0
+                            ? card?.matchesToServe
+                            : '-'
+                        }}
+                      </span>
+                    </div>
+
+                    <div class="cards-mobile-row">
+                      <span class="cards-mobile-label">Fin sanción</span>
+                      <span class="cards-mobile-value">
+                        {{ card?.suspensionLabel || '-' }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <table class="table">
+              </div>
+
+              <!-- Vista desktop: tabla -->
+              <div class="table-wrapper d-none d-md-block">
+                <table class="table cards-table">
                   <thead>
                     <tr>
                       <th style="text-align: left">Jugador</th>
-                      <th class="d-none d-sm-table-cell">
-                        Tarjetas Acumuladas
-                      </th>
-                      <th class="d-none d-sm-table-cell">Motivo</th>
-                      <th class="d-none d-sm-table-cell">
-                        Cantidad de partidos
-                      </th>
-                      <th class="d-none d-sm-table-cell">Fin Sanción</th>
+                      <th>Tarjetas Acumuladas</th>
+                      <th>Motivo</th>
+                      <th>Cantidad de partidos</th>
+                      <th>Fin Sanción</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -927,7 +1052,7 @@
                         </ng-template>
                       </td>
 
-                      <td class="d-none d-sm-table-cell">
+                      <td>
                         <div
                           class="suspension-type-cell"
                           *ngIf="
@@ -940,22 +1065,19 @@
                         <ng-template #matchesToServeFallback> - </ng-template>
                       </td>
 
-                      <td class="d-none d-sm-table-cell">
+                      <td>
                         {{ card?.suspensionLabel }}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                <div
-                  *ngIf="!isLoadingCards && (!cards || cards.length === 0)"
-                  style="
-                    padding: 1rem;
-                    text-align: center;
-                    color: rgba(255, 255, 255, 0.7);
-                  "
-                >
-                  Sin datos para mostrar.
-                </div>
+              </div>
+
+              <div
+                *ngIf="!isLoadingCards && (!cards || cards.length === 0)"
+                class="cards-empty"
+              >
+                Sin datos para mostrar.
               </div>
             </div>
           </div>

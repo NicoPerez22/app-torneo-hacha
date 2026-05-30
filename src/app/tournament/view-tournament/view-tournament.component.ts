@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { TournamentService } from '../service/tournament.service';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
@@ -60,6 +60,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   groupStageTotalPages = 0;
   groupStagePageByGroup: Record<string, number> = {};
   isLoading = false;
+  selectedTabIndex = 0;
+  isMobileViewport = false;
 
   /** Cabeceras de la grilla (semana empieza en domingo, como en la referencia). */
   readonly calendarDayLabels = [
@@ -130,11 +132,44 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.updateMobileViewport();
     this.tournamentId = Number(this.route.snapshot.params['id']);
     this._resetCalendarUiState();
     if (this.tournamentId) {
       this.loadTournamentData();
     }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.updateMobileViewport();
+  }
+
+  private updateMobileViewport(): void {
+    this.isMobileViewport = window.innerWidth < 768;
+  }
+
+  selectTab(index: number): void {
+    if (this.selectedTabIndex === index) return;
+    this.selectedTabIndex = index;
+    this.onTabSelectedIndexChange(index);
+  }
+
+  get tournamentTabs(): string[] {
+    const tabs: string[] = [];
+
+    if (this.showKnockoutTabAlongsideTable) {
+      tabs.push('Tabla de posiciones', 'Cruces');
+    } else {
+      tabs.push(this.isKnockout ? 'Cruces' : 'Tabla de posiciones');
+    }
+
+    tabs.push('Goleadores', 'Tarjetas');
+    return tabs;
+  }
+
+  get activeTabLabel(): string {
+    return this.tournamentTabs[this.selectedTabIndex] ?? this.tournamentTabs[0];
   }
 
   ngOnDestroy(): void {
@@ -209,10 +244,10 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Tab "Tarjetas" deshabilitado en el template: evitamos que el índice coincida con "Calendario".
+   * Tab "Tarjetas" (después de "Goleadores").
    */
   get cardsTabIndex(): number {
-    return 2;
+    return this.showKnockoutTabAlongsideTable ? 3 : 2;
   }
 
   /** Tab "Calendario" (después de "Goleadores"). */
