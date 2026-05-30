@@ -7,7 +7,8 @@
         Jugadores Inhabilitados
       </h1>
       <p class="disabled-subtitle">
-        Visualiza aquellos jugadores que no están habilitados para participar de las siguientes fechas
+        Visualiza aquellos jugadores que no están habilitados para participar de
+        las siguientes fechas
       </p>
     </div>
   </div>
@@ -25,12 +26,15 @@
       <div class="disabled-card-inner">
         <!-- Glow effect -->
         <div class="card-glow"></div>
-        
+
         <!-- Player Photo Container -->
         <div class="disabled-photo-container">
           <div class="photo-wrapper">
             <img
-              [src]="item?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+              [src]="
+                item?.logo?.secureUrl ||
+                '../../../assets/images/player-default.png'
+              "
               [alt]="item.name + ' ' + item.lastName"
               class="disabled-photo"
             />
@@ -40,12 +44,15 @@
         <!-- Content -->
         <div class="disabled-content">
           <h3 class="disabled-name">{{ item.name }} {{ item.lastName }}</h3>
-          
+
           <!-- Team Info -->
           <div class="disabled-team">
             <div class="team-logo-wrapper">
               <img
-                [src]="item?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
+                [src]="
+                  item?.team?.logo?.secureUrl ||
+                  '../../../assets/images/player-default.png'
+                "
                 [alt]="item.team?.name"
                 class="team-logo"
               />
@@ -61,7 +68,9 @@
             </div>
             <div class="status-item">
               <span class="status-label">Tiempo</span>
-              <span class="status-time">2 Semanas</span>
+              <span class="status-time">{{
+                item?.unavailableUntil | date : 'dd/MM/yyyy'
+              }}</span>
             </div>
           </div>
         </div>

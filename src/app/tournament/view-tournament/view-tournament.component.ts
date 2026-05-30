@@ -868,7 +868,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   }
 
   private _getPositionBadgeClass(id) {
-    if (id == 1) {
+    if (id == 8) {
       this.positionBadgeConfig = {
         top: { from: 1, to: 1 },
         promoUp: { from: null, to: null },
@@ -880,7 +880,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (id == 2) {
+    if (id == 9) {
       this.positionBadgeConfig = {
         top: { from: 1, to: 1 },
         promoUp: { from: 2, to: 4 },
@@ -892,7 +892,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (id == 3) {
+    if (id == 10) {
       this.positionBadgeConfig = {
         top: { from: 1, to: 1 },
         promoUp: { from: 2, to: 3 },

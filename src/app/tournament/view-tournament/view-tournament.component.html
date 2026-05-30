@@ -829,6 +829,9 @@
                   <thead>
                     <tr>
                       <th style="text-align: left">Jugador</th>
+                      <th class="d-none d-sm-table-cell">
+                        Tarjetas Acumuladas
+                      </th>
                       <th class="d-none d-sm-table-cell">Motivo</th>
                       <th class="d-none d-sm-table-cell">
                         Cantidad de partidos
@@ -858,6 +861,20 @@
                             {{ card?.lastName || card?.player?.lastName || '' }}
                           </span>
                         </div>
+                      </td>
+
+                      <td>
+                        <div
+                          class="suspension-type-cell"
+                          *ngIf="card?.yellows > 0; else yellowsFallback"
+                        >
+                          {{ card?.yellows }}
+                          <span
+                            class="referee-card"
+                            [class.referee-card--yellow]="card?.yellows > 0"
+                          ></span>
+                        </div>
+                        <ng-template #yellowsFallback> - </ng-template>
                       </td>
 
                       <td>
@@ -894,6 +911,7 @@
                                 : 'Tarjeta roja'
                             "
                           ></span>
+
                           <span class="suspension-type-label">
                             {{
                               card?.suspensionType === 'YELLOW'
@@ -910,7 +928,16 @@
                       </td>
 
                       <td class="d-none d-sm-table-cell">
-                        Partidos suspendido {{ card?.matchesToServe }}
+                        <div
+                          class="suspension-type-cell"
+                          *ngIf="
+                            card?.matchesToServe > 0;
+                            else matchesToServeFallback
+                          "
+                        >
+                          Partidos suspendido {{ card?.matchesToServe }}
+                        </div>
+                        <ng-template #matchesToServeFallback> - </ng-template>
                       </td>
 
                       <td class="d-none d-sm-table-cell">

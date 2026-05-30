@@ -11,7 +11,7 @@ import { DisabledPlayersService } from './service/disabled-players.service';
 @Component({
   selector: 'app-disabled-players',
   templateUrl: './disabled-players.component.html',
-  styleUrls: ['./disabled-players.component.css']
+  styleUrls: ['./disabled-players.component.css'],
 })
 export class DisabledPlayersComponent {
   teams: Array<any> = [];
@@ -28,7 +28,7 @@ export class DisabledPlayersComponent {
   ngOnInit(): void {
     this.user = this.authService.getUser();
 
-    this._getTeams();
+    this._getInjuryPlayers();
   }
 
   // onDelete(id) {
@@ -72,8 +72,8 @@ export class DisabledPlayersComponent {
   //   this.router.navigate(['equipos/' + id]);
   // }
 
-  private _getTeams() {
-    this.disabledPlayersService.getPlayers().subscribe({
+  private _getInjuryPlayers() {
+    this.disabledPlayersService.getInjuryPlayers().subscribe({
       next: (resp) => {
         this.teams = resp.data;
       },
