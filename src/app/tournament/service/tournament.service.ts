@@ -32,6 +32,7 @@ export class TournamentService {
   private readonly MATCH_REPORT_DRAFTS = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts`;
   private readonly MATCH_REPORT_DRAFT_DETAIL = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}`;
   private readonly MATCH_REPORT_DRAFT_REVIEW = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}/review`;
+  private readonly TOURNAMENT_NULL_MATCH_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/null-match`;
 
   constructor(private http: HttpClient) {}
 
@@ -178,6 +179,11 @@ export class TournamentService {
       '{draftId}',
       String(draftId),
     );
+    return this.http.post<any>(url, dto);
+  }
+
+  nullMatch(dto): Observable<any> {
+    const url = `${this.API_URL}${this.TOURNAMENT_NULL_MATCH_ENDPOINT}`;
     return this.http.post<any>(url, dto);
   }
 }

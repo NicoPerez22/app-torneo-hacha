@@ -20,5 +20,6 @@ import { ResultsComponent } from './my-team/results/results.component';
     ResultsComponent
   ],
   imports: [TeamRoutingModule, RouterModule, NzTabsModule, SharedModule],
+  exports: [ResultsComponent],
 })
 export class TeamModule {}

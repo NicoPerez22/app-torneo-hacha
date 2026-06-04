@@ -21,10 +21,16 @@
 
 .rounds-list {
   display: grid;
+  gap: 14px;
+}
+
+.round-section {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.rounds-row {
+.round-section-header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -46,10 +52,6 @@
   margin-top: 2px;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.55);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 52vw;
 }
 
 .rounds-actions {
@@ -59,43 +61,198 @@
   flex: 0 0 auto;
 }
 
+/* Botones de acción (icono + etiqueta opcional) */
+.action-btn,
 .action-icon {
-  width: 34px;
-  height: 34px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(0, 0, 0, 0.18);
   color: rgba(255, 255, 255, 0.92);
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
   transition: transform 120ms ease, background-color 120ms ease,
     border-color 120ms ease;
+  cursor: pointer;
 }
 
+.action-btn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+
+.action-btn:hover,
 .action-icon:hover {
   transform: translateY(-1px);
   background: rgba(0, 0, 0, 0.28);
   border-color: rgba(255, 255, 255, 0.22);
 }
 
+.action-btn.view,
 .action-icon.view {
   border-color: rgba(230, 119, 0, 0.35);
 }
 
+.action-btn.report,
 .action-icon.report {
   border-color: rgba(64, 200, 120, 0.35);
 }
 
+.action-btn.edit,
 .action-icon.edit {
   border-color: rgba(29, 101, 253, 0.35);
 }
 
+.action-btn.null-match,
 .action-icon.null-match {
   border-color: rgba(201, 42, 42, 0.35);
 }
 
+.action-btn i,
 .action-icon i {
   font-size: 14px;
+  flex-shrink: 0;
+}
+
+.action-label {
+  display: none;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.round-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 4px;
+}
+
+.round-group-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 2px;
+}
+
+.round-matches {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.round-match {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 0.75rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.round-match:hover {
+  background: rgba(29, 101, 253, 0.08);
+  border-color: rgba(29, 101, 253, 0.22);
+}
+
+.round-match-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.round-match-team {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.round-match-team--home {
+  justify-content: flex-start;
+}
+
+.round-match-team--away {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.round-match-team img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.round-match-team-name {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.round-match-score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  flex: 0 0 auto;
+}
+
+.round-match-score-value {
+  background: linear-gradient(
+    135deg,
+    rgba(25, 38, 133, 0.5) 0%,
+    rgba(29, 101, 253, 0.3) 100%
+  );
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  min-width: 28px;
+  text-align: center;
+}
+
+.round-match-score-sep {
+  opacity: 0.85;
+  font-size: 0.7rem;
+}
+
+.round-match-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.round-group-empty {
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
 }
 
 .rounds-empty {
@@ -107,7 +264,7 @@
   font-size: 13px;
 }
 
-.rounds-row.is-loading {
+.is-loading {
   pointer-events: none;
 }
 
@@ -123,6 +280,11 @@
   max-width: 45vw;
 }
 
+.tournament-skel-line.w-60 {
+  width: 100%;
+  max-width: 520px;
+}
+
 .rounds-skel-btn {
   width: 34px;
   height: 34px;
@@ -131,13 +293,210 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-@media (max-width: 576px) {
-  .rounds-row {
-    flex-wrap: wrap;
+/* ============================================
+   MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .tournament-rounds-page {
+    padding: 0.75rem !important;
+  }
+
+  .tournament-rounds-page .section-sub {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .rounds-list {
+    gap: 12px;
+  }
+
+  .round-section {
+    gap: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(22, 33, 44, 0.92) 0%,
+      rgba(18, 26, 34, 0.95) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .round-section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px 12px 10px !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 0, 0, 0.22) !important;
+    transform: none !important;
+  }
+
+  .round-section-header:hover {
+    transform: none !important;
+    background: rgba(0, 0, 0, 0.22) !important;
+  }
+
+  .rounds-label {
+    font-size: 1rem;
+  }
+
+  .rounds-hint {
+    font-size: 11px;
   }
 
   .rounds-actions {
     width: 100%;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .rounds-actions .action-btn {
+    width: 100%;
+    height: 40px;
+    padding: 0 6px;
+    gap: 5px;
+    border-radius: 10px;
+  }
+
+  .rounds-actions .action-label {
+    display: inline;
+  }
+
+  .round-groups {
+    padding: 10px 10px 12px;
+    gap: 12px;
+  }
+
+  .round-group-title {
+    font-size: 11px;
+    margin-bottom: 6px;
+    padding-left: 2px;
+  }
+
+  .round-matches {
+    gap: 10px;
+  }
+
+  .round-match {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .round-match:hover {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .round-match-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+  }
+
+  .round-match-team {
+    flex: none;
+    width: 100%;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .round-match-team--home {
+    padding-bottom: 6px;
+  }
+
+  .round-match-team--away {
+    justify-content: flex-start;
+    text-align: left;
+    flex-direction: row;
+    padding-top: 6px;
+  }
+
+  .round-match-team img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .round-match-team-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+
+  .round-match-score {
+    width: 100%;
+    padding: 8px 12px;
+    margin: 0;
+    gap: 0.65rem;
+    background: rgba(0, 0, 0, 0.18);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .round-match-score-value {
+    min-width: 32px;
+    font-size: 1rem;
+    padding: 0.35rem 0.6rem;
+  }
+
+  .round-match-score-sep {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .round-match-actions {
+    width: 100%;
+    padding: 10px 12px;
+    gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  .round-match-actions .action-btn {
+    flex: 1;
+    width: auto;
+    height: 40px;
+    gap: 6px;
+    border-radius: 10px;
+  }
+
+  .round-match-actions .action-label {
+    display: inline;
+  }
+
+  .round-match-actions .action-btn:only-child {
+    flex: 1;
+    max-width: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .rounds-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .rounds-actions .action-btn {
+    height: 38px;
+    justify-content: center;
+  }
+
+  .round-match-actions {
+    flex-direction: column;
+  }
+
+  .round-match-actions .action-btn {
+    width: 100%;
   }
 }

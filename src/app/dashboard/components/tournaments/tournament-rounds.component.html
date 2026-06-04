@@ -1,4 +1,4 @@
-<div class="card-custom p-3">
+<div class="card-custom p-3 tournament-rounds-page">
   <div class="rounds-toolbar">
     <button type="button" class="back-link" (click)="onBack()">
       <i class="fa fa-arrow-left me-2"></i> Volver a torneos
@@ -21,73 +21,163 @@
 
   <div class="section-title mt-3">Listado de rondas</div>
   <div class="section-sub">
-    Gestioná reportes, edición (próximamente) y partido nulo según la fecha o jornada.
+    Todas las fechas del torneo con sus partidos. Gestioná reportes, edición
+    (próximamente) y partido nulo desde cada jornada.
   </div>
 
   <div class="rounds-list mt-2" *ngIf="!isLoading; else loadingTpl">
-    <div class="rounds-empty" *ngIf="rounds.length === 0">
+    <div class="rounds-empty" *ngIf="roundSections.length === 0">
       No hay rondas o fechas cargadas para este torneo todavía.
     </div>
 
-    <div
-      *ngFor="let r of rounds; trackBy: trackByPage"
-      class="quick-action rounds-row"
+    <section
+      *ngFor="let section of roundSections; trackBy: trackByPage"
+      class="round-section"
     >
-      <div class="rounds-meta">
-        <div class="rounds-label">{{ r.label }}</div>
-        <div class="rounds-hint" *ngIf="tournament?.name">
-          {{ tournament.name }}
+      <div class="round-section-header quick-action">
+        <div class="rounds-meta">
+          <div class="rounds-label">{{ section.label }}</div>
+          <div class="rounds-hint">
+            {{ section.matchCount }}
+            {{ section.matchCount === 1 ? 'partido' : 'partidos' }}
+          </div>
         </div>
+
+        <!-- <div class="ms-auto rounds-actions">
+          <button
+            type="button"
+            class="action-btn view"
+            (click)="onViewReports(section)"
+            title="Ver reportes de la fecha"
+            aria-label="Ver reportes de la fecha"
+          >
+            <i class="fa fa-file-text-o"></i>
+            <span class="action-label">Reportes</span>
+          </button>
+          <button
+            type="button"
+            class="action-btn edit"
+            (click)="onEdit(section)"
+            title="Editar fecha"
+            aria-label="Editar fecha"
+          >
+            <i class="fa fa-pencil"></i>
+            <span class="action-label">Editar</span>
+          </button>
+          <button
+            type="button"
+            class="action-btn null-match"
+            (click)="onNullMatch(section)"
+            title="Partido nulo"
+            aria-label="Partido nulo"
+          >
+            <i class="fa fa-ban"></i>
+            <span class="action-label">Nulo</span>
+          </button>
+        </div> -->
       </div>
 
-      <div class="ms-auto rounds-actions">
-        <button
-          type="button"
-          class="action-icon view"
-          (click)="onViewReports(r)"
-          title="Ver reporte"
-          aria-label="Ver reporte"
+      <div class="round-groups">
+        <div
+          class="round-group"
+          *ngFor="let group of section.groups; trackBy: trackByGroup"
         >
-          <i class="fa fa-file-text-o"></i>
-        </button>
-        <button
-          type="button"
-          class="action-icon report"
-          (click)="onReport(r)"
-          title="Reportar"
-          aria-label="Reportar"
-        >
-          <i class="fa fa-flag"></i>
-        </button>
-        <button
-          type="button"
-          class="action-icon edit"
-          (click)="onEdit(r)"
-          title="Editar"
-          aria-label="Editar"
-        >
-          <i class="fa fa-pencil"></i>
-        </button>
-        <button
-          type="button"
-          class="action-icon null-match"
-          (click)="onNullMatch(r)"
-          title="Partido nulo"
-          aria-label="Partido nulo"
-        >
-          <i class="fa fa-ban"></i>
-        </button>
+          <div class="round-group-title" *ngIf="showGroupLabels">
+            {{ group.groupLabel }}
+          </div>
+
+          <ul class="round-matches">
+            <li
+              class="round-match"
+              *ngFor="let match of group.matches; trackBy: trackByMatchId"
+            >
+              <div class="round-match-content">
+                <div class="round-match-team round-match-team--home">
+                  <img
+                    [src]="
+                      match?.homeLogoUrl ||
+                      '../../../assets/images/player-default.png'
+                    "
+                    [alt]="match.homeTeamName"
+                    loading="lazy"
+                  />
+                  <span class="round-match-team-name">{{
+                    match.homeTeamName
+                  }}</span>
+                </div>
+
+                <div class="round-match-score" aria-label="Marcador">
+                  <span class="round-match-score-value">{{
+                    match.homeGoals ?? '-'
+                  }}</span>
+                  <span class="round-match-score-sep">VS</span>
+                  <span class="round-match-score-value">{{
+                    match.awayGoals ?? '-'
+                  }}</span>
+                </div>
+
+                <div class="round-match-team round-match-team--away">
+                  <span class="round-match-team-name">{{
+                    match.awayTeamName
+                  }}</span>
+                  <img
+                    [src]="
+                      match?.awayLogoUrl ||
+                      '../../../assets/images/player-default.png'
+                    "
+                    [alt]="match.awayTeamName"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              <div class="round-match-actions" *ngIf="isMatchPending(match)">
+                <button
+                  type="button"
+                  class="action-btn report"
+                  (click)="onReportMatch(match)"
+                  title="Reportar partido"
+                  aria-label="Reportar partido"
+                >
+                  <i class="fa fa-flag"></i>
+                  <span class="action-label">Reportar</span>
+                </button>
+                <button
+                  *ngIf="canNullMatchMatch(match)"
+                  type="button"
+                  class="action-btn null-match"
+                  (click)="onNullMatchMatch(match, section)"
+                  title="Partido nulo"
+                  aria-label="Partido nulo"
+                >
+                  <i class="fa fa-ban"></i>
+                  <span class="action-label">Nulo</span>
+                </button>
+              </div>
+            </li>
+          </ul>
+
+          <div class="round-group-empty" *ngIf="group.matches.length === 0">
+            Sin partidos en esta jornada.
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <ng-template #loadingTpl>
     <div class="rounds-list mt-2">
-      <div class="quick-action rounds-row is-loading" *ngFor="let _ of [1, 2, 3, 4]">
-        <div class="tournament-skel-line w-40"></div>
-        <div class="ms-auto d-flex gap-1">
-          <div class="rounds-skel-btn"></div>
-          <div class="rounds-skel-btn"></div>
+      <div class="round-section is-loading" *ngFor="let _ of [1, 2, 3]">
+        <div class="quick-action round-section-header">
+          <div class="tournament-skel-line w-40"></div>
+          <div class="ms-auto d-flex gap-1">
+            <div class="rounds-skel-btn"></div>
+            <div class="rounds-skel-btn"></div>
+            <div class="rounds-skel-btn"></div>
+          </div>
+        </div>
+        <div class="round-match is-loading" *ngFor="let __ of [1, 2]">
+          <div class="tournament-skel-line w-60"></div>
         </div>
       </div>
     </div>

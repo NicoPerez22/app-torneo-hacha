@@ -10,6 +10,7 @@ import { DashboardSettingsComponent } from './components/settings/dashboard-sett
 import { DashboardTeamsComponent } from './components/teams/dashboard-teams.component';
 import { DashboardTournamentsComponent } from './components/tournaments/dashboard-tournaments.component';
 import { TournamentRoundsComponent } from './components/tournaments/tournament-rounds.component';
+import { TeamModule } from '../team/team.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { TournamentRoundsComponent } from './components/tournaments/tournament-r
     DashboardReportsComponent,
     DashboardSettingsComponent,
   ],
-  imports: [CommonModule, SharedModule, DashboardRoutingModule],
+  imports: [CommonModule, SharedModule, DashboardRoutingModule, TeamModule],
 })
 export class DashboardModule {}
 
