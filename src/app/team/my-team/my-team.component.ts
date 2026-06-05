@@ -10,6 +10,7 @@ import { ResultsComponent } from './results/results.component';
 import { TradeComponent } from 'src/app/shared/components/trade/trade.component';
 
 @Component({
+  standalone: false,
   selector: 'app-my-team',
   templateUrl: './my-team.component.html',
   styleUrls: ['./my-team.component.css'],
@@ -102,7 +103,7 @@ export class MyTeamComponent implements OnInit {
   onReport(value){
     const modal = this.modalService.create({
       nzContent: ResultsComponent,
-      nzComponentParams: {
+      nzData: {
         match: value
       },
       nzFooter: null,
@@ -131,7 +132,7 @@ export class MyTeamComponent implements OnInit {
 
     this.modalService.create({
       nzContent: TradeComponent,
-      nzComponentParams: { player: playerForTrade },
+      nzData: { player: playerForTrade },
       nzFooter: null,
       nzWidth: '95vw',
       nzStyle: { maxWidth: '1000px' },

@@ -32,6 +32,7 @@ type CalendarWeekCell = {
 };
 
 @Component({
+  standalone: false,
   selector: 'app-view-tournament',
   templateUrl: './view-tournament.component.html',
   styleUrls: ['./view-tournament.component.css'],

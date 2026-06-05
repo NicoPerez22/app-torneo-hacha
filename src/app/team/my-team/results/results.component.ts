@@ -3,19 +3,23 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TournamentService } from 'src/app/tournament/service/tournament.service';
 import { ToastrService } from 'ngx-toastr';
 import { TeamService } from 'src/app/service/team.service';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
 type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE' | 'INJURY';
 
 @Component({
+  standalone: false,
   selector: 'app-results',
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.css'],
 })
 export class ResultsComponent implements OnInit {
   @Input() match: any;
+  private readonly modalData = inject<{ match?: any }>(NZ_MODAL_DATA, {
+    optional: true,
+  });
 
   form: FormGroup;
   isLoadingPlayers = false;
@@ -30,6 +34,7 @@ export class ResultsComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.match = this.match ?? this.modalData?.match;
     this._initForm();
     this._loadPlayers();
   }

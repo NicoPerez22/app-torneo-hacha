@@ -3,6 +3,7 @@ import { InputComponent } from './input/input.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
+  standalone: false,
   selector: 'app-filters',
   templateUrl: './filters.component.html',
   styleUrls: ['./filters.component.css'],

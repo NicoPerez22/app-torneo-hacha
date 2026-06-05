@@ -8,6 +8,7 @@ import { ManagerComponent } from './my-team/manager/manager.component';
 import { AuthService } from '../service/auth.service';
 
 @Component({
+  standalone: false,
   selector: 'app-team',
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.css'],
@@ -82,7 +83,7 @@ export class TeamComponent implements OnInit {
       nzContent: TeamCreateComponent,
       nzWidth: 800,
       nzFooter: null,
-      nzComponentParams: {
+      nzData: {
         teamData: team,
       }
     });

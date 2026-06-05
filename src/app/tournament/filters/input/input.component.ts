@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-input',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.css'],

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard-market',
   templateUrl: './dashboard-market.component.html',
   styleUrls: ['./dashboard-market.component.css'],

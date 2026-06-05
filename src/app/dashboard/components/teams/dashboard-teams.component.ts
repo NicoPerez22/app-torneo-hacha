@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TeamService } from 'src/app/service/team.service';
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard-teams',
   templateUrl: './dashboard-teams.component.html',
   styleUrls: ['./dashboard-teams.component.css'],

@@ -7,6 +7,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { TradeComponent } from '../shared/components/trade/trade.component';
 
 @Component({
+  standalone: false,
   selector: 'app-search-players',
   templateUrl: './search-players.component.html',
   styleUrls: ['./search-players.component.css'],
@@ -38,7 +39,7 @@ export class SearchPlayersComponent implements OnInit {
   onBird(player): void {
     this.modal.create({
       nzContent: TradeComponent,
-      nzComponentParams: { player },
+      nzData: { player },
       nzFooter: null,
       nzWidth: '95vw',
       nzStyle: { maxWidth: '1000px' },

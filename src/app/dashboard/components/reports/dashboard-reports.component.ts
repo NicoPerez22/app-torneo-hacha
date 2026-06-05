@@ -10,6 +10,7 @@ import {
 import { MatchReportDraftsService } from 'src/app/service/match-report-drafts.service';
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard-reports',
   templateUrl: './dashboard-reports.component.html',
   styleUrls: ['./dashboard-reports.component.css'],

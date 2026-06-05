@@ -1,5 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { TeamService } from 'src/app/service/team.service';
 import { FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { UploadService } from 'src/app/service/upload.service';
@@ -7,12 +8,16 @@ import { Team } from '../models/team';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  standalone: false,
   selector: 'app-team-create',
   templateUrl: './team-create.component.html',
   styleUrls: ['./team-create.component.css'],
 })
 export class TeamCreateComponent implements OnInit {
   @Input() teamData: any;
+  private readonly modalData = inject<{ teamData?: any }>(NZ_MODAL_DATA, {
+    optional: true,
+  });
 
   form: FormGroup;
   images: Array<any> = [];
@@ -31,6 +36,7 @@ export class TeamCreateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.teamData = this.teamData ?? this.modalData?.teamData;
     this._initForm();
 
     if (this.teamData) {

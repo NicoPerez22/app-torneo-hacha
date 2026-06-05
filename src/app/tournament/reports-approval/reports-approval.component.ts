@@ -21,6 +21,7 @@ type ReportDetailVM = {
 };
 
 @Component({
+  standalone: false,
   selector: 'app-reports-approval',
   templateUrl: './reports-approval.component.html',
   styleUrls: ['./reports-approval.component.css'],

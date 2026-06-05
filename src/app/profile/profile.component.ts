@@ -8,6 +8,7 @@ import { PersonalDataComponent } from './personal-data/personal-data.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  standalone: false,
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
@@ -31,10 +32,11 @@ export class ProfileComponent implements OnInit {
       nzTitle: 'Editar perfil',
       nzContent: PersonalDataComponent,
       nzWidth: '800px',
-      nzComponentParams: {
+      nzData: {
         myUser: this.user,
       },
-      nzOnOk: () => modal.componentInstance?.onSubmit(),
+      nzOnOk: () =>
+        modal.getContentComponentRef()?.instance?.onSubmit?.(),
     });
 
     modal.afterClose.subscribe((result) => {

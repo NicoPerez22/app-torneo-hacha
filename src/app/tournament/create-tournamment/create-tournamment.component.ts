@@ -17,6 +17,7 @@ import { TOURNAMENT_CONSTANTS, TEAM_COUNT_OPTIONS, CREATE_TOURNAMENT_STEPS } fro
 import { Subscription } from 'rxjs';
 
 @Component({
+  standalone: false,
   selector: 'app-create-tournamment',
   templateUrl: './create-tournamment.component.html',
   styleUrls: ['./create-tournamment.component.css'],

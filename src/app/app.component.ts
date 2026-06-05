@@ -12,6 +12,7 @@ import { UserService } from './service/user.service';
 import { distinctUntilChanged } from 'rxjs';
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

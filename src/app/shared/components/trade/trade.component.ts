@@ -1,18 +1,21 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { LoginService } from 'src/app/service/login.service';
 import { TeamService } from 'src/app/service/team.service';
 import { UserService } from 'src/app/service/user.service';
 
 @Component({
+  standalone: false,
   selector: 'app-trade',
   templateUrl: './trade.component.html',
   styleUrls: ['./trade.component.scss'],
 })
 export class TradeComponent implements OnInit {
-  // Se setea desde NzModalService.create({ nzComponentParams })
+  private readonly modalData = inject<{ player?: any }>(NZ_MODAL_DATA, {
+    optional: true,
+  });
   player: any;
 
   targetTeamPlayers: Array<any> = []; // Jugadores del equipo objetivo (entrantes)
@@ -41,6 +44,7 @@ export class TradeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.player = this.player ?? this.modalData?.player;
     this._initForm();
     this._resetMultiSelectUI();
 

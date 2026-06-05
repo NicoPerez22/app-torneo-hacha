@@ -9,6 +9,7 @@ import { ManagerComponent } from '../team/my-team/manager/manager.component';
 import { DisabledPlayersService } from './service/disabled-players.service';
 
 @Component({
+  standalone: false,
   selector: 'app-disabled-players',
   templateUrl: './disabled-players.component.html',
   styleUrls: ['./disabled-players.component.css'],

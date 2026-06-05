@@ -31,6 +31,7 @@ export interface TournamentRoundSection {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-tournament-rounds',
   templateUrl: './tournament-rounds.component.html',
   styleUrls: ['./tournament-rounds.component.css'],
@@ -113,7 +114,7 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
   onReportMatch(match: Match): void {
     const modal = this.modalService.create({
       nzContent: ResultsComponent,
-      nzComponentParams: { match },
+      nzData: { match },
       nzFooter: null,
       nzWidth: '95vw',
       nzStyle: { maxWidth: '1100px' },

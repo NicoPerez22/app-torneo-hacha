@@ -17,7 +17,6 @@ import { NZ_I18N, es_ES } from 'ng-zorro-antd/i18n';
 import es from '@angular/common/locales/es';
 import { FormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
-import { AuthGuard } from '@angular/fire/auth-guard';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
 import { SharedModule } from './shared/shared.module';
@@ -46,7 +45,6 @@ registerLocaleData(es);
     StoreDevtoolsModule.instrument({ name: 'TEST' }),
   ],
   providers: [
-    AuthGuard,
     CookieService,
     { provide: NZ_I18N, useValue: es_ES },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true },

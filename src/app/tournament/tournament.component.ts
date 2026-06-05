@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../service/auth.service';
 
 @Component({
+  standalone: false,
   selector: 'app-tournament',
   templateUrl: './tournament.component.html',
   styleUrls: ['./tournament.component.css'],

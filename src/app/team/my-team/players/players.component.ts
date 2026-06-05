@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TeamService } from 'src/app/service/team.service';
 
 @Component({
+  standalone: false,
   selector: 'app-players',
   templateUrl: './players.component.html',
   styleUrls: ['./players.component.css'],

@@ -22,6 +22,7 @@ export type MatchReportCardVM = {
 };
 
 @Component({
+  standalone: false,
   selector: 'app-match',
   templateUrl: './match.component.html',
   styleUrls: ['./match.component.css'],

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { ColumnItem } from './interface/columnItem.interface';
 
 @Component({
+  standalone: false,
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css'],

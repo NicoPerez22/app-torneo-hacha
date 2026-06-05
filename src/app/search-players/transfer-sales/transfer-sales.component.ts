@@ -19,6 +19,7 @@ type TransferOfferVM = {
 };
 
 @Component({
+  standalone: false,
   selector: "app-transfer-sales",
   templateUrl: "./transfer-sales.component.html",
   styleUrls: ["./transfer-sales.component.css"],

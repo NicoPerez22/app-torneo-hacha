@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TeamService } from 'src/app/service/team.service';
 
 @Component({
+  standalone: false,
   selector: 'app-manager',
   templateUrl: './manager.component.html',
   styleUrls: ['./manager.component.css'],

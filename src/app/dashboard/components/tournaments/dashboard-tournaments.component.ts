@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard-tournaments',
   templateUrl: './dashboard-tournaments.component.html',
   styleUrls: ['./dashboard-tournaments.component.css'],
