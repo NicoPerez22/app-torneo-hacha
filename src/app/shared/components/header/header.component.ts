@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
@@ -16,7 +17,11 @@ import { AuthService } from 'src/app/service/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
+  private authService = inject(AuthService);
+  private loginService = inject(LoginService);
+  private router = inject(Router);
+
   @Input() user: any;
   @Input() team: any;
 
@@ -24,16 +29,6 @@ export class HeaderComponent implements OnInit {
 
   @ViewChild('mainNav') mainNav?: ElementRef<HTMLElement>;
   @ViewChild('navToggler') navToggler?: ElementRef<HTMLElement>;
-
-  constructor(
-    private router: Router,
-    public loginService: LoginService,
-    public authService: AuthService,
-  ) {}
-
-  ngOnInit(): void {
-    console.log(this.authService?.getUser())
-  }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

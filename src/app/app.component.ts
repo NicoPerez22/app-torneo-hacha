@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -17,36 +18,18 @@ import { distinctUntilChanged } from 'rxjs';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements AfterViewInit {
+  private authService = inject(AuthService);
+  private userSerivce = inject(UserService);
+  private loginService = inject(LoginService);
+
   userActive: any;
   teamActive: any;
 
-  constructor(
-    private userSerivce: UserService,
-    public loginService: LoginService,
-    public authService: AuthService,
-  ) {}
+  protected userSignal = this.authService.userSignal;
 
   @ViewChild('hdr', { static: true }) hdr!: ElementRef<HTMLElement>;
   headerH = 0;
-
-  ngOnInit(): void {
-    // 1) Al cargar, si ya hay sesión, obtener perfil
-    const initialUser = this.loginService.user ?? this.authService?.getUser();
-    if (initialUser?.id) this._getProfile(initialUser.id);
-
-    // 2) Al loguear/desloguear, reaccionar sin recargar la app
-    this.loginService.user$
-      .pipe(distinctUntilChanged((a, b) => a?.id === b?.id))
-      .subscribe((user) => {
-        if (user?.id) {
-          this._getProfile(user.id);
-        } else {
-          this.userActive = null;
-          this.teamActive = null;
-        }
-      });
-  }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.updateHeaderHeight());

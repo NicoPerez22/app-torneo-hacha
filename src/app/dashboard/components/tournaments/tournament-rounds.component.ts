@@ -67,7 +67,7 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
       return;
     }
     this.tournamentId = id;
-    const user = this.authService.getUser();
+    const user = null;
     this.isAdmin = user?.idRol === 1;
     this.load();
   }
@@ -315,7 +315,7 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
 
   private executeNullMatch(draftId: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      const adminId = Number(this.authService.getUser()?.id);
+      const adminId = null;
       if (!Number.isFinite(adminId)) {
         this.toastr.error('Usuario no válido', 'Error');
         reject();

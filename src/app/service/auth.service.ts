@@ -1,19 +1,24 @@
 import { HttpClient } from '@angular/common/http';
 import { environment } from './../../environments/environment';
-import { Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Observable, BehaviorSubject, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  readonly http = inject(HttpClient);
+
+  private privateUserSignal = signal<any | null>(null);
+  userSignal = this.privateUserSignal.asReadonly();
+
   auhtState$: Observable<any>;
   USER_KEY = 'user';
-
-  constructor(private http: HttpClient) {}
-
-  userObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   API_URL = environment.API_URL;
+
+  constructor() {
+    this.getUserStorage();
+  }
 
   register(userRegister): Observable<any> {
     const url = this.API_URL + `auth/register`;
@@ -26,7 +31,6 @@ export class AuthService {
   }
 
   clean(): void {
-    // Evitar limpiar toda la sesión: solo lo que maneja auth.
     sessionStorage.removeItem(this.USER_KEY);
   }
 
@@ -35,16 +39,12 @@ export class AuthService {
     sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
-  getUser(): any {
+  getUserStorage() {
     const user = sessionStorage.getItem(this.USER_KEY);
     if (!user) return null;
-    try {
-      const parsed = JSON.parse(user);
-      this.setUserObservable = parsed;
-      return parsed;
-    } catch {
-      return null;
-    }
+
+    const parsed = JSON.parse(user);
+    this.privateUserSignal.set(parsed);
   }
 
   isLoggedIn(): boolean {
@@ -54,30 +54,4 @@ export class AuthService {
     }
     return false;
   }
-
-  returnUserLogged() {
-    var us;
-    this.getUserObservable.subscribe((res) => {
-      us = res;
-    });
-
-    return us;
-  }
-
-  get getUserObservable() {
-    this.getUser();
-    return this.userObservable.asObservable();
-  }
-
-  set setUserObservable(data) {
-    this.userObservable.next(data);
-  }
-
-  // getRole(): string {
-  //   return this.getUser().role;
-  // }
-
-  // isAuthorized(roles: string[]): boolean {
-  //   return roles.includes(this.getUser().role);
-  // }
 }

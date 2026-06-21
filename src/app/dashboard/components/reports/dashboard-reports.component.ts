@@ -52,7 +52,7 @@ export class DashboardReportsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const user = this.authService.getUser();
+    const user = null;
     this.isAdmin = user?.idRol === 1;
     const qTid = this.route.snapshot.queryParamMap.get('tournamentId');
     if (qTid && String(qTid).trim()) {
@@ -121,7 +121,7 @@ export class DashboardReportsComponent implements OnInit {
 
   onApprove(item: MatchReportCardVM) {
     if (!this.isAdmin) return;
-    const user = this.authService.getUser();
+    const user = null;
     const adminId = Number(user?.id);
     const draftId = Number(item?.reportId);
     if (!Number.isFinite(adminId) || !Number.isFinite(draftId)) return;
@@ -141,7 +141,7 @@ export class DashboardReportsComponent implements OnInit {
 
   onReject(item: MatchReportCardVM) {
     if (!this.isAdmin) return;
-    const user = this.authService.getUser();
+    const user = null;
     const adminId = Number(user?.id);
     const draftId = Number(item?.reportId);
     if (!Number.isFinite(adminId) || !Number.isFinite(draftId)) return;
@@ -160,7 +160,7 @@ export class DashboardReportsComponent implements OnInit {
   }
   onNullMatch(item: MatchReportCardVM) {
     if (!this.isAdmin) return;
-    const user = this.authService.getUser();
+    const user = null;
     const adminId = Number(user?.id);
     const draftId = Number(item?.reportId);
     if (!Number.isFinite(adminId) || !Number.isFinite(draftId)) return;

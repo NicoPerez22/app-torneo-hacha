@@ -1,6 +1,7 @@
+@let user = userSignal(); @defer (when user !== null) {
 <div class="wrapper">
   <header #hdr>
-    <app-header *ngIf="(loginService.user$ | async) as user" [user]="userActive" [team]="teamActive"></app-header>
+    <app-header [user]="user" [team]="teamActive"></app-header>
   </header>
 
   <!-- Aplico padding-top en px calculado -->
@@ -8,7 +9,7 @@
     <router-outlet></router-outlet>
   </main>
 
-  <footer *ngIf="loginService.user$ | async" class="footer bg-black back text-light py-4">
+  <footer class="footer bg-black back text-light py-4">
     <div class="container">
       <div class="text-center mt-3">
         <p class="mb-0">&copy; 2026 Todos los derechos reservados.</p>
@@ -16,6 +17,7 @@
     </div>
   </footer>
 </div>
+}
 
 <ngx-spinner
   bdColor="rgba(51,51,51,0.8)"
