@@ -51,6 +51,10 @@ export class DashboardTournamentsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard/tournaments', id, 'rounds']);
   }
 
+  onSchedule(): void {
+    this.router.navigate(['/dashboard/tournaments/schedule']);
+  }
+
   onEdit(t: Tournament): void {
     // No hay endpoint/flujo de edición todavía en el proyecto.
     this.toastrService.info(

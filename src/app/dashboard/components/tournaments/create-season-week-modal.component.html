@@ -1,0 +1,53 @@
+<div class="create-season-week-modal">
+  <p class="modal-lead">
+    Creá una nueva semana para la temporada. Luego podrás asignarle fechas de
+    torneos.
+  </p>
+
+  <div class="modal-field">
+    <label class="modal-label" for="weekNumber">Número de semana</label>
+    <input
+      id="weekNumber"
+      type="number"
+      class="form-control modal-input"
+      min="1"
+      [(ngModel)]="weekNumber"
+    />
+  </div>
+
+  <div class="modal-field">
+    <label class="modal-label" for="startDate">Fecha de inicio</label>
+    <input
+      id="startDate"
+      type="date"
+      class="form-control modal-input"
+      [(ngModel)]="startDate"
+    />
+  </div>
+
+  <div class="modal-field">
+    <label class="modal-label" for="endDate">Fecha de fin</label>
+    <input
+      id="endDate"
+      type="date"
+      class="form-control modal-input"
+      [(ngModel)]="endDate"
+      [min]="startDate"
+    />
+  </div>
+
+  <div class="modal-actions">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="onSave()"
+      [disabled]="isSaving || !weekNumber || !startDate || !endDate"
+    >
+      <span *ngIf="!isSaving">Crear semana</span>
+      <span *ngIf="isSaving">Guardando...</span>
+    </button>
+  </div>
+</div>

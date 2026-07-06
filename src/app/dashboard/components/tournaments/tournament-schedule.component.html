@@ -1,0 +1,113 @@
+<div class="card-custom p-3 tournament-schedule-page">
+  <div class="schedule-toolbar">
+    <button class="btn btn-primary" type="button" (click)="onBack()">
+      <i class="fa fa-arrow-left me-2"></i> Volver a torneos
+    </button>
+    <button
+      type="button"
+      class="quick-action schedule-add-week-btn"
+      (click)="onCreateWeek()"
+    >
+      <i class="fa fa-plus me-2"></i> Agregar semana
+    </button>
+  </div>
+
+  <div class="section-title mt-2">Programación por semanas</div>
+  <div class="section-sub">
+    Cada semana puede incluir una o más fechas disponibles. Dentro de cada
+    semana se muestra el número de fecha o ronda y el torneo al que pertenece.
+  </div>
+
+  <div class="schedule-grid mt-3" *ngIf="!isLoading; else loadingTpl">
+    <div class="schedule-empty" *ngIf="weeks.length === 0">
+      No hay semanas configuradas todavía.
+    </div>
+
+    <div
+      class="schedule-row"
+      *ngFor="let row of weekRows; trackBy: trackByRowIndex"
+    >
+      <article
+        class="week-card"
+        *ngFor="let week of row; trackBy: trackByWeekId"
+      >
+        <header class="week-card-header">
+          <div class="week-card-heading">
+            <span class="week-card-kicker">Semana</span>
+            <span class="week-card-kicker">{{ week.weekNumber }}</span>
+          </div>
+          <div class="week-card-actions">
+            <button
+              type="button"
+              class="week-add-btn"
+              (click)="onAddDates(week)"
+              [disabled]="!canAddDates(week)"
+              title="Agregar fechas de un torneo"
+              aria-label="Agregar fechas de un torneo"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+            <button
+              type="button"
+              class="week-delete-btn"
+              (click)="onDeleteWeek(week)"
+              title="Eliminar semana"
+              aria-label="Eliminar semana"
+            >
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="week-card-range" *ngIf="getWeekRangeLabel(week)">
+          INICIO: {{ week.startDate | date : 'dd/MM/yyyy' }} - FIN:
+          {{ week.endDate | date : 'dd/MM/yyyy' }}
+        </div>
+
+        <div class="week-card-body">
+          <div
+            class="week-date-item"
+            *ngFor="
+              let assignment of week.assignments;
+              trackBy: trackByAssignment
+            "
+          >
+            <div class="week-date-content">
+              <span class="week-date-label">{{
+                getAssignmentLabel(assignment)
+              }}</span>
+              <span class="week-date-tournament">
+                {{ assignment.tournamentName }}
+              </span>
+            </div>
+            <button
+              type="button"
+              class="week-date-delete-btn"
+              (click)="onDeleteAssignment(assignment, week)"
+              title="Eliminar fecha"
+              aria-label="Eliminar fecha"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+
+          <div class="week-card-empty" *ngIf="week.assignments.length === 0">
+            Sin fechas asignadas
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="schedule-grid mt-3">
+      <div class="schedule-row" *ngFor="let _ of [1, 2]">
+        <div class="week-card is-loading" *ngFor="let __ of [1, 2, 3, 4, 5, 6]">
+          <div class="week-skel-header"></div>
+          <div class="week-skel-line"></div>
+          <div class="week-skel-line w-70"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

@@ -9,8 +9,18 @@ import {
   CreateTournamentRequest,
   CreateTournamentResponse,
 } from '../models/tournament.interface';
-import { RoundsResponse } from '../models/round.interface';
+import {
+  RoundsResponse,
+  TournamentRoundsSummaryResponse,
+} from '../models/round.interface';
 import { RankingTablesResponse } from '../models/ranking.interface';
+import {
+  AddWeekMatchdaysRequest,
+  AddWeekMatchdaysResponse,
+  CreateSeasonWeekDto,
+  CreateSeasonWeekResponse,
+  SeasonWeeksResponse,
+} from '../models/week.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +35,7 @@ export class TournamentService {
   private readonly CARDS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/cards`;
   private readonly ROUNDS_PAGINATION_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/{page}`;
   private readonly ROUNDS_KO_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/{id}/rounds/ko`;
+  private readonly ROUNDS_SUMMARY_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/rounds/summary`;
   private readonly DELETE_TOURNAMENT = `${this.TOURNAMENT_ENDPOINT}/delete/{id}`;
   private readonly REPORT_MATCH = `${this.TOURNAMENT_ENDPOINT}/report`;
   private readonly GET_TEAMS_ID_ROUND = `${this.TOURNAMENT_ENDPOINT}/{roundId}/teams`;
@@ -33,6 +44,11 @@ export class TournamentService {
   private readonly MATCH_REPORT_DRAFT_DETAIL = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}`;
   private readonly MATCH_REPORT_DRAFT_REVIEW = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}/review`;
   private readonly TOURNAMENT_NULL_MATCH_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/null-match`;
+  private readonly SEASON_WEEKS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/seasons/{seasonId}/weeks`;
+  private readonly CREATE_SEASON_WEEK_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/weeks`;
+  private readonly ADD_WEEK_MATCHDAYS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/season-weeks/{weekId}/assignments`;
+  private readonly DELETE_SEASON_WEEK_ASSIGNMENT_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/season-weeks/assignments/{assignmentId}`;
+  private readonly DELETE_SEASON_WEEK_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/season-weeks/{weekId}`;
 
   constructor(private http: HttpClient) {}
 
@@ -44,6 +60,49 @@ export class TournamentService {
   getTournament(): Observable<TournamentResponse> {
     const url = `${this.API_URL}${this.TOURNAMENT_ENDPOINT}`;
     return this.http.get<TournamentResponse>(url);
+  }
+
+  getSeasonWeeks(seasonId: number): Observable<SeasonWeeksResponse> {
+    const url = `${this.API_URL}${this.SEASON_WEEKS_ENDPOINT}`.replace(
+      '{seasonId}',
+      String(seasonId),
+    );
+    return this.http.get<SeasonWeeksResponse>(url);
+  }
+
+  createSeasonWeek(
+    request: CreateSeasonWeekDto,
+  ): Observable<CreateSeasonWeekResponse> {
+    const url = `${this.API_URL}${this.CREATE_SEASON_WEEK_ENDPOINT}`;
+    return this.http.post<CreateSeasonWeekResponse>(url, request);
+  }
+
+  addWeekMatchdays(
+    seasonWeekId: number,
+    request: AddWeekMatchdaysRequest,
+  ): Observable<AddWeekMatchdaysResponse> {
+    const url = `${this.API_URL}${this.ADD_WEEK_MATCHDAYS_ENDPOINT}`.replace(
+      '{weekId}',
+      String(seasonWeekId),
+    );
+    return this.http.post<AddWeekMatchdaysResponse>(url, request);
+  }
+
+  deleteSeasonWeekAssignment(assignmentId: number): Observable<unknown> {
+    const url =
+      `${this.API_URL}${this.DELETE_SEASON_WEEK_ASSIGNMENT_ENDPOINT}`.replace(
+        '{assignmentId}',
+        String(assignmentId),
+      );
+    return this.http.delete(url);
+  }
+
+  deleteSeasonWeek(weekId: number): Observable<unknown> {
+    const url = `${this.API_URL}${this.DELETE_SEASON_WEEK_ENDPOINT}`.replace(
+      '{weekId}',
+      String(weekId),
+    );
+    return this.http.delete(url);
   }
 
   getTournamentByID(id: number): Observable<TournamentDetailResponse> {
@@ -75,6 +134,15 @@ export class TournamentService {
       id.toString(),
     );
     return this.http.get<{ data: any[] }>(url);
+  }
+
+  getRoundsSummary(
+    tournamentId: number,
+  ): Observable<TournamentRoundsSummaryResponse> {
+    const url = `${this.API_URL}${this.ROUNDS_SUMMARY_ENDPOINT}`;
+    return this.http.get<TournamentRoundsSummaryResponse>(url, {
+      params: { idTournament: String(tournamentId) },
+    });
   }
 
   getRankingLeague(id: number): Observable<RankingTablesResponse> {

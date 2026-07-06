@@ -10,6 +10,9 @@ import { DashboardSettingsComponent } from './components/settings/dashboard-sett
 import { DashboardTeamsComponent } from './components/teams/dashboard-teams.component';
 import { DashboardTournamentsComponent } from './components/tournaments/dashboard-tournaments.component';
 import { TournamentRoundsComponent } from './components/tournaments/tournament-rounds.component';
+import { TournamentScheduleComponent } from './components/tournaments/tournament-schedule.component';
+import { AddWeekDateModalComponent } from './components/tournaments/add-week-date-modal.component';
+import { CreateSeasonWeekModalComponent } from './components/tournaments/create-season-week-modal.component';
 import { TeamModule } from '../team/team.module';
 
 @NgModule({
@@ -19,6 +22,9 @@ import { TeamModule } from '../team/team.module';
     DashboardTeamsComponent,
     DashboardTournamentsComponent,
     TournamentRoundsComponent,
+    TournamentScheduleComponent,
+    AddWeekDateModalComponent,
+    CreateSeasonWeekModalComponent,
     DashboardMarketComponent,
     DashboardReportsComponent,
     DashboardSettingsComponent,

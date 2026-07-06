@@ -1,0 +1,63 @@
+<div class="add-week-date-modal">
+  <p class="modal-lead">
+    Elegí un torneo y las fechas que querés asignar a la
+    <strong>Semana {{ weekNumber }}</strong>.
+  </p>
+
+  <div class="modal-field">
+    <label class="modal-label" for="tournamentSelect">Torneo</label>
+    <nz-select
+      id="tournamentSelect"
+      nzShowSearch
+      nzPlaceHolder="Seleccionar torneo"
+      [nzLoading]="isLoadingTournaments"
+      [(ngModel)]="selectedTournamentId"
+      (ngModelChange)="onTournamentChange($event)"
+      class="modal-select"
+    >
+      <nz-option
+        *ngFor="let tournament of tournaments"
+        [nzValue]="tournament.id"
+        [nzLabel]="tournament.name"
+      ></nz-option>
+    </nz-select>
+  </div>
+
+  <div class="modal-field">
+    <label class="modal-label" for="matchdaySelect">Fechas del torneo</label>
+    <nz-select
+      id="matchdaySelect"
+      nzMode="multiple"
+      nzPlaceHolder="Seleccionar fechas"
+      [nzDisabled]="!selectedTournamentId"
+      [nzLoading]="isLoadingMatchdays"
+      [(ngModel)]="selectedOptionKeys"
+      class="modal-select"
+    >
+      <nz-option
+        *ngFor="let option of matchdayOptions"
+        [nzValue]="option.key"
+        [nzLabel]="option.label"
+        [nzDisabled]="option.disabled"
+      ></nz-option>
+    </nz-select>
+    <p class="modal-hint" *ngIf="selectedTournamentId && !isLoadingMatchdays">
+      Las fechas ya asignadas en esta semana aparecen deshabilitadas.
+    </p>
+  </div>
+
+  <div class="modal-actions">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="onSave()"
+      [disabled]="isSaving || !selectedTournamentId || selectedOptionKeys.length === 0"
+    >
+      <span *ngIf="!isSaving">Agregar fechas</span>
+      <span *ngIf="isSaving">Guardando...</span>
+    </button>
+  </div>
+</div>

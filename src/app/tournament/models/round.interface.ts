@@ -52,3 +52,17 @@ export interface Pagination {
   unitType?: string;
   unitValue?: number;
 }
+
+export interface TournamentRoundSummary {
+  tournamentId: number;
+  tournamentName: string;
+  tournamentLogo?: string | null;
+  matchday?: number | null;
+  round?: number | null;
+}
+
+export interface TournamentRoundsSummaryResponse {
+  data: TournamentRoundSummary[];
+  message?: string;
+  httpCode?: number;
+}

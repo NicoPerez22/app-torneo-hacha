@@ -1,0 +1,48 @@
+.create-season-week-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-lead {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 8px 12px;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: rgba(65, 169, 255, 0.55);
+  box-shadow: 0 0 0 2px rgba(65, 169, 255, 0.15);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}

@@ -1,0 +1,261 @@
+.tournament-schedule-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.schedule-toolbar {
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.schedule-add-week-btn {
+  margin-left: auto;
+}
+
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.week-card {
+  min-height: 150px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(
+    180deg,
+    rgba(22, 33, 44, 0.95) 0%,
+    rgba(12, 18, 24, 0.95) 100%
+  );
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.week-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.week-card-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.week-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.week-add-btn,
+.week-delete-btn {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.week-add-btn {
+  border: 1px solid rgba(65, 169, 255, 0.35);
+  background: rgba(65, 169, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.week-add-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(65, 169, 255, 0.22);
+  border-color: rgba(65, 169, 255, 0.55);
+}
+
+.week-add-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.week-delete-btn {
+  border: 1px solid rgba(201, 42, 42, 0.35);
+  background: rgba(201, 42, 42, 0.12);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.week-delete-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(201, 42, 42, 0.22);
+  border-color: rgba(201, 42, 42, 0.55);
+}
+
+.week-card-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.week-card-number {
+  font-size: 20px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1;
+}
+
+.week-card-range {
+  padding: 8px 12px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.2px;
+}
+
+.week-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  flex: 1;
+}
+
+.week-date-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.week-date-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.week-date-delete-btn {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 42, 42, 0.3);
+  background: rgba(201, 42, 42, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 11px;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.week-date-delete-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(201, 42, 42, 0.22);
+  border-color: rgba(201, 42, 42, 0.5);
+}
+
+.week-date-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(65, 169, 255, 0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.week-date-tournament {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.week-card-empty {
+  margin-top: auto;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  text-align: center;
+}
+
+.schedule-empty {
+  padding: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.18);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.week-card.is-loading {
+  pointer-events: none;
+}
+
+.week-skel-header {
+  height: 42px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.week-skel-line {
+  height: 10px;
+  margin: 10px 12px 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.week-skel-line.w-70 {
+  width: 70%;
+}
+
+@media (max-width: 1200px) {
+  .schedule-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .schedule-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-row {
+    grid-template-columns: 1fr;
+  }
+}

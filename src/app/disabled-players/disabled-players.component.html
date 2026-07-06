@@ -67,10 +67,16 @@
               <span class="status-badge status-injury">Lesionado</span>
             </div>
             <div class="status-item">
-              <span class="status-label">Tiempo</span>
-              <span class="status-time">{{
-                item?.unavailableUntil | date : 'dd/MM/yyyy'
-              }}</span>
+              <span class="status-label">Inicio</span>
+              <span class="status-time">
+                Semana {{ item?.startWeekNumber }}</span
+              >
+            </div>
+            <div class="status-item">
+              <span class="status-label">Disponible</span>
+              <span class="status-time">
+                Semana {{ item?.startWeekNumber + 2 }}</span
+              >
             </div>
           </div>
         </div>

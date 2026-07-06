@@ -8,6 +8,7 @@ import { DashboardSettingsComponent } from './components/settings/dashboard-sett
 import { DashboardTeamsComponent } from './components/teams/dashboard-teams.component';
 import { DashboardTournamentsComponent } from './components/tournaments/dashboard-tournaments.component';
 import { TournamentRoundsComponent } from './components/tournaments/tournament-rounds.component';
+import { TournamentScheduleComponent } from './components/tournaments/tournament-schedule.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: DashboardOverviewComponent },
       { path: 'teams', component: DashboardTeamsComponent },
+      { path: 'tournaments/schedule', component: TournamentScheduleComponent },
       {
         path: 'tournaments/:tournamentId/rounds',
         component: TournamentRoundsComponent,
