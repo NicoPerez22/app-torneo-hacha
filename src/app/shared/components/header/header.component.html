@@ -38,15 +38,16 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-        <img
-          [src]="team?.logo?.secureUrl || '../../../assets/images/profile.png'"
-          [alt]="user?.name"
-          width="30"
-          height="35"
-        />
-          <span class="d-none d-sm-inline">{{
-            user?.name
-          }}</span>
+          <img
+            [src]="
+              userSignal()?.teams[0]?.logo?.secureUrl ||
+              '../../../assets/images/profile.png'
+            "
+            [alt]="userSignal()?.name"
+            width="30"
+            height="35"
+          />
+          <span class="d-none d-sm-inline">{{ userSignal()?.name }}</span>
         </a>
         <ul
           class="dropdown-menu dropdown-menu-end"
@@ -149,7 +150,7 @@
           </a>
         </li>
 
-        <li class="nav-item" *ngIf="user?.idRol == 1">
+        <li class="nav-item" *ngIf="userSignal()?.idRol == 1">
           <a
             class="nav-link"
             routerLink="/dashboard"

@@ -1,14 +1,18 @@
-@let user = userSignal(); @defer (when user !== null) {
+@let user = userSignal();
+
 <div class="wrapper">
+  @if(user !== null) {
   <header #hdr>
-    <app-header [user]="user" [team]="teamActive"></app-header>
+    <app-header></app-header>
   </header>
+  }
 
   <!-- Aplico padding-top en px calculado -->
   <main class="content">
     <router-outlet></router-outlet>
   </main>
 
+  @if(user !== null) {
   <footer class="footer bg-black back text-light py-4">
     <div class="container">
       <div class="text-center mt-3">
@@ -16,8 +20,8 @@
       </div>
     </div>
   </footer>
+  }
 </div>
-}
 
 <ngx-spinner
   bdColor="rgba(51,51,51,0.8)"

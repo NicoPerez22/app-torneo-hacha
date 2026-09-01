@@ -45,6 +45,13 @@ export class AuthService {
 
     const parsed = JSON.parse(user);
     this.privateUserSignal.set(parsed);
+    return parsed;
+  }
+
+  getUser(): any | null {
+    const current = this.privateUserSignal();
+    if (current) return current;
+    return this.getUserStorage();
   }
 
   isLoggedIn(): boolean {

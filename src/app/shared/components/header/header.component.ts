@@ -4,6 +4,7 @@ import {
   ElementRef,
   HostListener,
   inject,
+  input,
   Input,
   OnInit,
   ViewChild,
@@ -22,10 +23,13 @@ export class HeaderComponent {
   private loginService = inject(LoginService);
   private router = inject(Router);
 
-  @Input() user: any;
-  @Input() team: any;
+  protected userSignal = this.authService.userSignal;
 
   isScrolled = false;
+
+  constructor() {
+    console.log(this.userSignal());
+  }
 
   @ViewChild('mainNav') mainNav?: ElementRef<HTMLElement>;
   @ViewChild('navToggler') navToggler?: ElementRef<HTMLElement>;
@@ -44,7 +48,7 @@ export class HeaderComponent {
   }
 
   navigateToTeam() {
-    this.router.navigate(['/equipos/' + this.user?.teams[0]?.id]);
+    this.router.navigate(['/equipos/' + this.userSignal()?.teams[0]?.id]);
   }
 
   collapseMobileMenu() {
