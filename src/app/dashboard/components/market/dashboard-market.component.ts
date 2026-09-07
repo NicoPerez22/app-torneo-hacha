@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-dashboard-market',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './dashboard-market.component.html',
   styleUrls: ['./dashboard-market.component.css'],
 })

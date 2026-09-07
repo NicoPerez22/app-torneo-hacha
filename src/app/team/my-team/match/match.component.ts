@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 export type MatchReportStatus = 'pending' | 'approved' | 'rejected';
 
@@ -7,8 +8,8 @@ export type MatchReportCardVM = {
   matchId?: number | string | null;
 
   tournamentName?: string | null;
-  roundLabel?: string | null; // ej: "Fecha 10"
-  createdAt?: string | null; // ISO
+  roundLabel?: string | null;
+  createdAt?: string | null;
 
   homeName: string;
   awayName: string;
@@ -22,24 +23,25 @@ export type MatchReportCardVM = {
 };
 
 @Component({
-  standalone: false,
   selector: 'app-match',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './match.component.html',
   styleUrls: ['./match.component.css'],
 })
 export class MatchComponent {
-  @Input() title?: string;
-  @Input() subtitle?: string;
-  @Input() items: MatchReportCardVM[] = [];
-  @Input() isAdmin: boolean = false;
-  @Input() loading: boolean = false;
+  readonly title = input<string | undefined>();
+  readonly subtitle = input<string | undefined>();
+  readonly items = input<MatchReportCardVM[]>([]);
+  readonly isAdmin = input(false);
+  readonly loading = input(false);
 
-  @Output() view = new EventEmitter<MatchReportCardVM>();
-  @Output() approve = new EventEmitter<MatchReportCardVM>();
-  @Output() reject = new EventEmitter<MatchReportCardVM>();
-  @Output() nullMatch = new EventEmitter<MatchReportCardVM>();
+  readonly view = output<MatchReportCardVM>();
+  readonly approve = output<MatchReportCardVM>();
+  readonly reject = output<MatchReportCardVM>();
+  readonly nullMatch = output<MatchReportCardVM>();
 
   readonly fallbackLogoUrl = 'assets/images/player-default.png';
+  readonly hasItems = computed(() => (this.items()?.length ?? 0) > 0);
 
   trackById = (_: number, item: MatchReportCardVM) =>
     item?.reportId ?? item?.matchId ?? _;

@@ -1,21 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { DashboardService } from 'src/app/dashboard/service/dashboard.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-dashboard-overview',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './dashboard-overview.component.html',
   styleUrls: ['./dashboard-overview.component.css'],
 })
 export class DashboardOverviewComponent implements OnInit {
-  resume: any;
-
-  constructor(private readonly dashboardService: DashboardService) {}
+  private readonly dashboardService = inject(DashboardService);
+  readonly resume = signal<any>(null);
 
   ngOnInit(): void {
     this.dashboardService.getResume().subscribe((res) => {
-      this.resume = res?.data;
+      this.resume.set(res?.data);
     });
   }
 }
-

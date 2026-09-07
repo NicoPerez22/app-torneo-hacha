@@ -8,10 +8,11 @@ import {
   ReportDetailVM,
 } from 'src/app/models/match-report.vm';
 import { MatchReportDraftsService } from 'src/app/service/match-report-drafts.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-dashboard-reports',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './dashboard-reports.component.html',
   styleUrls: ['./dashboard-reports.component.css'],
 })

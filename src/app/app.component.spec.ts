@@ -1,32 +1,22 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { LoginService } from './service/login.service';
-import { UserService } from './service/user.service';
-import { of } from 'rxjs';
+import { AuthService } from './service/auth.service';
+import { signal } from '@angular/core';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
+      imports: [AppComponent],
       providers: [
+        provideRouter([]),
         {
-          provide: LoginService,
+          provide: AuthService,
           useValue: {
-            user: { id: 1 },
-            user$: of(null),
-          },
-        },
-        {
-          provide: UserService,
-          useValue: {
-            getUserByID: () => of({ data: { user: {} } }),
+            userSignal: signal(null).asReadonly(),
           },
         },
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   });
 

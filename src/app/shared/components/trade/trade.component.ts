@@ -5,10 +5,11 @@ import { ToastrService } from 'ngx-toastr';
 import { LoginService } from 'src/app/service/login.service';
 import { TeamService } from 'src/app/service/team.service';
 import { UserService } from 'src/app/service/user.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-trade',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './trade.component.html',
   styleUrls: ['./trade.component.scss'],
 })

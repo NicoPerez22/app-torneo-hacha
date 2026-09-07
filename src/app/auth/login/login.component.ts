@@ -5,10 +5,11 @@ import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/service/auth.service';
 import { LoginService } from 'src/app/service/login.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-login',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })

@@ -13,6 +13,7 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import { TOURNAMENT_CONSTANTS } from '../constants/tournament.constants';
 import { RankingTable } from '../models/ranking.interface';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 type RoundsLoadResult =
   | { kind: 'single'; response: RoundsResponse }
@@ -32,8 +33,8 @@ type CalendarWeekCell = {
 };
 
 @Component({
-  standalone: false,
   selector: 'app-view-tournament',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './view-tournament.component.html',
   styleUrls: ['./view-tournament.component.css'],
 })

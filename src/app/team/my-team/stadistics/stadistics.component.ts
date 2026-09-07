@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-stadistics',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './stadistics.component.html',
   styleUrls: ['./stadistics.component.css']
 })

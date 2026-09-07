@@ -4,7 +4,7 @@
       <div class="d-flex align-items-center justify-content-between">
         <div>
           <div class="kpi-label">Usuarios</div>
-          <div class="kpi-value">{{ resume?.totalUsers ?? '—' }}</div>
+          <div class="kpi-value">{{ resume()?.totalUsers ?? '—' }}</div>
         </div>
         <div class="kpi-icon">
           <i class="fa fa-user"></i>
@@ -19,7 +19,7 @@
       <div class="d-flex align-items-center justify-content-between">
         <div>
           <div class="kpi-label">Equipos</div>
-          <div class="kpi-value">{{ resume?.totalTeams ?? '—' }}</div>
+          <div class="kpi-value">{{ resume()?.totalTeams ?? '—' }}</div>
         </div>
         <div class="kpi-icon">
           <i class="fa fa-shield"></i>
@@ -34,7 +34,7 @@
       <div class="d-flex align-items-center justify-content-between">
         <div>
           <div class="kpi-label">Torneos</div>
-          <div class="kpi-value">{{ resume?.totalTournaments ?? '—' }}</div>
+          <div class="kpi-value">{{ resume()?.totalTournaments ?? '—' }}</div>
         </div>
         <div class="kpi-icon">
           <i class="fa fa-trophy"></i>

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { environment } from './../../environments/environment';
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, BehaviorSubject, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,10 +9,9 @@ import { Observable, BehaviorSubject, map } from 'rxjs';
 export class AuthService {
   readonly http = inject(HttpClient);
 
-  private privateUserSignal = signal<any | null>(null);
-  userSignal = this.privateUserSignal.asReadonly();
+  private readonly privateUserSignal = signal<any | null>(null);
+  readonly userSignal = this.privateUserSignal.asReadonly();
 
-  auhtState$: Observable<any>;
   USER_KEY = 'user';
   API_URL = environment.API_URL;
 
@@ -31,12 +30,18 @@ export class AuthService {
   }
 
   clean(): void {
-    sessionStorage.removeItem(this.USER_KEY);
+    this.clearUser();
   }
 
   saveUser(user: any): void {
     sessionStorage.removeItem(this.USER_KEY);
     sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this.privateUserSignal.set(user);
+  }
+
+  clearUser(): void {
+    sessionStorage.removeItem(this.USER_KEY);
+    this.privateUserSignal.set(null);
   }
 
   getUserStorage() {
@@ -55,10 +60,6 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    const user = sessionStorage.getItem(this.USER_KEY);
-    if (user) {
-      return true;
-    }
-    return false;
+    return !!sessionStorage.getItem(this.USER_KEY);
   }
 }

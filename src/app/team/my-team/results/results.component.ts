@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TournamentService } from 'src/app/tournament/service/tournament.service';
 import { ToastrService } from 'ngx-toastr';
@@ -6,24 +6,26 @@ import { TeamService } from 'src/app/service/team.service';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE' | 'INJURY';
 
 @Component({
-  standalone: false,
   selector: 'app-results',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.css'],
 })
 export class ResultsComponent implements OnInit {
-  @Input() match: any;
+  readonly match = input<any>();
   private readonly modalData = inject<{ match?: any }>(NZ_MODAL_DATA, {
     optional: true,
   });
+  protected matchData: any;
 
   form: FormGroup;
-  isLoadingPlayers = false;
-  isSubmitting = false;
+  readonly isLoadingPlayers = signal(false);
+  readonly isSubmitting = signal(false);
 
   private readonly fb = inject(FormBuilder);
   private readonly tournamentService = inject(TournamentService);
@@ -34,13 +36,13 @@ export class ResultsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.match = this.match ?? this.modalData?.match;
+    this.matchData = this.match() ?? this.modalData?.match;
     this._initForm();
     this._loadPlayers();
   }
 
   onSubmit() {
-    if (this.isSubmitting) return;
+    if (this.isSubmitting()) return;
 
     this.form.markAllAsTouched();
     if (this.form.invalid) {
@@ -48,7 +50,7 @@ export class ResultsComponent implements OnInit {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
     const report = this._setValues();
 
@@ -56,11 +58,11 @@ export class ResultsComponent implements OnInit {
       next: () => {
         this.toastrService.success('Partido reportado con exito', 'Exito');
         this.modalRef?.close(true);
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       },
       error: () => {
         this.toastrService.error('No se pudo reportar el partido', 'Error');
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       },
     });
   }
@@ -121,8 +123,8 @@ export class ResultsComponent implements OnInit {
   }
 
   private _loadPlayers(): void {
-    const homeTeamId = Number(this.match?.homeTeamId);
-    const awayTeamId = Number(this.match?.awayTeamId);
+    const homeTeamId = Number(this.matchData?.homeTeamId);
+    const awayTeamId = Number(this.matchData?.awayTeamId);
 
     if (!Number.isFinite(homeTeamId) || !Number.isFinite(awayTeamId)) {
       this.toastrService.error(
@@ -132,7 +134,7 @@ export class ResultsComponent implements OnInit {
       return;
     }
 
-    this.isLoadingPlayers = true;
+    this.isLoadingPlayers.set(true);
     forkJoin({
       home: this.teamService
         .getPlayersByIdTeam(homeTeamId)
@@ -141,7 +143,7 @@ export class ResultsComponent implements OnInit {
         .getPlayersByIdTeam(awayTeamId)
         .pipe(catchError(() => of({ data: [] }))),
     })
-      .pipe(finalize(() => (this.isLoadingPlayers = false)))
+      .pipe(finalize(() => this.isLoadingPlayers.set(false)))
       .subscribe({
         next: ({ home, away }) => {
           const homePlayers = Array.isArray(home?.data) ? home.data : [];
@@ -242,8 +244,8 @@ export class ResultsComponent implements OnInit {
     ];
 
     const dto = {
-      roundId: this.match?.idRound,
-      tournamentId: this.match?.tournamentId ?? this.match?.tournament?.id,
+      roundId: this.matchData?.idRound,
+      tournamentId: this.matchData?.tournamentId ?? this.matchData?.tournament?.id,
       homeGoals: Number(this.form.get('homeGoals')?.value ?? 0),
       awayGoals: Number(this.form.get('awayGoals')?.value ?? 0),
       events,

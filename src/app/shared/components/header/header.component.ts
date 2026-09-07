@@ -1,42 +1,36 @@
-import { LoginService } from 'src/app/service/login.service';
 import {
   Component,
   ElementRef,
   HostListener,
   inject,
-  input,
-  Input,
-  OnInit,
-  ViewChild,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
+import { LoginService } from 'src/app/service/login.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-header',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent {
-  private authService = inject(AuthService);
-  private loginService = inject(LoginService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly loginService = inject(LoginService);
+  private readonly router = inject(Router);
 
-  protected userSignal = this.authService.userSignal;
+  protected readonly userSignal = this.authService.userSignal;
+  protected readonly isScrolled = signal(false);
 
-  isScrolled = false;
-
-  constructor() {
-    console.log(this.userSignal());
-  }
-
-  @ViewChild('mainNav') mainNav?: ElementRef<HTMLElement>;
-  @ViewChild('navToggler') navToggler?: ElementRef<HTMLElement>;
+  private readonly mainNav = viewChild<ElementRef<HTMLElement>>('mainNav');
+  private readonly navToggler = viewChild<ElementRef<HTMLElement>>('navToggler');
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
-    this.isScrolled = window.scrollY > 50;
+    this.isScrolled.set(window.scrollY > 50);
   }
 
   logout() {
@@ -52,10 +46,9 @@ export class HeaderComponent {
   }
 
   collapseMobileMenu() {
-    const collapseEl = this.mainNav?.nativeElement;
+    const collapseEl = this.mainNav()?.nativeElement;
     if (!collapseEl) return;
 
-    // Solo colapsar si está abierto (en desktop no debería tener .show)
     if (!collapseEl.classList.contains('show')) return;
 
     const w = window as any;
@@ -69,9 +62,8 @@ export class HeaderComponent {
       return;
     }
 
-    // Fallback si no está disponible la API global de Bootstrap
     collapseEl.classList.remove('show');
     (collapseEl as any).style && ((collapseEl as any).style.height = '');
-    this.navToggler?.nativeElement?.setAttribute('aria-expanded', 'false');
+    this.navToggler()?.nativeElement?.setAttribute('aria-expanded', 'false');
   }
 }

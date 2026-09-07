@@ -8,10 +8,11 @@ import { ManagerComponent } from './manager/manager.component';
 import { ToastrService } from 'ngx-toastr';
 import { ResultsComponent } from './results/results.component';
 import { TradeComponent } from 'src/app/shared/components/trade/trade.component';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-my-team',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './my-team.component.html',
   styleUrls: ['./my-team.component.css'],
 })

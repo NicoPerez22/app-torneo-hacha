@@ -4,10 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { TeamService } from 'src/app/service/team.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-manager',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './manager.component.html',
   styleUrls: ['./manager.component.css'],
 })

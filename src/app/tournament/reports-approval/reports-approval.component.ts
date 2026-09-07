@@ -4,6 +4,8 @@ import { AuthService } from 'src/app/service/auth.service';
 import { TournamentService } from '../service/tournament.service';
 import { MatchReportCardVM } from 'src/app/team/my-team/match/match.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+import { MatchComponent } from 'src/app/team/my-team/match/match.component';
 
 type ReportDetailVM = {
   id?: number | string;
@@ -21,8 +23,8 @@ type ReportDetailVM = {
 };
 
 @Component({
-  standalone: false,
   selector: 'app-reports-approval',
+  imports: [...SHARED_UI_IMPORTS, MatchComponent],
   templateUrl: './reports-approval.component.html',
   styleUrls: ['./reports-approval.component.css'],
 })

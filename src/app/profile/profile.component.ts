@@ -1,15 +1,13 @@
-import { TeamService } from './../service/team.service';
-import { AuthService } from 'src/app/service/auth.service';
 import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../service/user.service';
 import { LoginService } from '../service/login.service';
 import { PersonalDataComponent } from './personal-data/personal-data.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-profile',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })

@@ -16,6 +16,7 @@ import {
 } from 'src/app/tournament/models/round.interface';
 import { Tournament } from 'src/app/tournament/models/tournament.interface';
 import { TournamentService } from 'src/app/tournament/service/tournament.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 export interface TournamentRoundGroup {
   groupNumber: number | null;
@@ -31,8 +32,8 @@ export interface TournamentRoundSection {
 }
 
 @Component({
-  standalone: false,
   selector: 'app-tournament-rounds',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './tournament-rounds.component.html',
   styleUrls: ['./tournament-rounds.component.css'],
 })

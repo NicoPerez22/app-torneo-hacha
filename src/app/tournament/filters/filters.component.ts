@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { InputComponent } from './input/input.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-filters',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './filters.component.html',
   styleUrls: ['./filters.component.css'],
 })
@@ -26,8 +27,8 @@ export class FiltersComponent implements OnInit, OnDestroy {
 
   onCreateComponent(): void {
     const componentRef = this.container.createComponent(InputComponent);
-    componentRef.instance.label = 'Pokemon';
-    componentRef.instance.control = 'name';
+    componentRef.setInput('label', 'Pokemon');
+    componentRef.setInput('control', 'name');
   }
 
   onDeleteComponent(): void {

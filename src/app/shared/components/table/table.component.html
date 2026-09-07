@@ -1,10 +1,10 @@
 <div class="row">
   <div class="col-12">
-    <nz-table #filterTable [nzData]="listOfData" nzTableLayout="fixed">
+    <nz-table #filterTable [nzData]="displayData()" nzTableLayout="fixed">
       <thead>
         <tr>
           <th
-            *ngFor="let column of listOfColumns"
+            *ngFor="let column of listOfColumns()"
             [nzSortOrder]="column.sortOrder"
             [nzSortFn]="column.sortFn"
             [nzSortDirections]="column.sortDirections"
@@ -20,7 +20,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let data of filterTable.data">
-          <td *ngFor="let column of listOfColumns" class="text-center">
+            <td *ngFor="let column of listOfColumns()" class="text-center">
             <!-- Contenido de texto normal -->
             <span
               *ngIf="!column.dropdownActions && !column.action"

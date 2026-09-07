@@ -1,19 +1,37 @@
-import { Component, HostListener, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  HostListener,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+
+type DashboardPath =
+  | 'overview'
+  | 'teams'
+  | 'tournaments'
+  | 'market'
+  | 'reports'
+  | 'settings';
 
 @Component({
-  standalone: false,
   selector: 'app-dashboard',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
 export class DashboardComponent {
-  isSidebarOpen = false;
+  private readonly router = inject(Router);
+
+  readonly isSidebarOpen = signal(false);
 
   readonly menuItems: Array<{
-    path: 'overview' | 'teams' | 'tournaments' | 'market' | 'reports' | 'settings';
+    path: DashboardPath;
     label: string;
     iconClass: string;
   }> = [
@@ -25,41 +43,37 @@ export class DashboardComponent {
     { path: 'settings', label: 'Ajustes', iconClass: 'fa fa-cog' },
   ];
 
-  activePath: DashboardComponent['menuItems'][number]['path'] = 'overview';
+  readonly activePath = signal<DashboardPath>('overview');
+  readonly activeLabel = computed(() => {
+    const item = this.menuItems.find((it) => it.path === this.activePath());
+    return item?.label ?? 'Dashboard';
+  });
 
-  constructor(private readonly router: Router) {
+  constructor() {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.syncFromUrlAndClose());
     this.syncFromUrlAndClose();
   }
 
-  get activeLabel(): string {
-    const item = this.menuItems.find((it) => it.path === this.activePath);
-    return item?.label ?? 'Dashboard';
-  }
-
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
+    this.isSidebarOpen.update((open) => !open);
   }
 
   closeSidebar() {
-    this.isSidebarOpen = false;
+    this.isSidebarOpen.set(false);
   }
 
   private syncFromUrlAndClose() {
     const path = this.router.url.split('?')[0].split('#')[0];
-    const segment = (path.split('/')[2] || 'overview') as any; // /dashboard/<segment>
+    const segment = (path.split('/')[2] || 'overview') as DashboardPath;
     const isValid = this.menuItems.some((i) => i.path === segment);
-    this.activePath = isValid ? segment : 'overview';
-
-    // UX: en mobile cerramos el drawer cuando navegamos
+    this.activePath.set(isValid ? segment : 'overview');
     this.closeSidebar();
   }
 
   @HostListener('window:resize')
   onResize() {
-    // En desktop lo dejamos siempre "abierto visualmente" vía CSS; en mobile cerramos al agrandar.
-    if (window.innerWidth >= 992) this.isSidebarOpen = false;
+    if (window.innerWidth >= 992) this.isSidebarOpen.set(false);
   }
 }

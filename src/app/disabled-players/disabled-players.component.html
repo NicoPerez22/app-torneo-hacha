@@ -14,15 +14,15 @@
   </div>
 
   <!-- Empty State -->
-  <div class="empty-state" *ngIf="teams.length === 0">
+  <div class="empty-state" *ngIf="teams().length === 0">
     <i class="bi bi-check-circle empty-icon"></i>
     <h3>No hay jugadores inhabilitados</h3>
     <p>Todos los jugadores están disponibles</p>
   </div>
 
   <!-- Grid de cards -->
-  <div class="disabled-grid" *ngIf="teams.length > 0">
-    <div class="disabled-card" *ngFor="let item of teams">
+  <div class="disabled-grid" *ngIf="teams().length > 0">
+    <div class="disabled-card" *ngFor="let item of teams()">
       <div class="disabled-card-inner">
         <!-- Glow effect -->
         <div class="card-glow"></div>

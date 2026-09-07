@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { LoginService } from '../service/login.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { TradeComponent } from '../shared/components/trade/trade.component';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-search-players',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './search-players.component.html',
   styleUrls: ['./search-players.component.css'],
 })

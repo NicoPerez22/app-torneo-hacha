@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/service/auth.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 interface RegisterPayload {
   email: string;
@@ -14,8 +15,8 @@ interface RegisterPayload {
 }
 
 @Component({
-  standalone: false,
   selector: 'app-register',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })

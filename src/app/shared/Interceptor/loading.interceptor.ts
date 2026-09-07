@@ -1,44 +1,32 @@
-import {
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Observable, finalize } from 'rxjs';
+import { finalize } from 'rxjs';
 
-@Injectable()
-export class LoadingInterceptor implements HttpInterceptor {
-  private activeRequests = 0;
+let activeRequests = 0;
 
-  constructor(private spinner: NgxSpinnerService) {}
+export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
+  const spinner = inject(NgxSpinnerService);
 
-  intercept(
-    request: HttpRequest<unknown>,
-    next: HttpHandler,
-  ): Observable<HttpEvent<unknown>> {
-    // Permite opt-out puntual si alguna request lo requiere.
-    if (request.headers.has('X-Skip-Spinner')) {
-      const reqWithoutHeader = request.clone({
-        headers: request.headers.delete('X-Skip-Spinner'),
-      });
-      return next.handle(reqWithoutHeader);
-    }
-
-    this.activeRequests++;
-    if (this.activeRequests === 1) {
-      this.spinner.show();
-    }
-
-    return next.handle(request).pipe(
-      finalize(() => {
-        this.activeRequests = Math.max(this.activeRequests - 1, 0);
-        if (this.activeRequests === 0) {
-          this.spinner.hide();
-        }
+  if (req.headers.has('X-Skip-Spinner')) {
+    return next(
+      req.clone({
+        headers: req.headers.delete('X-Skip-Spinner'),
       }),
     );
   }
-}
 
+  activeRequests++;
+  if (activeRequests === 1) {
+    spinner.show();
+  }
+
+  return next(req).pipe(
+    finalize(() => {
+      activeRequests = Math.max(activeRequests - 1, 0);
+      if (activeRequests === 0) {
+        spinner.hide();
+      }
+    }),
+  );
+};

@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardMarketComponent } from './components/market/dashboard-market.component';
 import { DashboardOverviewComponent } from './components/overview/dashboard-overview.component';
@@ -9,7 +8,7 @@ import { DashboardTeamsComponent } from './components/teams/dashboard-teams.comp
 import { DashboardTournamentsComponent } from './components/tournaments/dashboard-tournaments.component';
 import { TournamentRoundsComponent } from './components/tournaments/tournament-rounds.component';
 
-const routes: Routes = [
+export const DASHBOARD_ROUTES: Routes = [
   {
     path: '',
     component: DashboardComponent,
@@ -29,10 +28,3 @@ const routes: Routes = [
     ],
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-})
-export class DashboardRoutingModule {}
-

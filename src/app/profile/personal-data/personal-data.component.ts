@@ -1,20 +1,21 @@
-import { Component, inject, OnInit, Input } from '@angular/core';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/service/user.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-personal-data',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './personal-data.component.html',
   styleUrls: ['./personal-data.component.css']
 })
 export class PersonalDataComponent implements OnInit {
-  @Input() myUser;
+  readonly myUser = input<any>();
   private readonly modalData = inject<{ myUser?: any }>(NZ_MODAL_DATA, {
     optional: true,
   });
+  private readonly user = computed(() => this.myUser() ?? this.modalData?.myUser);
 
   form: FormGroup;
 
@@ -24,10 +25,9 @@ export class PersonalDataComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.myUser = this.myUser ?? this.modalData?.myUser;
     this._initForm();
 
-    this.form.patchValue({ ...this.myUser })
+    this.form.patchValue({ ...this.user() })
   }
 
   onSubmit(){
@@ -38,7 +38,7 @@ export class PersonalDataComponent implements OnInit {
       userName: this.form.get('userName').value,
     }
 
-    this.userService.update(this.myUser.id, user).subscribe({
+    this.userService.update(this.user()?.id, user).subscribe({
       next: (resp) => {
 
       }

@@ -1,23 +1,23 @@
 <div class="container">
-  <div class="reports-header" *ngIf="title || subtitle">
+  <div class="reports-header" *ngIf="title() || subtitle()">
     <div class="header-content">
-      <h2 class="reports-title" *ngIf="title">{{ title }}</h2>
-      <p class="reports-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+      <h2 class="reports-title" *ngIf="title()">{{ title() }}</h2>
+      <p class="reports-subtitle" *ngIf="subtitle()">{{ subtitle() }}</p>
     </div>
   </div>
 
-  <div class="empty-state" *ngIf="!loading && (!items || items.length === 0)">
+  <div class="empty-state" *ngIf="!loading() && !hasItems()">
     <i class="bi bi-clipboard-data empty-icon"></i>
     <h3>No hay reportes para revisar</h3>
     <p>Cuando existan reportes pendientes, van a aparecer acá.</p>
   </div>
 
-  <div class="loading-state" *ngIf="loading">
+  <div class="loading-state" *ngIf="loading()">
     <nz-spin nzSimple></nz-spin>
   </div>
 
-  <ul class="matches-list" *ngIf="!loading && items?.length">
-    <li class="match-card" *ngFor="let item of items; trackBy: trackById">
+  <ul class="matches-list" *ngIf="!loading() && hasItems()">
+    <li class="match-card" *ngFor="let item of items(); trackBy: trackById">
       <div class="match-card-top">
         <div class="match-meta">
           <div class="meta-title">
@@ -87,7 +87,7 @@
           </button>
 
           <button
-            *ngIf="isAdmin"
+            *ngIf="isAdmin()"
             type="button"
             class="btn-action btn-approve"
             (click)="approve.emit(item)"
@@ -98,7 +98,7 @@
           </button>
 
           <button
-            *ngIf="isAdmin"
+            *ngIf="isAdmin()"
             type="button"
             class="btn-action btn-reject"
             (click)="reject.emit(item)"
@@ -109,7 +109,7 @@
           </button>
 
           <button
-            *ngIf="isAdmin"
+            *ngIf="isAdmin()"
             type="button"
             class="btn-action btn-null-match"
             (click)="nullMatch.emit(item)"

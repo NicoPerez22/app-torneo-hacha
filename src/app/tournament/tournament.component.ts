@@ -1,6 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { TournamentService } from './service/tournament.service';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { CreateTournammentComponent } from './create-tournamment/create-tournamment.component';
@@ -8,15 +8,16 @@ import { Tournament } from './models/tournament.interface';
 import { TOURNAMENT_CONSTANTS } from './constants/tournament.constants';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../service/auth.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-tournament',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './tournament.component.html',
   styleUrls: ['./tournament.component.css'],
 })
 export class TournamentComponent implements OnInit, OnDestroy {
-  tournaments: Tournament[] = [];
+  tournaments = signal<Tournament[]>([]);
   modalRef?: NzModalRef;
   private subscriptions: Subscription = new Subscription();
 
@@ -72,7 +73,7 @@ export class TournamentComponent implements OnInit, OnDestroy {
       .getTournament()
       .subscribe({
         next: (response) => {
-          this.tournaments = response.data || [];
+          this.tournaments.set(response.data || []);
         },
         error: () => {
           this.toastrService.error(

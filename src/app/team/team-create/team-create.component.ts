@@ -1,31 +1,34 @@
 import { ToastrService } from 'ngx-toastr';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { TeamService } from 'src/app/service/team.service';
 import { FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { UploadService } from 'src/app/service/upload.service';
 import { Team } from '../models/team';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-team-create',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './team-create.component.html',
   styleUrls: ['./team-create.component.css'],
 })
 export class TeamCreateComponent implements OnInit {
-  @Input() teamData: any;
+  readonly teamData = input<any>();
   private readonly modalData = inject<{ teamData?: any }>(NZ_MODAL_DATA, {
     optional: true,
   });
+  private readonly data = computed(
+    () => this.teamData() ?? this.modalData?.teamData,
+  );
 
   form: FormGroup;
   images: Array<any> = [];
   storedImages: Array<any> = [];
   team: Team = new Team();
-  showSpinner: boolean = false;
-
-  isEdit: boolean = false;
+  readonly showSpinner = signal(false);
+  readonly isEdit = signal(false);
 
   constructor(
     private teamService: TeamService,
@@ -36,12 +39,11 @@ export class TeamCreateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.teamData = this.teamData ?? this.modalData?.teamData;
     this._initForm();
 
-    if (this.teamData) {
-      this.form.patchValue({ ...this.teamData });
-      this.isEdit = true;
+    if (this.data()) {
+      this.form.patchValue({ ...this.data() });
+      this.isEdit.set(true);
     }
   }
 
@@ -50,9 +52,9 @@ export class TeamCreateComponent implements OnInit {
 
     this.team.name = form.name;
     this.team.idLogo = this.images[0]?.id || null;
-    this.team.id = this.teamData?.id || null;
+    this.team.id = this.data()?.id || null;
 
-    if (this.isEdit) {
+    if (this.isEdit()) {
       this.teamService.updateTeam(this.team).subscribe({
         next: (resp) => {
           if (resp.data) {
@@ -98,16 +100,16 @@ export class TeamCreateComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', file);
 
-    this.showSpinner = true;
+    this.showSpinner.set(true);
     this.uploadService.setImage(file).subscribe({
       next: (resp) => {
         this.images.push(resp);
-        this.showSpinner = false;
+        this.showSpinner.set(false);
       },
 
       error: (err) => {
         console.log(err);
-        this.showSpinner = false;
+        this.showSpinner.set(false);
       },
     });
   }

@@ -12,11 +12,11 @@
         <div class="team-name team-home team-block">
           <img
             class="team-logo"
-            [src]="match?.homeLogoUrl || match?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'"
+            [src]="matchData?.homeLogoUrl || matchData?.homeLogo?.secureUrl || '../../../assets/images/player-default.png'"
             width="70"
             alt="Home Team"
           />
-          <span class="team-text">{{ match?.homeTeamName || match?.home }}</span>
+          <span class="team-text">{{ matchData?.homeTeamName || matchData?.home }}</span>
         </div>
 
         <!-- Score -->
@@ -72,10 +72,10 @@
 
         <!-- Away -->
         <div class="team-name team-away team-block">
-          <span class="team-text">{{ match?.awayTeamName || match?.away }}</span>
+          <span class="team-text">{{ matchData?.awayTeamName || matchData?.away }}</span>
           <img
             class="team-logo"
-            [src]="match?.awayLogoUrl || match?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'"
+            [src]="matchData?.awayLogoUrl || matchData?.awayLogo?.secureUrl || '../../../assets/images/player-default.png'"
             width="70"
             alt="Away Team"
           />
@@ -83,17 +83,17 @@
       </div>
     </div>
 
-    <div class="match-card mb-3" *ngIf="isLoadingPlayers">
+    <div class="match-card mb-3" *ngIf="isLoadingPlayers()">
       <div class="text-center" style="color: rgba(255,255,255,0.75);">
         Cargando jugadores...
       </div>
     </div>
 
-    <div class="match-card mb-3" *ngIf="!isLoadingPlayers">
+    <div class="match-card mb-3" *ngIf="!isLoadingPlayers()">
       <nz-tabset nzCentered class="report-player-tabs">
-        <nz-tab [nzTitle]="(match?.homeTeamName || match?.home || 'Local') + ' (' + homePlayersControls.length + ')'">
+        <nz-tab [nzTitle]="(matchData?.homeTeamName || matchData?.home || 'Local') + ' (' + homePlayersControls.length + ')'">
           <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
-            <h6 class="mb-0 section-title">Jugadores · {{ match?.homeTeamName || match?.home }}</h6>
+            <h6 class="mb-0 section-title">Jugadores · {{ matchData?.homeTeamName || matchData?.home }}</h6>
             <span class="section-meta">{{ homePlayersControls.length }} jugador(es)</span>
           </div>
 
@@ -150,9 +150,9 @@
           </div>
         </nz-tab>
 
-        <nz-tab [nzTitle]="(match?.awayTeamName || match?.away || 'Visitante') + ' (' + awayPlayersControls.length + ')'">
+        <nz-tab [nzTitle]="(matchData?.awayTeamName || matchData?.away || 'Visitante') + ' (' + awayPlayersControls.length + ')'">
           <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
-            <h6 class="mb-0 section-title">Jugadores · {{ match?.awayTeamName || match?.away }}</h6>
+            <h6 class="mb-0 section-title">Jugadores · {{ matchData?.awayTeamName || matchData?.away }}</h6>
             <span class="section-meta">{{ awayPlayersControls.length }} jugador(es)</span>
           </div>
 
@@ -222,7 +222,7 @@
     type="button"
     class="btn-confirm"
     (click)="onSubmit()"
-    [disabled]="isSubmitting"
+    [disabled]="isSubmitting()"
   >
     <i class="bi bi-check-lg"></i>
     <span>Confirmar</span>

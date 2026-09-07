@@ -1,38 +1,31 @@
-import { Component, Input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { ColumnItem } from './interface/columnItem.interface';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-table',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css'],
 })
 export class TableComponent {
-  @Input() listOfColumns: ColumnItem[] = [];
-  @Input() listOfData: any[] = [];
-  @Input() customButton: boolean = false;
-  @Input() dropDown: boolean = false;
+  readonly listOfColumns = input<ColumnItem[]>([]);
+  readonly listOfData = input<any[]>([]);
+  readonly customButton = input(false);
+  readonly dropDown = input(false);
+  readonly isCustomButton = input(false);
+  readonly labelCustomButton = input('');
 
-  @Input() isCustomButton: boolean = false;
-  @Input() labelCustomButton: string = '';
-
-  ngOnInit(): void {
-    this._compareColumnsAndData();
-  }
-
-  private _compareColumnsAndData() {
-    this.listOfData = this.listOfData.map((data) => {
+  readonly displayData = computed(() => {
+    const columns = this.listOfColumns();
+    return this.listOfData().map((data) => {
       const styles: { [key: string]: any } = {};
-      const icons: { [key: string]: any } = {};
-
-      this.listOfColumns.forEach((column) => {
+      columns.forEach((column) => {
         if (column.key || column.icon) {
           styles[column.key] = column.style;
-          icons[column.icon] = column.icon;
         }
       });
-
       return { ...data, styles };
     });
-  }
+  });
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TeamService } from '../service/team.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../service/auth.service';
@@ -7,15 +7,16 @@ import { Router } from '@angular/router';
 import { TeamCreateComponent } from '../team/team-create/team-create.component';
 import { ManagerComponent } from '../team/my-team/manager/manager.component';
 import { DisabledPlayersService } from './service/disabled-players.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-disabled-players',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './disabled-players.component.html',
   styleUrls: ['./disabled-players.component.css'],
 })
 export class DisabledPlayersComponent {
-  teams: Array<any> = [];
+  teams = signal<Array<any>>([]);
   user: any;
 
   constructor(
@@ -76,7 +77,7 @@ export class DisabledPlayersComponent {
   private _getInjuryPlayers() {
     this.disabledPlayersService.getInjuryPlayers().subscribe({
       next: (resp) => {
-        this.teams = resp.data;
+        this.teams.set(resp.data);
       },
     });
   }

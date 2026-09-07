@@ -5,10 +5,11 @@ import { Tournament } from 'src/app/tournament/models/tournament.interface';
 import { TournamentService } from 'src/app/tournament/service/tournament.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-dashboard-tournaments',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './dashboard-tournaments.component.html',
   styleUrls: ['./dashboard-tournaments.component.css'],
 })

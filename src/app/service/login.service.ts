@@ -1,8 +1,6 @@
-// auth.service.ts
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,25 +9,32 @@ export class LoginService {
   private static readonly TOKEN_KEY = 'token';
   private static readonly USER_KEY = 'user';
 
-  private userSubject = new BehaviorSubject<any | null>(this.user);
-  user$ = this.userSubject.asObservable();
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
-  constructor(private router: Router) {}
+  private readonly userState = signal<any | null>(this.readStoredUser());
+  readonly currentUser = this.userState.asReadonly();
+  readonly isAuthenticated = computed(() => this.isLogged());
+
+  get user() {
+    return this.userState();
+  }
 
   login(user, token: string) {
     sessionStorage.setItem(LoginService.TOKEN_KEY, token);
 
-    // Buenas prácticas: no persistir el token dentro del objeto user.
     const safeUser = this.sanitizeUser(user);
     sessionStorage.setItem(LoginService.USER_KEY, JSON.stringify(safeUser));
 
-    this.userSubject.next(safeUser);
+    this.userState.set(safeUser);
+    this.authService.saveUser(safeUser);
   }
 
   logout() {
     sessionStorage.removeItem(LoginService.TOKEN_KEY);
     sessionStorage.removeItem(LoginService.USER_KEY);
-    this.userSubject.next(null);
+    this.userState.set(null);
+    this.authService.clearUser();
 
     this.router.navigate(['/auth/login']);
   }
@@ -44,7 +49,7 @@ export class LoginService {
     return sessionStorage.getItem(LoginService.TOKEN_KEY);
   }
 
-  get user() {
+  private readStoredUser() {
     const raw = sessionStorage.getItem(LoginService.USER_KEY);
     if (!raw) return null;
     try {
@@ -57,7 +62,6 @@ export class LoginService {
   private sanitizeUser(user: any) {
     if (!user || typeof user !== 'object') return user ?? null;
     const copy: any = { ...user };
-    // Evitar persistir campos sensibles comunes si vienen en la respuesta
     delete copy.token;
     delete copy.accessToken;
     delete copy.refreshToken;
@@ -68,9 +72,8 @@ export class LoginService {
   private isTokenExpired(token: string): boolean {
     const payload = this.tryDecodeJwtPayload(token);
     const exp = payload?.exp;
-    if (typeof exp !== 'number') return false; // si no hay exp, no asumimos expirado
+    if (typeof exp !== 'number') return false;
 
-    // exp viene en segundos desde epoch
     const nowSeconds = Math.floor(Date.now() / 1000);
     return exp <= nowSeconds;
   }

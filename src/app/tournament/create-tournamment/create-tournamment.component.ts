@@ -15,10 +15,11 @@ import {
 } from '../models/tournament.interface';
 import { TOURNAMENT_CONSTANTS, TEAM_COUNT_OPTIONS, CREATE_TOURNAMENT_STEPS } from '../constants/tournament.constants';
 import { Subscription } from 'rxjs';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-create-tournamment',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './create-tournamment.component.html',
   styleUrls: ['./create-tournamment.component.css'],
 })

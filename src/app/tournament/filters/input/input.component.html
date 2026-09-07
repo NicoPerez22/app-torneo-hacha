@@ -1,10 +1,10 @@
 
 <nz-form-item>
-    <nz-form-label style="color: white;">{{ label }}</nz-form-label>
+    <nz-form-label style="color: white;">{{ label() }}</nz-form-label>
     <nz-form-control>
         <input 
             nz-input 
-            [formControlName]="control" 
+            [formControlName]="control()" 
             placeholder="input placeholder" 
         />
     </nz-form-control>

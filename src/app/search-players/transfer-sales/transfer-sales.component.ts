@@ -3,6 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { LoginService } from "src/app/service/login.service";
 import { TeamService } from "src/app/service/team.service";
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 type OfferPlayerVM = { displayName: string; valoration?: number };
 
@@ -19,8 +20,8 @@ type TransferOfferVM = {
 };
 
 @Component({
-  standalone: false,
   selector: "app-transfer-sales",
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: "./transfer-sales.component.html",
   styleUrls: ["./transfer-sales.component.css"],
 })

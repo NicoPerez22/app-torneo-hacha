@@ -1,20 +1,21 @@
 import { TeamService } from './../service/team.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { TeamCreateComponent } from './team-create/team-create.component';
 import { Router } from '@angular/router';
 import { ManagerComponent } from './my-team/manager/manager.component';
 import { AuthService } from '../service/auth.service';
+import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
-  standalone: false,
   selector: 'app-team',
+  imports: [...SHARED_UI_IMPORTS],
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.css'],
 })
 export class TeamComponent implements OnInit {
-  teams: Array<any> = [];
+  teams = signal<Array<any>>([]);
   user: any;
 
   constructor(
@@ -34,7 +35,7 @@ export class TeamComponent implements OnInit {
   onDelete(id) {
     this.teamService.deleteTeam(id).subscribe({
       next: (resp) => {
-        this.teams = resp.data;
+        this.teams.set(resp.data);
         this.toastrService.success(resp.message);
       },
 
@@ -96,7 +97,7 @@ export class TeamComponent implements OnInit {
   private _getTeams() {
     this.teamService.getTeams().subscribe({
       next: (resp) => {
-        this.teams = resp.data;
+        this.teams.set(resp.data);
       },
     });
   }
