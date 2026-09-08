@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { ProfileComponent } from './profile.component';
+import { LoginService } from '../service/login.service';
+import { UserService } from '../service/user.service';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -8,7 +12,17 @@ describe('ProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProfileComponent ]
+      imports: [ProfileComponent],
+      providers: [
+        {
+          provide: UserService,
+          useValue: {
+            getUserByID: () => of({ data: { user: {}, id: null } }),
+          },
+        },
+        { provide: LoginService, useValue: { user: { id: 1 } } },
+        { provide: NzModalService, useValue: { create: () => undefined } },
+      ],
     })
     .compileComponents();
 

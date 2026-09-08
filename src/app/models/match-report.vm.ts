@@ -1,4 +1,17 @@
-export type MatchReportStatus = 'pending' | 'approved' | 'rejected';
+export type MatchReportStatus = 'pending' | 'approved' | 'rejected' | 'null_match' | string;
+
+export type MatchReportEvent = {
+  minute?: number | string;
+  min?: number | string;
+  eventType?: string;
+  type?: string;
+  playerName?: string;
+  player?: { name?: string };
+  playerId?: number | string;
+  teamName?: string;
+  team?: { name?: string };
+  teamId?: number | string;
+};
 
 export type MatchReportCardVM = {
   reportId?: number | string | null;
@@ -31,6 +44,6 @@ export type ReportDetailVM = {
   awayLogoUrl?: string;
   homeGoals?: number | null;
   awayGoals?: number | null;
-  events?: Array<any>;
+  events?: MatchReportEvent[];
 };
 

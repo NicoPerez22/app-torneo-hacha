@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 
 import { PersonalDataComponent } from './personal-data.component';
+import { UserService } from 'src/app/service/user.service';
 
 describe('PersonalDataComponent', () => {
   let component: PersonalDataComponent;
@@ -8,7 +10,13 @@ describe('PersonalDataComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PersonalDataComponent ]
+      imports: [PersonalDataComponent],
+      providers: [
+        {
+          provide: UserService,
+          useValue: { update: () => of({}) },
+        },
+      ],
     })
     .compileComponents();
 

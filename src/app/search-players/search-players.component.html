@@ -12,12 +12,14 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn-create-team" (click)="onListBirdAdmin()" *ngIf="user?.idRol == 1">
+      @if (user?.idRol === 1) {
+      <button type="button" class="btn-create-team" (click)="onListBirdAdmin()">
         <i class="bi bi-list me-2"></i>
         Comprobar Ofertas
       </button>
+      }
 
-      <button class="btn-assign-manager" (click)="onListBird()">
+      <button type="button" class="btn-assign-manager" (click)="onListBird()">
         <i class="bi bi-hand-thumbs-up me-2"></i>
         Mis ofertas
       </button>
@@ -25,20 +27,24 @@
   </div>
 
   <!-- Empty State -->
-  <div class="empty-state" *ngIf="playersList?.length === 0">
+  @if (playersList.length === 0) {
+  <div class="empty-state">
     <i class="bi bi-person-x empty-icon"></i>
     <h3>No hay jugadores disponibles</h3>
     <p>No hay jugadores transferibles en este momento</p>
   </div>
+  }
 
   <!-- Grid de cards -->
-  <div class="players-grid" *ngIf="playersList?.length > 0">
+  @if (playersList.length > 0) {
+  <div class="players-grid">
+    @for (
+      player of (playersList
+        | paginate: { id: playersPaginationId, itemsPerPage: playersPerPage, currentPage: playersPage });
+      track player
+    ) {
     <div
       class="player-card"
-      *ngFor="
-        let player of playersList
-          | paginate: { id: playersPaginationId, itemsPerPage: playersPerPage, currentPage: playersPage }
-      "
     >
       <div class="player-card-inner">
         <!-- Glow effect -->
@@ -60,16 +66,18 @@
           <h3 class="player-name">{{ player.fullName }}</h3>
           
           <!-- Team Info -->
-          <div class="player-team" *ngIf="player?.team">
+          @if (player.team) {
+          <div class="player-team">
             <div class="team-logo-wrapper">
               <img
                 [src]="player?.team?.logo?.secureUrl || '../../../assets/images/player-default.png'"
-                [alt]="player.team.name"
+                [alt]="player.team.name || 'Logo del equipo'"
                 class="team-logo"
               />
             </div>
             <span class="team-name">{{ player.team.name }}</span>
           </div>
+          }
 
           <!-- Stats -->
           <div class="player-stats">
@@ -81,12 +89,10 @@
               <span class="stat-label">Posición</span>
               <span
                 class="position-tag"
-                [ngClass]="{
-                  gk: player.position == 'POR',
-                  defence: player.position == 'LD' || player.position == 'LI' || player.position == 'DFC' || player.position == 'DFD' || player.position == 'DFD',
-                  medio: player.position == 'MCO' || player.position == 'MC' || player.position == 'MCD' || player.position == 'MI' || player.position == 'MD',
-                  attack: player.position == 'DC' || player.position == 'ED' || player.position == 'EI'
-                }"
+                [class.gk]="player.position === 'POR'"
+                [class.defence]="player.position === 'LD' || player.position === 'LI' || player.position === 'DFC' || player.position === 'DFD'"
+                [class.medio]="player.position === 'MCO' || player.position === 'MC' || player.position === 'MCD' || player.position === 'MI' || player.position === 'MD'"
+                [class.attack]="player.position === 'DC' || player.position === 'ED' || player.position === 'EI'"
               >
                 {{ player?.position }}
               </span>
@@ -94,23 +100,29 @@
           </div>
 
           <!-- Footer -->
-          <div class="player-footer" *ngIf="user?.teams?.[0]?.id !== player?.team?.id">
-            <button class="btn-offer" (click)="onBird(player)">
+          @if (user?.teams?.[0]?.id !== player.team?.id) {
+          <div class="player-footer">
+            <button type="button" class="btn-offer" (click)="onBird(player)">
               <i class="bi bi-hand-thumbs-up me-2"></i>
               Ofertar
             </button>
           </div>
+          }
         </div>
       </div>
     </div>
+    }
   </div>
+  }
 
-  <div class="pagination-wrapper" *ngIf="(playersList?.length || 0) > playersPerPage">
+  @if (playersList.length > playersPerPage) {
+  <div class="pagination-wrapper">
     <pagination-controls
       [id]="playersPaginationId"
-      (pageChange)="playersPage = $event"
+      (pageChange)="onPlayersPageChange($event)"
       previousLabel="Anterior"
       nextLabel="Siguiente"
     ></pagination-controls>
   </div>
+  }
 </div>

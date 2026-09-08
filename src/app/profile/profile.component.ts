@@ -1,9 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../service/user.service';
 import { LoginService } from '../service/login.service';
 import { PersonalDataComponent } from './personal-data/personal-data.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+
+interface ProfileUser {
+  id?: number;
+  name?: string;
+  lastName?: string;
+  email?: string;
+  userName?: string;
+  logo?: { secureUrl?: string };
+}
+
+interface ProfileTeam {
+  id?: number | null;
+  name?: string;
+  logo?: { secureUrl?: string };
+}
 
 @Component({
   selector: 'app-profile',
@@ -12,20 +28,19 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
-  user: any;
-  team: any;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly userService = inject(UserService);
+  private readonly loginService = inject(LoginService);
+  private readonly modalService = inject(NzModalService);
 
-  constructor(
-    private readonly userService: UserService,
-    private readonly loginService: LoginService,
-    private readonly modalService: NzModalService,
-  ) {}
+  protected user?: ProfileUser;
+  protected team?: ProfileTeam;
 
   ngOnInit(): void {
-    this._getProfile(this.loginService.user.id);
+    this.getProfile(this.loginService.user?.id);
   }
 
-  onEdit() {
+  protected onEdit(): void {
     const modal = this.modalService.create({
       nzTitle: 'Editar perfil',
       nzContent: PersonalDataComponent,
@@ -37,17 +52,23 @@ export class ProfileComponent implements OnInit {
         modal.getContentComponentRef()?.instance?.onSubmit?.(),
     });
 
-    modal.afterClose.subscribe((result) => {
-      this._getProfile(this.loginService.user.id);
-    });
+    modal.afterClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.getProfile(this.loginService.user?.id));
   }
 
-  private _getProfile(id) {
-    this.userService.getUserByID(id).subscribe({
+  private getProfile(id: number | undefined): void {
+    if (!id) {
+      return;
+    }
+    this.userService
+      .getUserByID(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (resp) => {
-        this.user = resp.data.user;
-        this.team = resp.data;
+        this.user = resp.data?.user;
+        this.team = resp.data as ProfileTeam | undefined;
       },
-    });
+      });
   }
 }

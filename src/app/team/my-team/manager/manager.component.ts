@@ -1,10 +1,11 @@
 import { UserService } from './../../../service/user.service';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { TeamService } from 'src/app/service/team.service';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+import { TeamUser, TeamView } from '../../models/team';
 
 @Component({
   selector: 'app-manager',
@@ -13,31 +14,38 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./manager.component.css'],
 })
 export class ManagerComponent implements OnInit {
-  form: FormGroup;
-  teams: Array<any> = [];
-  users: Array<any> = [];
+  protected readonly form: FormGroup<{
+    manager: FormControl<number | null>;
+    teamDestination: FormControl<number | null>;
+  }>;
+  protected teams: TeamView[] = [];
+  protected users: TeamUser[] = [];
 
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly teamService: TeamService,
-    private readonly userService: UserService,
-    private readonly toasteService: ToastrService,
-    private readonly modalRef: NzModalRef,
-  ) {}
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly teamService = inject(TeamService);
+  private readonly userService = inject(UserService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly modalRef = inject(NzModalRef);
+
+  constructor() {
+    this.form = this.fb.group({
+      manager: this.fb.control<number | null>(null, Validators.required),
+      teamDestination: this.fb.control<number | null>(null, Validators.required),
+    });
+  }
 
   ngOnInit(): void {
-    this._initForm();
     this._getTeams();
     this._getUsers();
   }
 
-  onSubmit() {
-    const id = this.form.get('manager').value;
-    const idTeam = this.form.get('teamDestination').value;
+  protected onSubmit(): void {
+    const id = this.form.controls.manager.value;
+    const idTeam = this.form.controls.teamDestination.value;
 
     this.teamService.transferManager(idTeam, id).subscribe({
       next: (resp) => {
-        this.toasteService.success(resp.msg);
+        this.toastrService.success(resp.msg);
         this.modalRef.close(true);
       },
 
@@ -45,25 +53,18 @@ export class ManagerComponent implements OnInit {
     });
   }
 
-  private _initForm() {
-    this.form = this.fb.group({
-      manager: [null, Validators.required],
-      teamDestination: [null, Validators.required],
-    });
-  }
-
-  private _getTeams() {
+  private _getTeams(): void {
     this.teamService.getTeams().subscribe({
       next: (resp) => {
-        this.teams = resp.data;
+        this.teams = resp.data ?? [];
       },
     });
   }
 
-  private _getUsers() {
+  private _getUsers(): void {
     this.userService.getUsers().subscribe({
       next: (resp) => {
-        this.users = resp.data;
+        this.users = (resp.data ?? []) as TeamUser[];
       },
 
       error: () => {},

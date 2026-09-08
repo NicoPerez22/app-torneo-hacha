@@ -1,4 +1,10 @@
-import { Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+} from '@angular/core';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 export type MatchReportStatus = 'pending' | 'approved' | 'rejected';
@@ -27,6 +33,7 @@ export type MatchReportCardVM = {
   imports: [...SHARED_UI_IMPORTS],
   templateUrl: './match.component.html',
   styleUrls: ['./match.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatchComponent {
   readonly title = input<string | undefined>();
@@ -40,17 +47,23 @@ export class MatchComponent {
   readonly reject = output<MatchReportCardVM>();
   readonly nullMatch = output<MatchReportCardVM>();
 
-  readonly fallbackLogoUrl = 'assets/images/player-default.png';
-  readonly hasItems = computed(() => (this.items()?.length ?? 0) > 0);
+  protected readonly fallbackLogoUrl = 'assets/images/player-default.png';
+  protected readonly hasItems = computed(() => this.items().length > 0);
+  protected readonly cards = computed(() =>
+    this.items().map((item) => {
+      const statusKey = String(item.status ?? 'pending').toLowerCase();
+      return {
+        ...item,
+        statusKey,
+        statusLabel: this._statusLabel(statusKey),
+      };
+    }),
+  );
 
-  trackById = (_: number, item: MatchReportCardVM) =>
-    item?.reportId ?? item?.matchId ?? _;
-
-  getStatusLabel(status?: any): string {
-    const s = String(status ?? 'pending').toLowerCase();
-    if (s === 'approved') return 'Aprobado';
-    if (s === 'rejected') return 'Rechazado';
-    if (s === 'null_match') return 'No jugado';
+  private _statusLabel(statusKey: string): string {
+    if (statusKey === 'approved') return 'Aprobado';
+    if (statusKey === 'rejected') return 'Rechazado';
+    if (statusKey === 'null_match') return 'No jugado';
     return 'Pendiente';
   }
 }

@@ -20,18 +20,19 @@
                 <th class="d-none d-md-table-cell">Equipo Entrante</th>
                 <th class="d-none d-md-table-cell">Jugadores Entrantes</th>
                 <th class="d-none d-md-table-cell">Estado Oferta</th>
-                <th *ngIf="isAdmin" class="d-none d-md-table-cell">Acciones</th>
+                @if (isAdmin) {
+                <th class="d-none d-md-table-cell">Acciones</th>
+                }
               </tr>
             </thead>
 
             <tbody>
-              <tr
-                *ngFor="
-                  let offer of transferOffer
-                    | paginate: { id: offersPaginationId, itemsPerPage: offersPerPage, currentPage: offersPage };
-                  let i = index
-                "
-              >
+              @for (
+                offer of (transferOffer
+                  | paginate: { id: offersPaginationId, itemsPerPage: offersPerPage, currentPage: offersPage });
+                track offer
+              ) {
+              <tr>
                 <td>
                   <div class="team-cell">
                     <img [src]="offer?.fromTeamLogoUrl || '../../../assets/images/player-default.png'" alt="Team Logo"
@@ -42,9 +43,11 @@
                 <td>
                   <div class="players-cell">
                     <div class="players-stack">
-                      <span class="player-pill" *ngFor="let p of offer.outgoingPlayers">
+                      @for (p of offer.outgoingPlayers; track p) {
+                      <span class="player-pill">
                         {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
                       </span>
+                      }
                     </div>
                   </div>
                 </td>
@@ -58,39 +61,47 @@
                 <td class="d-none d-md-table-cell">
                   <div class="players-cell">
                     <div class="players-stack">
-                      <span class="player-pill" *ngFor="let p of offer.incomingPlayers">
+                      @for (p of offer.incomingPlayers; track p) {
+                      <span class="player-pill">
                         {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
                       </span>
+                      }
                     </div>
                   </div>
                 </td>
                 <td class="d-none d-md-table-cell">
-                  <span class="position-badge" [ngClass]="{
-                            'mid': offer.status == 'pending',
-                            'top': offer.status == 'approved',
-                            'bottom': offer.status == 'rejected',
-                            'cancell': offer.status == 'cancelled',
-                          }">
+                  <span
+                    class="position-badge"
+                    [class.mid]="offer.status === 'pending'"
+                    [class.top]="offer.status === 'approved'"
+                    [class.bottom]="offer.status === 'rejected'"
+                    [class.cancell]="offer.status === 'cancelled'"
+                  >
                     {{ offer.statusEs }}
                   </span>
                 </td>
-                <td class="d-none d-lg-table-cell" *ngIf="isAdmin">
+                @if (isAdmin) {
+                <td class="d-none d-lg-table-cell">
                   <div class="team-actions">
-                    <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1"
-                      (click)="onActionBird(offer.id, 'approve')">
-                      <i class="fa fa-check"></i>
+                    @if (loginService.user.idRol === 1) {
+                    <button type="button" class="btn-action btn-view"
+                      aria-label="Aprobar oferta" (click)="onActionBird(offer.id, 'approve')">
+                      <i class="fa fa-check" aria-hidden="true"></i>
                     </button>
-                    <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1"
-                      (click)="onActionBird(offer.id, 'reject')">
-                      <i class="fa fa-times"></i>
+                    <button type="button" class="btn-action btn-delete"
+                      aria-label="Rechazar oferta" (click)="onActionBird(offer.id, 'reject')">
+                      <i class="fa fa-times" aria-hidden="true"></i>
                     </button>
+                    }
                     <!-- <button class="btn-action btn-edit"
                       (click)="onActionBird(offer.id, 'cancel')">
                       <i class="fa fa-trash"></i>
                     </button> -->
                   </div>
                 </td>
+                }
               </tr>
+              }
             </tbody>
           </table>
         </div>
@@ -101,22 +112,22 @@
 
   <!-- MOBILE -->
   <div class="d-block d-md-none d-flex align-items-center justify-content-center flex-column gap-4">
-    <ng-container
-      *ngFor="
-        let offer of transferOffer
-          | paginate: { id: offersPaginationId, itemsPerPage: offersPerPage, currentPage: offersPage };
-        let i = index
-      "
-    >
+    @for (
+      offer of (transferOffer
+        | paginate: { id: offersPaginationId, itemsPerPage: offersPerPage, currentPage: offersPage });
+      track offer;
+      let i = $index
+    ) {
       <div class="offer-card-mobile">
         <div class="offer-card-header">
           <div class="offer-title">Oferta {{ offer?.id ? ('#' + offer.id) : (i + 1) }}</div>
-          <span class="position-badge" [ngClass]="{
-                'mid': offer.status == 'pending',
-                'top': offer.status == 'approved',
-                'bottom': offer.status == 'rejected',
-                'cancell': offer.status == 'cancelled',
-              }">
+          <span
+            class="position-badge"
+            [class.mid]="offer.status === 'pending'"
+            [class.top]="offer.status === 'approved'"
+            [class.bottom]="offer.status === 'rejected'"
+            [class.cancell]="offer.status === 'cancelled'"
+          >
             {{ offer.statusEs }}
           </span>
         </div>
@@ -136,9 +147,11 @@
             </div>
 
             <div class="players-stack players-stack-left">
-              <span class="player-pill" *ngFor="let p of offer.outgoingPlayers">
+              @for (p of offer.outgoingPlayers; track p) {
+              <span class="player-pill">
                 {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
               </span>
+              }
             </div>
           </div>
 
@@ -158,40 +171,48 @@
             </div>
 
             <div class="players-stack players-stack-left">
-              <span class="player-pill" *ngFor="let p of offer.incomingPlayers">
+              @for (p of offer.incomingPlayers; track p) {
+              <span class="player-pill">
                 {{ p.displayName }} - {{ p.valoration !== undefined && p.valoration !== null ? p.valoration : '—' }}
               </span>
+              }
             </div>
           </div>
         </div>
 
         <div class="offer-card-footer">
           <div class="team-actions">
-            <button class="btn-action btn-view" *ngIf="loginService.user.idRol == 1"
-              (click)="onActionBird(offer.id, 'approve')">
-              <i class="fa fa-check"></i>
+            @if (loginService.user.idRol === 1) {
+            <button type="button" class="btn-action btn-view"
+              aria-label="Aprobar oferta" (click)="onActionBird(offer.id, 'approve')">
+              <i class="fa fa-check" aria-hidden="true"></i>
             </button>
-            <button class="btn-action btn-delete" *ngIf="loginService.user.idRol == 1"
-              (click)="onActionBird(offer.id, 'reject')">
-              <i class="fa fa-times"></i>
+            <button type="button" class="btn-action btn-delete"
+              aria-label="Rechazar oferta" (click)="onActionBird(offer.id, 'reject')">
+              <i class="fa fa-times" aria-hidden="true"></i>
             </button>
-            <button class="btn-action btn-edit" *ngIf="offer.status == 'pending'"
-              (click)="onActionBird(offer.id, 'cancel')">
-              <i class="fa fa-trash"></i>
+            }
+            @if (offer.status === 'pending') {
+            <button type="button" class="btn-action btn-edit"
+              aria-label="Cancelar oferta" (click)="onActionBird(offer.id, 'cancel')">
+              <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
+            }
           </div>
         </div>
       </div>
-    </ng-container>
+    }
 
   </div>
 
-  <div class="pagination-wrapper" *ngIf="(transferOffer?.length || 0) > offersPerPage">
+  @if (transferOffer.length > offersPerPage) {
+  <div class="pagination-wrapper">
     <pagination-controls
       [id]="offersPaginationId"
-      (pageChange)="offersPage = $event"
+      (pageChange)="onOffersPageChange($event)"
       previousLabel="Anterior"
       nextLabel="Siguiente"
     ></pagination-controls>
   </div>
+  }
 </div>

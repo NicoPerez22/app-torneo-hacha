@@ -1,53 +1,70 @@
 <div class="container">
-  <div class="reports-header" *ngIf="title() || subtitle()">
+  @if (title() || subtitle()) {
+  <div class="reports-header">
     <div class="header-content">
-      <h2 class="reports-title" *ngIf="title()">{{ title() }}</h2>
-      <p class="reports-subtitle" *ngIf="subtitle()">{{ subtitle() }}</p>
+      @if (title()) {
+      <h2 class="reports-title">{{ title() }}</h2>
+      }
+      @if (subtitle()) {
+      <p class="reports-subtitle">{{ subtitle() }}</p>
+      }
     </div>
   </div>
+  }
 
-  <div class="empty-state" *ngIf="!loading() && !hasItems()">
+  @if (!loading() && !hasItems()) {
+  <div class="empty-state">
     <i class="bi bi-clipboard-data empty-icon"></i>
     <h3>No hay reportes para revisar</h3>
     <p>Cuando existan reportes pendientes, van a aparecer acá.</p>
   </div>
+  }
 
-  <div class="loading-state" *ngIf="loading()">
+  @if (loading()) {
+  <div class="loading-state">
     <nz-spin nzSimple></nz-spin>
   </div>
+  }
 
-  <ul class="matches-list" *ngIf="!loading() && hasItems()">
-    <li class="match-card" *ngFor="let item of items(); trackBy: trackById">
+  @if (!loading() && hasItems()) {
+  <ul class="matches-list">
+    @for (item of cards(); track item.reportId ?? item.matchId ?? $index) {
+    <li class="match-card">
       <div class="match-card-top">
         <div class="match-meta">
           <div class="meta-title">
-            <span class="meta-tournament" *ngIf="item.tournamentName">{{
+            @if (item.tournamentName) {
+            <span class="meta-tournament">{{
               item.tournamentName
             }}</span>
+            }
+            @if (item.tournamentName && item.roundLabel) {
             <span
               class="meta-sep"
-              *ngIf="item.tournamentName && item.roundLabel"
               >·</span
             >
-            <span class="meta-round" *ngIf="item.roundLabel">{{
+            }
+            @if (item.roundLabel) {
+            <span class="meta-round">{{
               item.roundLabel
             }}</span>
+            }
           </div>
-          <div class="meta-sub" *ngIf="item.createdAt">
+          @if (item.createdAt) {
+          <div class="meta-sub">
             {{ item.createdAt | date : 'medium' }}
           </div>
+          }
         </div>
 
         <span
           class="status-badge"
-          [ngClass]="{
-            pending: (item.status || 'pending') === 'pending',
-            approved: (item.status || 'pending') === 'approved',
-            rejected: (item.status || 'pending') === 'rejected',
-            null_match: (item.status || 'pending') === 'null_match'
-          }"
+          [class.pending]="item.statusKey === 'pending'"
+          [class.approved]="item.statusKey === 'approved'"
+          [class.rejected]="item.statusKey === 'rejected'"
+          [class.null_match]="item.statusKey === 'null_match'"
         >
-          {{ getStatusLabel(item.status) }}
+          {{ item.statusLabel }}
         </span>
       </div>
 
@@ -86,8 +103,8 @@
             <i class="fa fa-eye"></i>
           </button>
 
+          @if (isAdmin()) {
           <button
-            *ngIf="isAdmin()"
             type="button"
             class="btn-action btn-approve"
             (click)="approve.emit(item)"
@@ -98,7 +115,6 @@
           </button>
 
           <button
-            *ngIf="isAdmin()"
             type="button"
             class="btn-action btn-reject"
             (click)="reject.emit(item)"
@@ -109,7 +125,6 @@
           </button>
 
           <button
-            *ngIf="isAdmin()"
             type="button"
             class="btn-action btn-null-match"
             (click)="nullMatch.emit(item)"
@@ -118,8 +133,11 @@
           >
             <i class="fa fa-ban"></i>
           </button>
+          }
         </div>
       </div>
     </li>
+    }
   </ul>
+  }
 </div>

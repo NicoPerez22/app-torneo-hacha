@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { MatchReportCardVM } from 'src/app/models/match-report.vm';
-import { AuthService } from 'src/app/service/auth.service';
 import { MatchReportDraftsService } from 'src/app/service/match-report-drafts.service';
 import { ResultsComponent } from 'src/app/team/my-team/results/results.component';
 import { TOURNAMENT_CONSTANTS } from 'src/app/tournament/constants/tournament.constants';
@@ -37,24 +37,22 @@ export interface TournamentRoundSection {
   templateUrl: './tournament-rounds.component.html',
   styleUrls: ['./tournament-rounds.component.css'],
 })
-export class TournamentRoundsComponent implements OnInit, OnDestroy {
-  tournamentId = 0;
-  tournament?: Tournament;
-  roundSections: TournamentRoundSection[] = [];
-  isLoading = false;
-  isAdmin = false;
+export class TournamentRoundsComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly tournamentService = inject(TournamentService);
+  private readonly toastr = inject(ToastrService);
+  private readonly modalService = inject(NzModalService);
+  private readonly matchReportDrafts = inject(MatchReportDraftsService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly pendingDraftByMatchId = new Map<number, number>();
-  private readonly subs = new Subscription();
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly tournamentService: TournamentService,
-    private readonly toastr: ToastrService,
-    private readonly modalService: NzModalService,
-    private readonly authService: AuthService,
-    private readonly matchReportDrafts: MatchReportDraftsService,
-  ) {}
+  protected tournamentId = 0;
+  protected tournament?: Tournament;
+  protected roundSections: TournamentRoundSection[] = [];
+  protected isLoading = false;
+  protected isAdmin = false;
+  protected showGroupLabels = false;
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('tournamentId');
@@ -73,37 +71,15 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
     this.load();
   }
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
-  }
-
-  get showGroupLabels(): boolean {
-    return this.tournament?.format?.id === 2;
-  }
-
-  trackByPage(_: number, item: TournamentRoundSection): number {
-    return item.page;
-  }
-
-  trackByGroup(_: number, item: TournamentRoundGroup): string {
-    return String(item.groupNumber ?? 'default');
-  }
-
-  trackByMatchId(_: number, item: Match): number | string {
-    return (
-      item?.id ?? item?.idRound ?? `${item?.homeTeamName}-${item?.awayTeamName}`
-    );
-  }
-
-  onBack(): void {
+  protected onBack(): void {
     this.router.navigate(['/dashboard/tournaments']);
   }
 
-  onViewTournament(): void {
+  protected onViewTournament(): void {
     this.router.navigate(['/tournament/view', this.tournamentId]);
   }
 
-  onViewReports(round: TournamentRoundSection): void {
+  protected onViewReports(round: TournamentRoundSection): void {
     this.router.navigate(['/dashboard/reports'], {
       queryParams: {
         tournamentId: String(this.tournamentId),
@@ -112,7 +88,7 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onReportMatch(match: Match): void {
+  protected onReportMatch(match: Match): void {
     const modal = this.modalService.create({
       nzContent: ResultsComponent,
       nzData: { match },
@@ -125,21 +101,23 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
       nzClassName: 'match-report-modal',
     });
 
-    modal.afterClose.subscribe((result) => {
-      if (result === true) {
-        this.load();
-      }
-    });
+    modal.afterClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result === true) {
+          this.load();
+        }
+      });
   }
 
-  onEdit(round: TournamentRoundSection): void {
+  protected onEdit(round: TournamentRoundSection): void {
     this.toastr.info(
       `Edición de "${round.label}" para este torneo no está disponible aún.`,
       'Próximamente',
     );
   }
 
-  onNullMatch(round: TournamentRoundSection): void {
+  protected onNullMatch(round: TournamentRoundSection): void {
     this.router.navigate(['/dashboard/reports'], {
       queryParams: {
         tournamentId: String(this.tournamentId),
@@ -148,7 +126,10 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onNullMatchMatch(match: Match, section: TournamentRoundSection): void {
+  protected onNullMatchMatch(
+    match: Match,
+    _section: TournamentRoundSection,
+  ): void {
     if (!this.isAdmin) {
       this.toastr.warning(
         'Solo un administrador puede marcar un partido como no jugado',
@@ -170,23 +151,24 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
     });
   }
 
-  isMatchPending(match: Match): boolean {
+  protected isMatchPending(match: Match): boolean {
     return Number(match?.state) === 0;
   }
 
-  canNullMatchMatch(match: Match): boolean {
+  protected canNullMatchMatch(match: Match): boolean {
     return this.isAdmin && this.isMatchPending(match);
   }
 
   private load(): void {
     this.isLoading = true;
 
-    const loadSub = this.tournamentService
+    this.tournamentService
       .getTournamentByID(this.tournamentId)
       .pipe(
         catchError(() => of({ data: null as Tournament | null })),
         switchMap((tournamentRes) => {
           this.tournament = tournamentRes.data ?? undefined;
+          this.showGroupLabels = this.tournament?.format?.id === 2;
           return forkJoin({
             pages: this.loadAllRoundsPages$(),
             pendingReports: this.matchReportDrafts
@@ -197,6 +179,7 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
               .pipe(catchError(() => of([] as MatchReportCardVM[]))),
           });
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: ({ pages, pendingReports }) => {
@@ -209,11 +192,9 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
       });
-
-    this.subs.add(loadSub);
   }
 
-  private loadAllRoundsPages$() {
+  private loadAllRoundsPages$(): Observable<RoundsResponse[]> {
     return this.tournamentService
       .getRoundsPagination(this.tournamentId, 1)
       .pipe(
@@ -325,6 +306,7 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
 
       this.matchReportDrafts
         .review(draftId, { adminId, action: 'null_match' })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.toastr.success(
@@ -362,24 +344,27 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
     tournamentId: number;
   }): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.tournamentService.nullMatch(dto).subscribe({
-        next: () => {
-          this.toastr.success(
-            'Partido marcado como no jugado correctamente',
-            'Éxito',
-          );
-          this.load();
-          resolve();
-        },
+      this.tournamentService
+        .nullMatch(dto)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.toastr.success(
+              'Partido marcado como no jugado correctamente',
+              'Éxito',
+            );
+            this.load();
+            resolve();
+          },
 
-        error: () => {
-          this.toastr.error(
-            'No se pudo marcar el partido como no jugado',
-            'Error',
-          );
-          reject();
-        },
-      });
+          error: () => {
+            this.toastr.error(
+              'No se pudo marcar el partido como no jugado',
+              'Error',
+            );
+            reject();
+          },
+        });
     });
   }
 }

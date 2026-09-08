@@ -1,65 +1,79 @@
 import { HttpClient } from '@angular/common/http';
-import { environment } from './../../environments/environment';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from './../../environments/environment';
+import { SessionUser } from '../models/user';
+
+export interface AuthApiResponse<T = unknown> {
+  data?: T;
+  code?: number;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  readonly http = inject(HttpClient);
+  private readonly _http = inject(HttpClient);
+  private readonly _user = signal<SessionUser | null>(null);
+  private readonly _userKey = 'user';
+  private readonly _apiUrl = environment.API_URL;
 
-  private readonly privateUserSignal = signal<any | null>(null);
-  readonly userSignal = this.privateUserSignal.asReadonly();
-
-  USER_KEY = 'user';
-  API_URL = environment.API_URL;
+  readonly userSignal = this._user.asReadonly();
 
   constructor() {
     this.getUserStorage();
   }
 
-  register(userRegister): Observable<any> {
-    const url = this.API_URL + `auth/register`;
-    return this.http.post<any>(url, userRegister);
+  register(userRegister: unknown): Observable<AuthApiResponse> {
+    return this._http.post<AuthApiResponse>(
+      `${this._apiUrl}auth/register`,
+      userRegister,
+    );
   }
 
-  login(userLogin): Observable<any> {
-    const url = this.API_URL + `auth/login`;
-    return this.http.post<any>(url, userLogin);
+  login(userLogin: unknown): Observable<AuthApiResponse<SessionUser & { token?: string }>> {
+    return this._http.post<AuthApiResponse<SessionUser & { token?: string }>>(
+      `${this._apiUrl}auth/login`,
+      userLogin,
+    );
   }
 
   clean(): void {
     this.clearUser();
   }
 
-  saveUser(user: any): void {
-    sessionStorage.removeItem(this.USER_KEY);
-    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
-    this.privateUserSignal.set(user);
+  saveUser(user: SessionUser): void {
+    sessionStorage.removeItem(this._userKey);
+    sessionStorage.setItem(this._userKey, JSON.stringify(user));
+    this._user.set(user);
   }
 
   clearUser(): void {
-    sessionStorage.removeItem(this.USER_KEY);
-    this.privateUserSignal.set(null);
+    sessionStorage.removeItem(this._userKey);
+    this._user.set(null);
   }
 
-  getUserStorage() {
-    const user = sessionStorage.getItem(this.USER_KEY);
-    if (!user) return null;
+  getUserStorage(): SessionUser | null {
+    const user = sessionStorage.getItem(this._userKey);
+    if (!user) {
+      return null;
+    }
 
-    const parsed = JSON.parse(user);
-    this.privateUserSignal.set(parsed);
-    return parsed;
+    try {
+      const parsed = JSON.parse(user) as SessionUser;
+      this._user.set(parsed);
+      return parsed;
+    } catch {
+      return null;
+    }
   }
 
-  getUser(): any | null {
-    const current = this.privateUserSignal();
-    if (current) return current;
-    return this.getUserStorage();
+  getUser(): SessionUser | null {
+    return this._user() ?? this.getUserStorage();
   }
 
   isLoggedIn(): boolean {
-    return !!sessionStorage.getItem(this.USER_KEY);
+    return !!sessionStorage.getItem(this._userKey);
   }
 }

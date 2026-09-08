@@ -1,69 +1,92 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import { LoginService } from 'src/app/service/login.service';
-import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+
+interface BootstrapCollapse {
+  hide(): void;
+}
+
+interface BootstrapCollapseApi {
+  getOrCreateInstance(
+    element: HTMLElement,
+    config: { toggle: boolean },
+  ): BootstrapCollapse;
+}
 
 @Component({
   selector: 'app-header',
-  imports: [...SHARED_UI_IMPORTS],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css'],
+  styleUrl: './header.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(window:scroll)': 'onWindowScroll()',
+  },
 })
 export class HeaderComponent {
-  private readonly authService = inject(AuthService);
-  private readonly loginService = inject(LoginService);
-  private readonly router = inject(Router);
+  private readonly _authService = inject(AuthService);
+  private readonly _loginService = inject(LoginService);
+  private readonly _router = inject(Router);
 
-  protected readonly userSignal = this.authService.userSignal;
+  protected readonly userSignal = this._authService.userSignal;
   protected readonly isScrolled = signal(false);
 
-  private readonly mainNav = viewChild<ElementRef<HTMLElement>>('mainNav');
-  private readonly navToggler = viewChild<ElementRef<HTMLElement>>('navToggler');
+  private readonly _mainNav =
+    viewChild<ElementRef<HTMLDivElement>>('mainNav');
+  private readonly _navToggler =
+    viewChild<ElementRef<HTMLButtonElement>>('navToggler');
 
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
+  protected onWindowScroll(): void {
     this.isScrolled.set(window.scrollY > 50);
   }
 
-  logout() {
-    this.loginService.logout();
+  protected onLogout(): void {
+    this._loginService.logout();
   }
 
-  navigateToProfile() {
-    this.router.navigate(['/profile']);
+  protected onNavigateToProfile(): void {
+    void this._router.navigate(['/profile']);
   }
 
-  navigateToTeam() {
-    this.router.navigate(['/equipos/' + this.userSignal()?.teams[0]?.id]);
+  protected onNavigateToTeam(): void {
+    const teamId = this.userSignal()?.teams?.[0]?.id;
+    if (teamId === undefined || teamId === null) {
+      return;
+    }
+
+    void this._router.navigate(['/equipos', teamId]);
   }
 
-  collapseMobileMenu() {
-    const collapseEl = this.mainNav()?.nativeElement;
-    if (!collapseEl) return;
+  protected onCollapseMobileMenu(): void {
+    const collapseElement = this._mainNav()?.nativeElement;
+    if (!collapseElement?.classList.contains('show')) {
+      return;
+    }
 
-    if (!collapseEl.classList.contains('show')) return;
+    const bootstrap = (
+      window as Window & {
+        bootstrap?: { Collapse?: BootstrapCollapseApi };
+      }
+    ).bootstrap;
 
-    const w = window as any;
-    const bs = w?.bootstrap;
-
-    if (bs?.Collapse?.getOrCreateInstance) {
-      const instance = bs.Collapse.getOrCreateInstance(collapseEl, {
+    if (bootstrap?.Collapse) {
+      const instance = bootstrap.Collapse.getOrCreateInstance(collapseElement, {
         toggle: false,
       });
       instance.hide();
       return;
     }
 
-    collapseEl.classList.remove('show');
-    (collapseEl as any).style && ((collapseEl as any).style.height = '');
-    this.navToggler()?.nativeElement?.setAttribute('aria-expanded', 'false');
+    collapseElement.classList.remove('show');
+    collapseElement.style.height = '';
+    this._navToggler()?.nativeElement.setAttribute('aria-expanded', 'false');
   }
 }

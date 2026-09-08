@@ -14,7 +14,7 @@ describe('SearchPlayersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SearchPlayersComponent],
+      imports: [SearchPlayersComponent],
       providers: [
         {
           provide: TeamService,

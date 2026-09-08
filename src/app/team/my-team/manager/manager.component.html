@@ -1,16 +1,17 @@
 <div class="container">
-  <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
+  <form [formGroup]="form" nz-form nzLayout="vertical" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="col-md-6">
         <nz-form-item>
           <nz-form-label nzFor="manager">Manager</nz-form-label>
           <nz-form-control>
             <nz-select formControlName="manager">
+              @for (item of users; track item.id) {
               <nz-option
-                *ngFor="let item of users"
                 [nzValue]="item.id"
                 [nzLabel]="item.name + ' ' + item.lastName"
               ></nz-option>
+              }
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -21,11 +22,12 @@
           <nz-form-label nzFor="teams">Equipo Destino</nz-form-label>
           <nz-form-control>
             <nz-select formControlName="teamDestination">
+              @for (item of teams; track item.id) {
               <nz-option
-                *ngFor="let item of teams"
                 [nzValue]="item.id"
                 [nzLabel]="item.name"
               ></nz-option>
+              }
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -34,7 +36,7 @@
 
     <div class="row d-flex justify-content-center">
       <div class="col-md-2">
-        <button class="btn btn-warning" (click)="onSubmit()">Confirmar</button>
+        <button class="btn btn-warning" type="submit">Confirmar</button>
       </div>
     </div>
   </form>

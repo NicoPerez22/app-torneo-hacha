@@ -1,9 +1,4 @@
 export class DataColumn {
-  key: string;
-  style: string;
-
-  constructor() {
-    this.key = null;
-    this.style = null;
-  }
+  key: string | null = null;
+  style: string | null = null;
 }

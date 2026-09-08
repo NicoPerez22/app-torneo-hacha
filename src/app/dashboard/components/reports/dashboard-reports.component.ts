@@ -1,13 +1,21 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  TemplateRef,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from 'src/app/service/auth.service';
 import {
   MatchReportCardVM,
   ReportDetailVM,
 } from 'src/app/models/match-report.vm';
 import { MatchReportDraftsService } from 'src/app/service/match-report-drafts.service';
+import { AuthService } from 'src/app/service/auth.service';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
@@ -17,44 +25,42 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./dashboard-reports.component.css'],
 })
 export class DashboardReportsComponent implements OnInit {
-  @ViewChild('previewTpl', { static: true }) previewTpl!: TemplateRef<any>;
+  private readonly matchReportDrafts = inject(MatchReportDraftsService);
+  private readonly toastr = inject(ToastrService);
+  private readonly modal = inject(NzModalService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly authService = inject(AuthService);
+  private readonly previewTpl =
+    viewChild.required<TemplateRef<unknown>>('previewTpl');
 
-  loading = false;
-  previewLoading = false;
-  isAdmin = false;
+  protected loading = false;
+  protected previewLoading = false;
+  protected isAdmin = false;
 
-  reports: MatchReportCardVM[] = [];
+  protected reports: MatchReportCardVM[] = [];
 
-  statusFilter: string = 'pending';
-  tournamentIdFilter: string = '';
-  q: string = '';
+  protected statusFilter = 'pending';
+  protected tournamentIdFilter = '';
+  protected q = '';
 
   // pagination (ngx-pagination)
-  page = 1;
-  readonly perPage = 9;
-  readonly paginationId = 'dashboard-match-reports';
-  totalItems = 0;
+  protected page = 1;
+  protected readonly perPage = 9;
+  protected readonly paginationId = 'dashboard-match-reports';
+  protected totalItems = 0;
 
   // pagination (events dentro del preview)
-  eventsPage = 1;
-  readonly eventsPerPage = 6;
-  readonly eventsPaginationId = 'dashboard-match-report-events';
+  protected eventsPage = 1;
+  protected readonly eventsPerPage = 6;
+  protected readonly eventsPaginationId = 'dashboard-match-report-events';
 
-  selected?: MatchReportCardVM;
-  selectedDetail?: ReportDetailVM;
-  previewModal?: NzModalRef;
-
-  constructor(
-    private readonly matchReportDrafts: MatchReportDraftsService,
-    private readonly toastr: ToastrService,
-    private readonly authService: AuthService,
-    private readonly modal: NzModalService,
-    private readonly route: ActivatedRoute,
-  ) {}
+  protected selected?: MatchReportCardVM;
+  protected selectedDetail?: ReportDetailVM;
+  private previewModal?: NzModalRef;
 
   ngOnInit(): void {
-    const user = null;
-    this.isAdmin = user?.idRol === 1;
+    this.isAdmin = this.authService.getUser()?.idRol === 1;
     const qTid = this.route.snapshot.queryParamMap.get('tournamentId');
     if (qTid && String(qTid).trim()) {
       this.tournamentIdFilter = String(qTid).trim();
@@ -62,20 +68,20 @@ export class DashboardReportsComponent implements OnInit {
     this.load();
   }
 
-  onPageChange(next: number) {
+  protected onPageChange(next: number): void {
     this.page = next;
   }
 
-  onApplyFilters() {
+  protected onApplyFilters(): void {
     this.page = 1;
     this.load();
   }
 
-  onEventsPageChange(next: number) {
+  protected onEventsPageChange(next: number): void {
     this.eventsPage = next;
   }
 
-  get filteredReports(): MatchReportCardVM[] {
+  protected get filteredReports(): MatchReportCardVM[] {
     const term = String(this.q || '')
       .trim()
       .toLowerCase();
@@ -89,7 +95,7 @@ export class DashboardReportsComponent implements OnInit {
     });
   }
 
-  onView(item: MatchReportCardVM) {
+  protected onView(item: MatchReportCardVM): void {
     this.selected = item;
     this.selectedDetail = undefined;
     this.previewLoading = true;
@@ -102,25 +108,28 @@ export class DashboardReportsComponent implements OnInit {
       return;
     }
 
-    this.matchReportDrafts.detail(draftId, item).subscribe({
-      next: (detail) => {
-        this.selectedDetail = detail;
-        this.previewLoading = false;
-        this.openPreviewModal();
-      },
-      error: () => {
-        this.previewLoading = false;
-        this.selectedDetail = this.matchReportDrafts.normalizeDetail({}, item);
-        this.openPreviewModal();
-        this.toastr.warning(
-          'No se pudo cargar el detalle del reporte',
-          'Atención',
-        );
-      },
-    });
+    this.matchReportDrafts
+      .detail(draftId, item)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (detail) => {
+          this.selectedDetail = detail;
+          this.previewLoading = false;
+          this.openPreviewModal();
+        },
+        error: () => {
+          this.previewLoading = false;
+          this.selectedDetail = this.matchReportDrafts.normalizeDetail({}, item);
+          this.openPreviewModal();
+          this.toastr.warning(
+            'No se pudo cargar el detalle del reporte',
+            'Atención',
+          );
+        },
+      });
   }
 
-  onApprove(item: MatchReportCardVM) {
+  protected onApprove(item: MatchReportCardVM): void {
     if (!this.isAdmin) return;
     const user = null;
     const adminId = Number(user?.id);
@@ -129,6 +138,7 @@ export class DashboardReportsComponent implements OnInit {
 
     this.matchReportDrafts
       .review(draftId, { adminId, action: 'approve' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.toastr.success('Reporte aprobado correctamente', 'Éxito');
@@ -140,7 +150,7 @@ export class DashboardReportsComponent implements OnInit {
       });
   }
 
-  onReject(item: MatchReportCardVM) {
+  protected onReject(item: MatchReportCardVM): void {
     if (!this.isAdmin) return;
     const user = null;
     const adminId = Number(user?.id);
@@ -149,6 +159,7 @@ export class DashboardReportsComponent implements OnInit {
 
     this.matchReportDrafts
       .review(draftId, { adminId, action: 'reject' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.toastr.success('Reporte rechazado correctamente', 'Éxito');
@@ -159,7 +170,7 @@ export class DashboardReportsComponent implements OnInit {
         },
       });
   }
-  onNullMatch(item: MatchReportCardVM) {
+  protected onNullMatch(item: MatchReportCardVM): void {
     if (!this.isAdmin) return;
     const user = null;
     const adminId = Number(user?.id);
@@ -168,6 +179,7 @@ export class DashboardReportsComponent implements OnInit {
 
     this.matchReportDrafts
       .review(draftId, { adminId, action: 'null_match' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.toastr.success(
@@ -185,18 +197,18 @@ export class DashboardReportsComponent implements OnInit {
       });
   }
 
-  closePreview() {
+  protected onClosePreview(): void {
     this.previewModal?.close();
     this.previewModal = undefined;
     this.selected = undefined;
     this.selectedDetail = undefined;
   }
 
-  private openPreviewModal() {
-    const title = this._buildPreviewTitle(this.selected);
+  private openPreviewModal(): void {
+    const title = this.buildPreviewTitle(this.selected);
     this.previewModal = this.modal.create({
       nzTitle: title,
-      nzContent: this.previewTpl,
+      nzContent: this.previewTpl(),
       nzFooter: null,
       nzWidth: '95vw',
       nzStyle: { maxWidth: '900px' },
@@ -207,7 +219,7 @@ export class DashboardReportsComponent implements OnInit {
     });
   }
 
-  private load() {
+  private load(): void {
     this.loading = true;
 
     let tournamentId: number | null = null;
@@ -221,6 +233,7 @@ export class DashboardReportsComponent implements OnInit {
         status: this.statusFilter || null,
         tournamentId,
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (list) => {
           this.reports = list;
@@ -236,7 +249,7 @@ export class DashboardReportsComponent implements OnInit {
       });
   }
 
-  private _buildPreviewTitle(item?: MatchReportCardVM): string {
+  private buildPreviewTitle(item?: MatchReportCardVM): string {
     if (!item) return 'Reporte';
     const parts = [item?.tournamentName, item?.roundLabel].filter(Boolean);
     return parts.length ? `Reporte · ${parts.join(' · ')}` : 'Reporte';

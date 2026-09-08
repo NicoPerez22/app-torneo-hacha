@@ -14,15 +14,19 @@
   </div>
 
   <!-- Empty State -->
-  <div class="empty-state" *ngIf="teams().length === 0">
+  @if (teams().length === 0) {
+  <div class="empty-state">
     <i class="bi bi-check-circle empty-icon"></i>
     <h3>No hay jugadores inhabilitados</h3>
     <p>Todos los jugadores están disponibles</p>
   </div>
+  }
 
   <!-- Grid de cards -->
-  <div class="disabled-grid" *ngIf="teams().length > 0">
-    <div class="disabled-card" *ngFor="let item of teams()">
+  @if (teams().length > 0) {
+  <div class="disabled-grid">
+    @for (item of teams(); track item) {
+    <div class="disabled-card">
       <div class="disabled-card-inner">
         <!-- Glow effect -->
         <div class="card-glow"></div>
@@ -53,7 +57,7 @@
                   item?.team?.logo?.secureUrl ||
                   '../../../assets/images/player-default.png'
                 "
-                [alt]="item.team?.name"
+                [alt]="item.team?.name || 'Logo del equipo'"
                 class="team-logo"
               />
             </div>
@@ -76,5 +80,7 @@
         </div>
       </div>
     </div>
+    }
   </div>
+  }
 </div>

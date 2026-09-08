@@ -1,5 +1,5 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TournamentService } from 'src/app/tournament/service/tournament.service';
 import { ToastrService } from 'ngx-toastr';
 import { TeamService } from 'src/app/service/team.service';
@@ -7,8 +7,20 @@ import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EventsReports, Reports, RoundMatchData } from '../../models/report';
+import { TeamPlayer } from '../../models/team';
 
 type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE' | 'INJURY';
+
+interface PlayerReportRow {
+  teamId: number;
+  playerId: number;
+  goals: number;
+  yellow: number;
+  red: boolean;
+  injured: boolean;
+}
 
 @Component({
   selector: 'app-results',
@@ -17,15 +29,15 @@ type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE' | 'INJURY';
   styleUrls: ['./results.component.css'],
 })
 export class ResultsComponent implements OnInit {
-  readonly match = input<any>();
-  private readonly modalData = inject<{ match?: any }>(NZ_MODAL_DATA, {
+  readonly match = input<RoundMatchData>();
+  private readonly modalData = inject<{ match?: RoundMatchData }>(NZ_MODAL_DATA, {
     optional: true,
   });
-  protected matchData: any;
+  protected matchData: RoundMatchData | null = null;
 
-  form: FormGroup;
-  readonly isLoadingPlayers = signal(false);
-  readonly isSubmitting = signal(false);
+  protected readonly form: FormGroup;
+  protected readonly isLoadingPlayers = signal(false);
+  protected readonly isSubmitting = signal(false);
 
   private readonly fb = inject(FormBuilder);
   private readonly tournamentService = inject(TournamentService);
@@ -34,14 +46,23 @@ export class ResultsComponent implements OnInit {
   private readonly modalRef = inject<NzModalRef | null>(NzModalRef, {
     optional: true,
   });
+  private readonly destroyRef = inject(DestroyRef);
+
+  constructor() {
+    this.form = this.fb.group({
+      homeGoals: [0, Validators.required],
+      awayGoals: [0, Validators.required],
+      homePlayers: this.fb.array([]),
+      awayPlayers: this.fb.array([]),
+    });
+  }
 
   ngOnInit(): void {
     this.matchData = this.match() ?? this.modalData?.match;
-    this._initForm();
     this._loadPlayers();
   }
 
-  onSubmit() {
+  protected onSubmit(): void {
     if (this.isSubmitting()) return;
 
     this.form.markAllAsTouched();
@@ -54,7 +75,10 @@ export class ResultsComponent implements OnInit {
 
     const report = this._setValues();
 
-    this.tournamentService.getRoundReportPreview(report).subscribe({
+    this.tournamentService
+      .getRoundReportPreview(report)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: () => {
         this.toastrService.success('Partido reportado con exito', 'Exito');
         this.modalRef?.close(true);
@@ -64,36 +88,36 @@ export class ResultsComponent implements OnInit {
         this.toastrService.error('No se pudo reportar el partido', 'Error');
         this.isSubmitting.set(false);
       },
-    });
+      });
   }
 
-  addGoal(control: any) {
+  protected onAddGoal(control: AbstractControl | null): void {
     const current = Number(control?.value ?? 0);
     control?.setValue(current + 1);
   }
 
-  removeGoal(control: any) {
+  protected onRemoveGoal(control: AbstractControl | null): void {
     const current = Number(control?.value ?? 0);
     control?.setValue(Math.max(0, current - 1));
   }
 
-  get homePlayersArray(): FormArray {
+  protected get homePlayersArray(): FormArray {
     return this.form.get('homePlayers') as FormArray;
   }
 
-  get awayPlayersArray(): FormArray {
+  protected get awayPlayersArray(): FormArray {
     return this.form.get('awayPlayers') as FormArray;
   }
 
-  get homePlayersControls() {
+  protected get homePlayersControls(): AbstractControl[] {
     return this.homePlayersArray?.controls ?? [];
   }
 
-  get awayPlayersControls() {
+  protected get awayPlayersControls(): AbstractControl[] {
     return this.awayPlayersArray?.controls ?? [];
   }
 
-  clampYellow(i: number, side: 'home' | 'away'): void {
+  protected onClampYellow(i: number, side: 'home' | 'away'): void {
     const arr = side === 'home' ? this.homePlayersArray : this.awayPlayersArray;
     const ctrl = arr.at(i)?.get('yellow');
     const raw = Number(ctrl?.value ?? 0);
@@ -101,7 +125,7 @@ export class ResultsComponent implements OnInit {
     if (ctrl && ctrl.value !== safe) ctrl.setValue(safe, { emitEvent: false });
   }
 
-  clampNonNegative(i: number, side: 'home' | 'away'): void {
+  protected onClampNonNegative(i: number, side: 'home' | 'away'): void {
     const arr = side === 'home' ? this.homePlayersArray : this.awayPlayersArray;
     const ctrl = arr.at(i)?.get('goals');
     const raw = Number(ctrl?.value ?? 0);
@@ -109,17 +133,8 @@ export class ResultsComponent implements OnInit {
     if (ctrl && ctrl.value !== safe) ctrl.setValue(safe, { emitEvent: false });
   }
 
-  handleCancel(): void {
+  protected onCancel(): void {
     this.modalRef?.destroy();
-  }
-
-  private _initForm() {
-    this.form = this.fb.group({
-      homeGoals: [0, Validators.required],
-      awayGoals: [0, Validators.required],
-      homePlayers: this.fb.array([]),
-      awayPlayers: this.fb.array([]),
-    });
   }
 
   private _loadPlayers(): void {
@@ -143,7 +158,10 @@ export class ResultsComponent implements OnInit {
         .getPlayersByIdTeam(awayTeamId)
         .pipe(catchError(() => of({ data: [] }))),
     })
-      .pipe(finalize(() => this.isLoadingPlayers.set(false)))
+      .pipe(
+        finalize(() => this.isLoadingPlayers.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: ({ home, away }) => {
           const homePlayers = Array.isArray(home?.data) ? home.data : [];
@@ -161,7 +179,7 @@ export class ResultsComponent implements OnInit {
       });
   }
 
-  private _setPlayers(target: FormArray, players: any[], teamId: number): void {
+  private _setPlayers(target: FormArray, players: TeamPlayer[], teamId: number): void {
     target.clear();
 
     const sorted = [...(players ?? [])].sort((a, b) => {
@@ -189,11 +207,11 @@ export class ResultsComponent implements OnInit {
     }
   }
 
-  private _setValues() {
-    const buildEvents = (rows: any[]): any[] => {
-      const events: any[] = [];
+  private _setValues(): Reports {
+    const buildEvents = (rows: PlayerReportRow[]): EventsReports[] => {
+      const events: EventsReports[] = [];
 
-      const toCount = (value: any, max?: number): number => {
+      const toCount = (value: unknown, max?: number): number => {
         const n = Number(value);
         if (!Number.isFinite(n)) return 0;
         const i = Math.floor(n);
@@ -239,11 +257,11 @@ export class ResultsComponent implements OnInit {
     };
 
     const events = [
-      ...buildEvents(this.homePlayersArray?.value ?? []),
-      ...buildEvents(this.awayPlayersArray?.value ?? []),
+      ...buildEvents(this.homePlayersArray.value),
+      ...buildEvents(this.awayPlayersArray.value),
     ];
 
-    const dto = {
+    const dto: Reports = {
       roundId: this.matchData?.idRound,
       tournamentId: this.matchData?.tournamentId ?? this.matchData?.tournament?.id,
       homeGoals: Number(this.form.get('homeGoals')?.value ?? 0),

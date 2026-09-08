@@ -1,8 +1,16 @@
 import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UserService } from 'src/app/service/user.service';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+
+interface EditableUser {
+  id?: number;
+  name?: string;
+  lastName?: string;
+  email?: string;
+  userName?: string;
+}
 
 @Component({
   selector: 'app-personal-data',
@@ -11,47 +19,28 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./personal-data.component.css']
 })
 export class PersonalDataComponent implements OnInit {
-  readonly myUser = input<any>();
-  private readonly modalData = inject<{ myUser?: any }>(NZ_MODAL_DATA, {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly userService = inject(UserService);
+  private readonly modalData = inject<{ myUser?: EditableUser }>(NZ_MODAL_DATA, {
     optional: true,
   });
+  readonly myUser = input<EditableUser>();
   private readonly user = computed(() => this.myUser() ?? this.modalData?.myUser);
 
-  form: FormGroup;
-
-  constructor(
-    private fb: FormBuilder,
-    private userService: UserService
-  ) { }
+  protected readonly form = this.formBuilder.nonNullable.group({
+    name: ['', Validators.required],
+    lastName: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    userName: [''],
+  });
 
   ngOnInit(): void {
-    this._initForm();
-
-    this.form.patchValue({ ...this.user() })
+    this.form.patchValue({ ...this.user() });
   }
 
-  onSubmit(){
-    const user = {
-      name: this.form.get('name').value,
-      lastName: this.form.get('lastName').value,
-      email: this.form.get('email').value,
-      userName: this.form.get('userName').value,
-    }
-
-    this.userService.update(this.user()?.id, user).subscribe({
-      next: (resp) => {
-
-      }
-    })
+  onSubmit(): void {
+    this.userService
+      .update(this.user()?.id, this.form.getRawValue())
+      .subscribe();
   }
-
-  private _initForm() {
-    this.form = this.fb.group({
-      name: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      userName: ['']
-    });
-  }
-
 }

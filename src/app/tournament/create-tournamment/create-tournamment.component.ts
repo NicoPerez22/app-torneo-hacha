@@ -1,9 +1,8 @@
 import { ToastrService } from 'ngx-toastr';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd/modal';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TournamentService } from '../service/tournament.service';
-import { Router } from '@angular/router';
 import { TeamService } from 'src/app/service/team.service';
 import { UploadService } from 'src/app/service/upload.service';
 import { 
@@ -14,7 +13,7 @@ import {
   TeamCountOption 
 } from '../models/tournament.interface';
 import { TOURNAMENT_CONSTANTS, TEAM_COUNT_OPTIONS, CREATE_TOURNAMENT_STEPS } from '../constants/tournament.constants';
-import { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
@@ -23,11 +22,19 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   templateUrl: './create-tournamment.component.html',
   styleUrls: ['./create-tournamment.component.css'],
 })
-export class CreateTournammentComponent implements OnInit, OnDestroy {
+export class CreateTournammentComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly fb = inject(FormBuilder);
+  private readonly tournamentService = inject(TournamentService);
+  private readonly teamService = inject(TeamService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly uploadService = inject(UploadService);
+  private readonly modalRef = inject(NzModalRef);
+
   form!: FormGroup;
   formats: Format[] = [];
   availableTeams: Team[] = [];
-  teamCountOptions: TeamCountOption[] = TEAM_COUNT_OPTIONS;
+  readonly teamCountOptions: TeamCountOption[] = TEAM_COUNT_OPTIONS;
 
   selectedTeams: Team[] = [];
   selectedTeamIds: number[] = [];
@@ -37,26 +44,10 @@ export class CreateTournammentComponent implements OnInit, OnDestroy {
   currentStep: number = CREATE_TOURNAMENT_STEPS.TOURNAMENT_DATA;
   currentStepIndex: number = CREATE_TOURNAMENT_STEPS.TOURNAMENT_DATA;
 
-  private subscriptions: Subscription = new Subscription();
-
-  constructor(
-    private fb: FormBuilder,
-    private tournamentService: TournamentService,
-    private teamService: TeamService,
-    private toastrService: ToastrService,
-    private router: Router,
-    private uploadService: UploadService,
-    private modalRef: NzModalRef,
-  ) {}
-
   ngOnInit(): void {
     this.initForm();
     this.loadTeams();
     this.loadFormats();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   onSubmitData(): void {
@@ -74,7 +65,9 @@ export class CreateTournammentComponent implements OnInit, OnDestroy {
       enableDraft: formValue.draft || false,
     };
 
-    const createSub = this.tournamentService.createTournament(request).subscribe({
+    this.tournamentService.createTournament(request).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: (response) => {
         if (!response) {
           this.toastrService.error(
@@ -98,7 +91,6 @@ export class CreateTournammentComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.subscriptions.add(createSub);
   }
 
   onLoadImage(event: Event): void {
@@ -116,9 +108,11 @@ export class CreateTournammentComponent implements OnInit, OnDestroy {
 
     this.isUploadingImage = true;
 
-    const uploadSub = this.uploadService.setImage(file).subscribe({
-      next: (response: ImageUrl) => {
-        this.uploadedImages = [response];
+    this.uploadService.setImage(file).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (response) => {
+        this.uploadedImages = [response as ImageUrl];
         this.isUploadingImage = false;
       },
       error: () => {
@@ -127,7 +121,6 @@ export class CreateTournammentComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.subscriptions.add(uploadSub);
   }
 
   onSelectTeam(teamId: number): void {
@@ -190,20 +183,23 @@ export class CreateTournammentComponent implements OnInit, OnDestroy {
   }
 
   private loadTeams(): void {
-    const teamsSub = this.teamService.getTeams().subscribe({
+    this.teamService.getTeams().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: (response) => {
-        this.availableTeams = response.data || [];
+        this.availableTeams = (response.data || []) as Team[];
       },
       error: () => {
         this.toastrService.error('Error al cargar los equipos', TOURNAMENT_CONSTANTS.ERROR_TITLE);
       },
     });
 
-    this.subscriptions.add(teamsSub);
   }
 
   private loadFormats(): void {
-    const formatsSub = this.tournamentService.getFormats().subscribe({
+    this.tournamentService.getFormats().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: (response) => {
         this.formats = response.data || [];
       },
@@ -212,7 +208,6 @@ export class CreateTournammentComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.subscriptions.add(formatsSub);
   }
 
   private validateCurrentStep(): boolean {

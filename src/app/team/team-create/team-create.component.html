@@ -2,7 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-8">
       <div>
-        <form [formGroup]="form" nz-form [nzLayout]="'vertical'">
+        <form [formGroup]="form" nz-form nzLayout="vertical" (ngSubmit)="onSubmit()">
           <div class="row justify-content-center">
             <div class="col-md-4">
               <nz-form-item class="mb-0">
@@ -18,9 +18,11 @@
                   />
 
                   <ng-template #nameErrorTpl let-control>
-                    <span *ngIf="control.hasError('required')">
+                    @if (control.hasError('required')) {
+                    <span>
                       El nombre es obligatorio
                     </span>
+                    }
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
@@ -43,9 +45,11 @@
                   />
 
                   <ng-template #abreviaturaErrorTpl let-control>
-                    <span *ngIf="control.hasError('required')">
+                    @if (control.hasError('required')) {
+                    <span>
                       La abreviatura es obligatoria
                     </span>
+                    }
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
@@ -53,10 +57,8 @@
           </div>
 
           <div class="row">
-            <div
-              class="d-flex justify-content-center gap-4 mt-5"
-              *ngIf="!images.length"
-            >
+            @if (!images.length) {
+            <div class="d-flex justify-content-center gap-4 mt-5">
               <input
                 type="file"
                 #fileInput
@@ -80,20 +82,27 @@
                 Logos almacenados
               </button> -->
             </div>
+            }
 
-            <div class="d-flex justify-content-center" *ngIf="showSpinner()">
-              <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+            @if (showSpinner()) {
+            <div class="d-flex justify-content-center">
+              <nz-spin nzSimple nzSize="large"></nz-spin>
             </div>
+            }
 
-            <div class="d-flex justify-content-center" *ngIf="images.length">
-              <div *ngFor="let image of images" style="margin-top: 5%">
-                <img [src]="image.url" width="100" />
+            @if (images.length) {
+            <div class="d-flex justify-content-center">
+              @for (image of images; track image.id ?? image.url) {
+              <div style="margin-top: 5%">
+                <img [src]="image.url" width="100" alt="Logo del equipo" />
               </div>
+              }
             </div>
+            }
           </div>
 
           <div class="text-center mt-5">
-            <button class="btn btn-warning" (click)="onSubmit()">
+            <button class="btn btn-warning" type="submit">
               Crear equipo
             </button>
           </div>

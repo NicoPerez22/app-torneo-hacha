@@ -1,11 +1,13 @@
 import {
   Component,
   computed,
-  HostListener,
+  DestroyRef,
   inject,
+  OnInit,
   signal,
   ViewEncapsulation,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
@@ -18,23 +20,29 @@ type DashboardPath =
   | 'reports'
   | 'settings';
 
+interface DashboardMenuItem {
+  readonly path: DashboardPath;
+  readonly label: string;
+  readonly iconClass: string;
+}
+
 @Component({
   selector: 'app-dashboard',
   imports: [...SHARED_UI_IMPORTS],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   encapsulation: ViewEncapsulation.None,
+  host: {
+    '(window:resize)': 'onResize()',
+  },
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly isSidebarOpen = signal(false);
+  protected readonly isSidebarOpen = signal(false);
 
-  readonly menuItems: Array<{
-    path: DashboardPath;
-    label: string;
-    iconClass: string;
-  }> = [
+  protected readonly menuItems: readonly DashboardMenuItem[] = [
     { path: 'overview', label: 'Resumen', iconClass: 'fa fa-home' },
     { path: 'teams', label: 'Equipos', iconClass: 'fa fa-shield' },
     { path: 'tournaments', label: 'Torneos', iconClass: 'fa fa-trophy' },
@@ -43,37 +51,41 @@ export class DashboardComponent {
     { path: 'settings', label: 'Ajustes', iconClass: 'fa fa-cog' },
   ];
 
-  readonly activePath = signal<DashboardPath>('overview');
-  readonly activeLabel = computed(() => {
+  private readonly activePath = signal<DashboardPath>('overview');
+  protected readonly activeLabel = computed(() => {
     const item = this.menuItems.find((it) => it.path === this.activePath());
     return item?.label ?? 'Dashboard';
   });
 
-  constructor() {
+  ngOnInit(): void {
     this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe(() => this.syncFromUrlAndClose());
     this.syncFromUrlAndClose();
   }
 
-  toggleSidebar() {
+  protected onToggleSidebar(): void {
     this.isSidebarOpen.update((open) => !open);
   }
 
-  closeSidebar() {
+  protected onCloseSidebar(): void {
     this.isSidebarOpen.set(false);
   }
 
-  private syncFromUrlAndClose() {
+  private syncFromUrlAndClose(): void {
     const path = this.router.url.split('?')[0].split('#')[0];
     const segment = (path.split('/')[2] || 'overview') as DashboardPath;
     const isValid = this.menuItems.some((i) => i.path === segment);
     this.activePath.set(isValid ? segment : 'overview');
-    this.closeSidebar();
+    this.onCloseSidebar();
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    if (window.innerWidth >= 992) this.isSidebarOpen.set(false);
+  protected onResize(): void {
+    if (window.innerWidth >= 992) {
+      this.isSidebarOpen.set(false);
+    }
   }
 }

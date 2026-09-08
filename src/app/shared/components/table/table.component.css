@@ -1,0 +1,12 @@
+.table__header {
+  font-weight: bold;
+  text-align: center;
+}
+
+.table__dropdown {
+  display: inline-block;
+}
+
+.table__action-icon {
+  margin-right: 5px;
+}

@@ -6,10 +6,13 @@
   </div>
 
   <div class="section-title mt-2">Rondas y fechas</div>
-  <div class="section-sub" *ngIf="tournament">
-    {{ tournament.name }} · {{ tournament.format?.description || '—' }}
+  @if (tournament; as currentTournament) {
+  <div class="section-sub">
+    {{ currentTournament.name }} · {{ currentTournament.format?.description || '—' }}
   </div>
-  <div class="section-sub" *ngIf="!tournament">Torneo #{{ tournamentId }}</div>
+  } @else {
+  <div class="section-sub">Torneo #{{ tournamentId }}</div>
+  }
 
   <div class="row g-2 mt-2">
     <div class="col-12 col-md-6">
@@ -25,13 +28,16 @@
     (próximamente) y partido nulo desde cada jornada.
   </div>
 
-  <div class="rounds-list mt-2" *ngIf="!isLoading; else loadingTpl">
-    <div class="rounds-empty" *ngIf="roundSections.length === 0">
+  @if (!isLoading) {
+  <div class="rounds-list mt-2">
+    @if (roundSections.length === 0) {
+    <div class="rounds-empty">
       No hay rondas o fechas cargadas para este torneo todavía.
     </div>
+    }
 
+    @for (section of roundSections; track section.page) {
     <section
-      *ngFor="let section of roundSections; trackBy: trackByPage"
       class="round-section"
     >
       <div class="round-section-header quick-action">
@@ -78,18 +84,23 @@
       </div>
 
       <div class="round-groups">
+        @for (group of section.groups; track group.groupNumber ?? $index) {
         <div
           class="round-group"
-          *ngFor="let group of section.groups; trackBy: trackByGroup"
         >
-          <div class="round-group-title" *ngIf="showGroupLabels">
+          @if (showGroupLabels) {
+          <div class="round-group-title">
             {{ group.groupLabel }}
           </div>
+          }
 
           <ul class="round-matches">
+            @for (
+              match of group.matches;
+              track match.id ?? match.idRound ?? $index
+            ) {
             <li
               class="round-match"
-              *ngFor="let match of group.matches; trackBy: trackByMatchId"
             >
               <div class="round-match-content">
                 <div class="round-match-team round-match-team--home">
@@ -131,7 +142,8 @@
                 </div>
               </div>
 
-              <div class="round-match-actions" *ngIf="isMatchPending(match)">
+              @if (isMatchPending(match)) {
+              <div class="round-match-actions">
                 <button
                   type="button"
                   class="action-btn report"
@@ -142,32 +154,39 @@
                   <i class="fa fa-flag"></i>
                   <span class="action-label">Reportar</span>
                 </button>
-                <button
-                  *ngIf="canNullMatchMatch(match)"
-                  type="button"
-                  class="action-btn null-match"
-                  (click)="onNullMatchMatch(match, section)"
-                  title="Partido nulo"
-                  aria-label="Partido nulo"
-                >
-                  <i class="fa fa-ban"></i>
-                  <span class="action-label">Nulo</span>
-                </button>
+                @if (canNullMatchMatch(match)) {
+                  <button
+                    type="button"
+                    class="action-btn null-match"
+                    (click)="onNullMatchMatch(match, section)"
+                    title="Partido nulo"
+                    aria-label="Partido nulo"
+                  >
+                    <i class="fa fa-ban"></i>
+                    <span class="action-label">Nulo</span>
+                  </button>
+                }
               </div>
+              }
             </li>
+            }
           </ul>
 
-          <div class="round-group-empty" *ngIf="group.matches.length === 0">
+          @if (group.matches.length === 0) {
+          <div class="round-group-empty">
             Sin partidos en esta jornada.
           </div>
+          }
         </div>
+        }
       </div>
     </section>
+    }
   </div>
-
-  <ng-template #loadingTpl>
+  } @else {
     <div class="rounds-list mt-2">
-      <div class="round-section is-loading" *ngFor="let _ of [1, 2, 3]">
+      @for (_ of [1, 2, 3]; track $index) {
+      <div class="round-section is-loading">
         <div class="quick-action round-section-header">
           <div class="tournament-skel-line w-40"></div>
           <div class="ms-auto d-flex gap-1">
@@ -176,10 +195,13 @@
             <div class="rounds-skel-btn"></div>
           </div>
         </div>
-        <div class="round-match is-loading" *ngFor="let __ of [1, 2]">
+        @for (__ of [1, 2]; track $index) {
+        <div class="round-match is-loading">
           <div class="tournament-skel-line w-60"></div>
         </div>
+        }
       </div>
+      }
     </div>
-  </ng-template>
+  }
 </div>

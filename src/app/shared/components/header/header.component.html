@@ -1,13 +1,14 @@
 <nav
   class="navbar navbar-expand-lg navbar-dark bg-black sticky-top"
-  [ngClass]="{ 'shadow-sm': isScrolled() }"
+  [class.shadow-sm]="isScrolled()"
+  aria-label="Navegación principal"
 >
   <div class="container">
     <!-- Logo / Brand -->
     <a
       class="navbar-brand d-flex align-items-center gap-2"
       routerLink="/home"
-      (click)="collapseMobileMenu()"
+      (click)="onCollapseMobileMenu()"
     >
       <img
         src="../../../../assets/images/seaneternos2.png"
@@ -21,54 +22,68 @@
     <!-- Perfil + Dropdown (alineado a la derecha en desktop) -->
     <div class="d-flex align-items-center gap-3 order-lg-3">
       <!-- Icono (ejemplo) -->
-      <a
-        class="text-light d-none d-md-inline-flex"
-        href="#"
+      <button
+        type="button"
+        class="btn border-0 p-0 text-light d-none d-md-inline-flex"
         aria-label="Mensajes"
+        title="Mensajes"
       >
-        <i class="bi bi-envelope-fill fs-5"></i>
-      </a>
+        <i class="bi bi-envelope-fill fs-5" aria-hidden="true"></i>
+      </button>
 
       <!-- Avatar + nombre + dropdown -->
       <div class="dropdown">
-        <a
-          class="d-flex align-items-center text-decoration-none text-white dropdown-toggle gap-1"
-          href="#"
+        <button
+          type="button"
+          class="btn border-0 p-0 d-flex align-items-center text-decoration-none text-white dropdown-toggle gap-1"
           id="userDropdown"
           data-bs-toggle="dropdown"
           aria-expanded="false"
+          aria-haspopup="menu"
         >
           <img
             [src]="
-              userSignal()?.teams[0]?.logo?.secureUrl ||
+              userSignal()?.teams?.[0]?.logo?.secureUrl ||
               '../../../assets/images/profile.png'
             "
-            [alt]="userSignal()?.name"
+            [alt]="'Perfil de ' + (userSignal()?.name || 'usuario')"
             width="30"
             height="35"
           />
           <span class="d-none d-sm-inline">{{ userSignal()?.name }}</span>
-        </a>
+        </button>
         <ul
           class="dropdown-menu dropdown-menu-end"
           aria-labelledby="userDropdown"
         >
           <li>
-            <button class="dropdown-item" (click)="navigateToProfile()">
+            <button
+              type="button"
+              class="dropdown-item"
+              (click)="onNavigateToProfile()"
+            >
               <i class="fa fa-user" aria-hidden="true"></i>
               Mi Perfil
             </button>
           </li>
 
           <li>
-            <button class="dropdown-item" (click)="navigateToTeam()">
+            <button
+              type="button"
+              class="dropdown-item"
+              (click)="onNavigateToTeam()"
+            >
               <i class="fa fa-shield me-1" aria-hidden="true"></i> Mi Equipo
             </button>
           </li>
 
-          <hr />
+          <li><hr class="dropdown-divider" /></li>
           <li>
-            <button class="dropdown-item" (click)="logout()">
+            <button
+              type="button"
+              class="dropdown-item"
+              (click)="onLogout()"
+            >
               Cerrar sesión
             </button>
           </li>
@@ -84,7 +99,7 @@
       data-bs-target="#mainNav"
       aria-controls="mainNav"
       aria-expanded="false"
-      aria-label="Toggle navigation"
+      aria-label="Alternar navegación"
       #navToggler
     >
       <span class="navbar-toggler-icon"></span>
@@ -99,7 +114,7 @@
             routerLink="/home"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
-            (click)="collapseMobileMenu()"
+            (click)="onCollapseMobileMenu()"
           >
             <i class="fa fa-home me-1" aria-hidden="true"></i> Inicio
           </a>
@@ -110,7 +125,7 @@
             class="nav-link"
             routerLink="/tournament"
             routerLinkActive="active"
-            (click)="collapseMobileMenu()"
+            (click)="onCollapseMobileMenu()"
           >
             <i class="fa fa-trophy me-1" aria-hidden="true"></i> Torneos
           </a>
@@ -121,7 +136,7 @@
             class="nav-link"
             routerLink="/equipos"
             routerLinkActive="active"
-            (click)="collapseMobileMenu()"
+            (click)="onCollapseMobileMenu()"
           >
             <i class="fa fa-shield me-1" aria-hidden="true"></i> Equipos
           </a>
@@ -132,7 +147,7 @@
             class="nav-link"
             routerLink="/mercado-transferencias"
             routerLinkActive="active"
-            (click)="collapseMobileMenu()"
+            (click)="onCollapseMobileMenu()"
           >
             <i class="fa fa-users me-1" aria-hidden="true"></i> Mercado
             Transferencias
@@ -144,22 +159,24 @@
             class="nav-link"
             routerLink="/inhabilitados"
             routerLinkActive="active"
-            (click)="collapseMobileMenu()"
+            (click)="onCollapseMobileMenu()"
           >
             <i class="fa fa-ban me-1" aria-hidden="true"></i> Inhabilitados
           </a>
         </li>
 
-        <li class="nav-item" *ngIf="userSignal()?.idRol == 1">
-          <a
-            class="nav-link"
-            routerLink="/dashboard"
-            routerLinkActive="active"
-            (click)="collapseMobileMenu()"
-          >
-            <i class="fa fa-dashboard me-1" aria-hidden="true"></i> Dashboard
-          </a>
-        </li>
+        @if (userSignal()?.idRol === 1) {
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/dashboard"
+              routerLinkActive="active"
+              (click)="onCollapseMobileMenu()"
+            >
+              <i class="fa fa-dashboard me-1" aria-hidden="true"></i> Dashboard
+            </a>
+          </li>
+        }
       </ul>
     </div>
   </div>

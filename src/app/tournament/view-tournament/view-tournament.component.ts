@@ -1,7 +1,8 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TournamentService } from '../service/tournament.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { Tournament } from '../models/tournament.interface';
 import {
@@ -18,6 +19,25 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 type RoundsLoadResult =
   | { kind: 'single'; response: RoundsResponse }
   | { kind: 'pages'; pages: RoundsResponse[]; pagination?: Pagination };
+
+type TournamentStatRow = {
+  id?: number;
+  name?: string;
+  playerName?: string;
+  lastName?: string;
+  player?: { name?: string; lastName?: string };
+  teamLogo?: string;
+  played?: number;
+  matchesPlayed?: number;
+  pj?: number;
+  goals?: number;
+  goles?: number;
+  goal?: number;
+  yellows?: number;
+  suspensionType?: string;
+  matchesToServe?: number;
+  suspensionLabel?: string;
+};
 
 type KnockoutStage = {
   title: string;
@@ -37,8 +57,16 @@ type CalendarWeekCell = {
   imports: [...SHARED_UI_IMPORTS],
   templateUrl: './view-tournament.component.html',
   styleUrls: ['./view-tournament.component.css'],
+  host: {
+    '(window:resize)': 'onWindowResize()',
+  },
 })
-export class ViewTournamentComponent implements OnInit, OnDestroy {
+export class ViewTournamentComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly tournamentService = inject(TournamentService);
+  private readonly toastrService = inject(ToastrService);
+
   tournament?: Tournament;
   currentPage: number = 1;
   tournamentId: number = 0;
@@ -48,8 +76,8 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   rankingTables: RankingTable[] = [];
   knockoutStages: KnockoutStage[] = [];
 
-  highlights: any[] = [];
-  cards: any[] = [];
+  highlights: TournamentStatRow[] = [];
+  cards: TournamentStatRow[] = [];
   isLoadingHighlights = false;
   isLoadingCards = false;
   private hasLoadedHighlights = false;
@@ -102,7 +130,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
   private calendarWeekUserNavigated = false;
   private calendarAnchorInitialized = false;
 
-  private subscriptions: Subscription = new Subscription();
   private readonly INITIAL_PAGE = 1;
   private readonly MAX_VISIBLE_PAGES = 5;
 
@@ -127,12 +154,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     bottom: { last: null },
   } as const;
 
-  constructor(
-    private route: ActivatedRoute,
-    private tournamentService: TournamentService,
-    private toastrService: ToastrService,
-  ) {}
-
   ngOnInit(): void {
     this.updateMobileViewport();
     this.tournamentId = Number(this.route.snapshot.params['id']);
@@ -142,7 +163,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('window:resize')
   onWindowResize(): void {
     this.updateMobileViewport();
   }
@@ -151,7 +171,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     this.isMobileViewport = window.innerWidth < 768;
   }
 
-  selectTab(index: number): void {
+  onSelectTab(index: number): void {
     if (this.selectedTabIndex === index) return;
     this.selectedTabIndex = index;
     this.onTabSelectedIndexChange(index);
@@ -172,10 +192,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
   get activeTabLabel(): string {
     return this.tournamentTabs[this.selectedTabIndex] ?? this.tournamentTabs[0];
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   onTabSelectedIndexChange(index: number): void {
@@ -316,7 +332,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     return pages;
   }
 
-  goToGroupStagePage(groupNumber: number | null, page: number): void {
+  onGoToGroupStagePage(groupNumber: number | null, page: number): void {
     if (!this.isGroupStage) return;
     const total = this.groupStageTotalPages || 0;
     if (!total) return;
@@ -380,7 +396,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     this.isLoadingKnockoutStages = false;
     this.hasLoadedKnockoutStages = false;
 
-    const loadSub = this.tournamentService
+    this.tournamentService
       .getTournamentByID(this.tournamentId)
       .pipe(
         catchError((error) => {
@@ -492,6 +508,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         finalize(() => {
           this.isLoading = false;
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (results) => {
@@ -554,7 +571,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.subscriptions.add(loadSub);
   }
 
   private _loadKnockoutStages(): void {
@@ -564,7 +580,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
 
     this.isLoadingKnockoutStages = true;
 
-    const sub = this.tournamentService
+    this.tournamentService
       .getRoundsKo(this.tournamentId)
       .pipe(
         map((resp) => this._koDataToRoundsPages(resp?.data ?? [])),
@@ -575,6 +591,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         finalize(() => {
           this.isLoadingKnockoutStages = false;
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (knockoutPages) => {
@@ -584,7 +601,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.subscriptions.add(sub);
   }
 
   private _koDataToRoundsPages(data: any[]): RoundsResponse[] {
@@ -764,25 +780,25 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     if (this.hasLoadedHighlights || this.isLoadingHighlights) return;
 
     this.isLoadingHighlights = true;
-    const sub = this.tournamentService
+    this.tournamentService
       .getTournamentHighlights(this.tournamentId)
       .pipe(
         catchError((error) => {
           this.handleError('Error al cargar los goleadores', error);
-          return of({ data: [] as any[] });
+          return of({ data: [] as TournamentStatRow[] });
         }),
         finalize(() => {
           this.isLoadingHighlights = false;
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (resp) => {
-          this.highlights = resp?.data ?? [];
+          this.highlights = (resp?.data ?? []) as TournamentStatRow[];
           this.hasLoadedHighlights = true;
         },
       });
 
-    this.subscriptions.add(sub);
   }
 
   private _loadCards(): void {
@@ -790,25 +806,25 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     if (this.hasLoadedCards || this.isLoadingCards) return;
 
     this.isLoadingCards = true;
-    const sub = this.tournamentService
+    this.tournamentService
       .getTournamentCards(this.tournamentId)
       .pipe(
         catchError((error) => {
           this.handleError('Error al cargar las tarjetas', error);
-          return of({ data: [] as any[] });
+          return of({ data: [] as TournamentStatRow[] });
         }),
         finalize(() => {
           this.isLoadingCards = false;
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (resp) => {
-          this.cards = resp?.data ?? [];
+          this.cards = (resp?.data ?? []) as TournamentStatRow[];
           this.hasLoadedCards = true;
         },
       });
 
-    this.subscriptions.add(sub);
   }
 
   private _koMatchesToRoundsPages(matches: Match[]): RoundsResponse[] {
@@ -848,13 +864,14 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     // En eliminación directa mostramos el cuadro, no paginamos.
     if (this.isKnockout || this.isGroupStage) return;
 
-    const roundsSub = this.tournamentService
+    this.tournamentService
       .getRoundsPagination(this.tournamentId, page)
       .pipe(
         catchError((error) => {
           this.handleError('Error al cargar las fechas', error);
           return of({ data: { groups: [], pagination: this.pagination } });
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (response) => {
@@ -865,7 +882,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.subscriptions.add(roundsSub);
   }
 
   private handleError(message: string, error: unknown): void {
@@ -997,7 +1013,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
       return;
     this.groupStageLoadingPages.add(page);
 
-    const sub = this.tournamentService
+    this.tournamentService
       .getRoundsPagination(this.tournamentId, page)
       .pipe(
         catchError((error) => {
@@ -1007,6 +1023,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         finalize(() => {
           this.groupStageLoadingPages.delete(page);
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (res) => {
@@ -1038,7 +1055,6 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.subscriptions.add(sub);
   }
 
   private _flattenMatchesFromRoundsResponse(res: RoundsResponse): Match[] {
@@ -1091,14 +1107,14 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     }));
   }
 
-  calendarPrevWeek(): void {
+  onCalendarPrevWeek(): void {
     this.calendarWeekUserNavigated = true;
     this.calendarAnchorInitialized = true;
     this.calendarWeekAnchor = this._addDaysLocal(this.calendarWeekAnchor, -7);
     this._rebuildCalendarWeekCells();
   }
 
-  calendarNextWeek(): void {
+  onCalendarNextWeek(): void {
     this.calendarWeekUserNavigated = true;
     this.calendarAnchorInitialized = true;
     this.calendarWeekAnchor = this._addDaysLocal(this.calendarWeekAnchor, 7);

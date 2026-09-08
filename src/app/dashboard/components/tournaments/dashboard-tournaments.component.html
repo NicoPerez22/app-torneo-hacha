@@ -20,13 +20,16 @@
   <div class="section-title mt-3">Listado de torneos</div>
   <div class="section-sub">Entrá a un torneo para ver tabla y cruces.</div>
 
-  <div class="tournament-list mt-2" *ngIf="!isLoading; else loadingTpl">
-    <div class="tournament-empty" *ngIf="tournaments.length === 0">
+  @if (!isLoading) {
+  <div class="tournament-list mt-2">
+    @if (tournaments.length === 0) {
+    <div class="tournament-empty">
       No hay torneos para mostrar.
     </div>
+    }
 
+    @for (t of tournaments; track t.id) {
     <div
-      *ngFor="let t of tournaments; trackBy: trackByTournamentId"
       class="quick-action tournament-row"
     >
       <a
@@ -57,18 +60,20 @@
         </button>
       </div>
     </div>
+    }
   </div>
-
-  <ng-template #loadingTpl>
+  } @else {
     <div class="tournament-list mt-2">
-      <div class="quick-action tournament-row is-loading" *ngFor="let _ of [1,2,3]">
+      @for (_ of [1, 2, 3]; track $index) {
+      <div class="quick-action tournament-row is-loading">
         <div class="tournament-skel-logo"></div>
         <div class="tournament-meta">
           <div class="tournament-skel-line w-60"></div>
           <div class="tournament-skel-line w-40"></div>
         </div>
       </div>
+      }
     </div>
-  </ng-template>
+  }
 </div>
 

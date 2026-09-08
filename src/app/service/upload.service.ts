@@ -1,26 +1,30 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+
+export interface UploadApiResponse {
+  id?: number;
+  url?: string;
+  data?: unknown;
+  code?: number;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class UploadService {
-  constructor(private http: HttpClient) {}
+  private readonly _http = inject(HttpClient);
+  private readonly _apiUrl = environment.API_URL;
 
-  API_URL = environment.API_URL;
-
-  getImages(): Observable<any> {
-    const url = this.API_URL + `upload`;
-    return this.http.get<any>(url);
+  getImages(): Observable<UploadApiResponse> {
+    return this._http.get<UploadApiResponse>(`${this._apiUrl}upload`);
   }
 
-  setImage(file: File): Observable<any> {
+  setImage(file: File): Observable<UploadApiResponse> {
     const formData = new FormData();
     formData.append('file', file);
-
-    const url = this.API_URL + `upload`;
-    return this.http.post<any>(url, formData);
+    return this._http.post<UploadApiResponse>(`${this._apiUrl}upload`, formData);
   }
 }

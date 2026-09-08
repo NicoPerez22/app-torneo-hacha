@@ -1,17 +1,17 @@
-export class Reports {
-    roundId: number;
-    tournamentId: number;
+export interface Reports {
+    roundId: number | undefined;
+    tournamentId: number | undefined;
     homeGoals: number;
     awayGoals: number;
     events: EventsReports[];
 }
 
-export class EventsReports {
+export interface EventsReports {
     teamId: number;
     playerId: number;
-    eventType: string;
-    minute: number;
-    nota: string;
+    eventType: MatchEventType;
+    minute: number | null;
+    nota?: string | null;
 }
 
 
@@ -26,7 +26,7 @@ export interface Player {
     name: string;
   }
   
-  export type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE';
+  export type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE' | 'INJURY';
   
   export interface MatchEventPayload {
     type: MatchEventType;
@@ -43,3 +43,19 @@ export interface Player {
     homePlayers: Player[];
     awayPlayers: Player[];
   }
+
+export interface RoundMatchData {
+  idRound: number;
+  tournamentId?: number;
+  tournament?: { id: number };
+  homeTeamId: number;
+  awayTeamId: number;
+  homeTeamName?: string;
+  awayTeamName?: string;
+  home?: string;
+  away?: string;
+  homeLogoUrl?: string | null;
+  awayLogoUrl?: string | null;
+  homeLogo?: { secureUrl?: string | null };
+  awayLogo?: { secureUrl?: string | null };
+}

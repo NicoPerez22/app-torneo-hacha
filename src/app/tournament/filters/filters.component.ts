@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, viewChild, ViewContainerRef } from '@angular/core';
 import { InputComponent } from './input/input.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
@@ -10,12 +10,12 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./filters.component.css'],
 })
 export class FiltersComponent implements OnInit, OnDestroy {
-  @ViewChild('container', { read: ViewContainerRef, static: true })
-  container!: ViewContainerRef;
+  private readonly fb = inject(FormBuilder);
+  private readonly container = viewChild.required('container', {
+    read: ViewContainerRef,
+  });
 
   form!: FormGroup;
-
-  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -26,7 +26,7 @@ export class FiltersComponent implements OnInit, OnDestroy {
   }
 
   onCreateComponent(): void {
-    const componentRef = this.container.createComponent(InputComponent);
+    const componentRef = this.container().createComponent(InputComponent);
     componentRef.setInput('label', 'Pokemon');
     componentRef.setInput('control', 'name');
   }
@@ -42,8 +42,6 @@ export class FiltersComponent implements OnInit, OnDestroy {
   }
 
   private clearComponents(): void {
-    if (this.container) {
-      this.container.clear();
-    }
+    this.container().clear();
   }
 }

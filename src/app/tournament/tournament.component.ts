@@ -1,12 +1,12 @@
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TournamentService } from './service/tournament.service';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { CreateTournammentComponent } from './create-tournamment/create-tournamment.component';
 import { Tournament } from './models/tournament.interface';
 import { TOURNAMENT_CONSTANTS } from './constants/tournament.constants';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../service/auth.service';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
@@ -16,38 +16,38 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   templateUrl: './tournament.component.html',
   styleUrls: ['./tournament.component.css'],
 })
-export class TournamentComponent implements OnInit, OnDestroy {
-  tournaments = signal<Tournament[]>([]);
-  modalRef?: NzModalRef;
-  private subscriptions: Subscription = new Subscription();
+export class TournamentComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  private readonly tournamentService = inject(TournamentService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly modalService = inject(NzModalService);
+  protected readonly authService = inject(AuthService);
 
-  constructor(
-    private router: Router,
-    private tournamentService: TournamentService,
-    private toastrService: ToastrService,
-    private modalService: NzModalService,
-    public authService: AuthService,
-  ) {}
+  readonly tournaments = signal<Tournament[]>([]);
+  modalRef?: NzModalRef;
 
   ngOnInit(): void {
     this.loadTournaments();
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
+  protected readonly isAdmin = computed(
+    () => this.authService.userSignal()?.idRol === 1,
+  );
 
   onViewTournament(id: number): void {
     this.router.navigate(['/tournament/view', id]);
   }
 
-  onDelete(id){
-    this.tournamentService.deleteTournament(id).subscribe({
+  onDelete(id: number): void {
+    this.tournamentService.deleteTournament(id).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: (resp) => {
         this.loadTournaments();
-        this.toastrService.success('Torneo eliminado con exito', 'Exito')
-      }
-    })
+        this.toastrService.success('Torneo eliminado con exito', 'Exito');
+      },
+    });
   }
 
   onCreate(): void {
@@ -58,10 +58,11 @@ export class TournamentComponent implements OnInit, OnDestroy {
       nzFooter: null,
     });
 
-    const afterCloseSub = this.modalRef.afterClose.subscribe(() => {
+    this.modalRef.afterClose.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
       this.loadTournaments();
     });
-    this.subscriptions.add(afterCloseSub);
   }
 
   onReviewReports(): void {
@@ -69,8 +70,9 @@ export class TournamentComponent implements OnInit, OnDestroy {
   }
 
   private loadTournaments(): void {
-    const tournamentSub = this.tournamentService
+    this.tournamentService
       .getTournament()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           this.tournaments.set(response.data || []);
@@ -82,7 +84,5 @@ export class TournamentComponent implements OnInit, OnDestroy {
           );
         },
       });
-
-    this.subscriptions.add(tournamentSub);
   }
 }

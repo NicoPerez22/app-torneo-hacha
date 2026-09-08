@@ -11,7 +11,8 @@
     </div>
   </div>
 
-  <div class="admin-warning" *ngIf="!isAdmin">
+  @if (!isAdmin) {
+  <div class="admin-warning">
     <i class="bi bi-shield-exclamation"></i>
     <div>
       <div class="admin-warning-title">Acceso limitado</div>
@@ -20,12 +21,14 @@
       </div>
     </div>
   </div>
+  }
 
   <div class="filters-card">
     <div class="filters-row">
       <div class="filter-item">
-        <label class="filter-label">Estado</label>
+        <label class="filter-label" for="report-status-filter">Estado</label>
         <select
+          id="report-status-filter"
           class="form-select input-dark"
           [(ngModel)]="statusFilter"
           (change)="onApplyFilters()"
@@ -37,8 +40,9 @@
       </div>
 
       <div class="filter-item">
-        <label class="filter-label">Torneo (ID)</label>
+        <label class="filter-label" for="report-tournament-filter">Torneo (ID)</label>
         <input
+          id="report-tournament-filter"
           type="number"
           class="form-control input-dark"
           placeholder="Ej: 31"
@@ -72,7 +76,8 @@
     (nullMatch)="onNullMatch($event)"
   ></app-match>
 
-  <div class="pagination-wrapper" *ngIf="totalItems > perPage">
+  @if (totalItems > perPage) {
+  <div class="pagination-wrapper">
     <pagination-controls
       [id]="paginationId"
       (pageChange)="onPageChange($event)"
@@ -80,26 +85,35 @@
       nextLabel="Siguiente"
     ></pagination-controls>
   </div>
+  }
 
   <ng-template #previewTpl>
     <div class="preview-wrap">
       <div class="match-card match-summary">
         <div class="preview-meta mb-3">
           <div class="preview-meta-title">
-            <span *ngIf="selectedDetail?.tournamentName">{{
+            @if (selectedDetail?.tournamentName) {
+            <span>{{
               selectedDetail?.tournamentName
             }}</span>
-            <span
-              *ngIf="
-                selectedDetail?.tournamentName && selectedDetail?.roundLabel
-              "
-              >·</span
-            >
-            <span *ngIf="selectedDetail?.roundLabel">{{
+            }
+            @if (selectedDetail?.tournamentName && selectedDetail?.roundLabel) {
+            <span>·</span>
+            }
+            @if (selectedDetail?.roundLabel) {
+            <span>{{
               selectedDetail?.roundLabel
             }}</span>
+            }
           </div>
-          <span class="status-badge" [ngClass]="selectedDetail?.status">
+          <span
+            class="status-badge"
+            [class.approved]="selectedDetail?.status === 'approved'"
+            [class.rejected]="selectedDetail?.status === 'rejected'"
+            [class.pending]="
+              !selectedDetail?.status || selectedDetail?.status === 'pending'
+            "
+          >
             {{
               selectedDetail?.status === 'approved'
                 ? 'Aprobado'
@@ -118,7 +132,7 @@
                 selectedDetail?.homeLogoUrl ||
                 'assets/images/player-default.png'
               "
-              alt="Home"
+              [alt]="'Escudo de ' + (selectedDetail?.homeName || selected?.homeName || 'local')"
             />
             <span class="team-text">{{
               selectedDetail?.homeName || selected?.homeName
@@ -145,19 +159,22 @@
                 selectedDetail?.awayLogoUrl ||
                 'assets/images/player-default.png'
               "
-              alt="Away"
+              [alt]="'Escudo de ' + (selectedDetail?.awayName || selected?.awayName || 'visitante')"
             />
           </div>
         </div>
       </div>
 
-      <div class="match-card" *ngIf="previewLoading">
+      @if (previewLoading) {
+      <div class="match-card">
         <div class="loading-state">
           <nz-spin nzSimple></nz-spin>
         </div>
       </div>
+      }
 
-      <div class="match-card" *ngIf="!previewLoading">
+      @if (!previewLoading) {
+      <div class="match-card">
         <div class="events-header">
           <h6 class="section-title mb-0">Eventos</h6>
           <span class="section-meta"
@@ -165,29 +182,25 @@
           >
         </div>
 
-        <div
-          class="events-empty"
-          *ngIf="(selectedDetail?.events?.length || 0) === 0"
-        >
+        @if ((selectedDetail?.events?.length || 0) === 0) {
+        <div class="events-empty">
           No hay eventos para mostrar.
         </div>
+        }
 
-        <div
-          class="events-list"
-          *ngIf="(selectedDetail?.events?.length || 0) > 0"
-        >
-          <div
-            class="event-row"
-            *ngFor="
-              let ev of selectedDetail?.events || []
+        @if ((selectedDetail?.events?.length || 0) > 0) {
+        <div class="events-list">
+          @for (
+            ev of (selectedDetail?.events || []
                 | paginate
                   : {
                       id: eventsPaginationId,
                       itemsPerPage: eventsPerPage,
                       currentPage: eventsPage
-                    }
-            "
-          >
+                    });
+            track ev?.id ?? $index
+          ) {
+          <div class="event-row">
             <span class="event-minute"
               >{{ ev?.minute ?? ev?.min ?? '—' }}'</span
             >
@@ -201,12 +214,12 @@
               ev?.teamName ?? ev?.team?.name ?? ev?.teamId ?? '—'
             }}</span>
           </div>
+          }
         </div>
+        }
 
-        <div
-          class="events-pagination pagination-wrapper"
-          *ngIf="(selectedDetail?.events?.length || 0) > eventsPerPage"
-        >
+        @if ((selectedDetail?.events?.length || 0) > eventsPerPage) {
+        <div class="events-pagination pagination-wrapper">
           <pagination-controls
             [id]="eventsPaginationId"
             (pageChange)="onEventsPageChange($event)"
@@ -214,7 +227,9 @@
             nextLabel="Siguiente"
           ></pagination-controls>
         </div>
+        }
       </div>
+      }
     </div>
 
     <div class="modal-footer-custom">

@@ -1,4 +1,12 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  TemplateRef,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/service/auth.service';
 import { TournamentService } from '../service/tournament.service';
@@ -28,8 +36,14 @@ type ReportDetailVM = {
   templateUrl: './reports-approval.component.html',
   styleUrls: ['./reports-approval.component.css'],
 })
-export class ReportsApprovalComponent {
-  @ViewChild('previewTpl', { static: true }) previewTpl!: TemplateRef<any>;
+export class ReportsApprovalComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly tournamentService = inject(TournamentService);
+  private readonly toastr = inject(ToastrService);
+  private readonly authService = inject(AuthService);
+  private readonly modal = inject(NzModalService);
+  private readonly previewTpl =
+    viewChild.required<TemplateRef<unknown>>('previewTpl');
 
   loading = false;
   isAdmin = false;
@@ -55,33 +69,26 @@ export class ReportsApprovalComponent {
   previewModal?: NzModalRef;
   previewLoading = false;
 
-  constructor(
-    private readonly tournamentService: TournamentService,
-    private readonly toastr: ToastrService,
-    private readonly authService: AuthService,
-    private readonly modal: NzModalService,
-  ) {}
-
   ngOnInit(): void {
     const user = this.authService.getUser();
     this.isAdmin = user?.idRol === 1;
     this.loadDrafts();
   }
 
-  onPageChange(next: number) {
+  onPageChange(next: number): void {
     this.page = next;
   }
 
-  onApplyFilters() {
+  onApplyFilters(): void {
     this.page = 1;
     this.loadDrafts();
   }
 
-  onEventsPageChange(next: number) {
+  onEventsPageChange(next: number): void {
     this.eventsPage = next;
   }
 
-  onView(item: MatchReportCardVM) {
+  onView(item: MatchReportCardVM): void {
     this.selected = item;
     this.selectedDetail = undefined;
     this.previewLoading = true;
@@ -94,9 +101,11 @@ export class ReportsApprovalComponent {
       return;
     }
 
-    this.tournamentService.getMatchReportDraftDetail(draftId).subscribe({
+    this.tournamentService.getMatchReportDraftDetail(draftId).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: (resp) => {
-        const raw = resp?.data ?? resp ?? {};
+        const raw = (resp as { data?: unknown })?.data ?? resp ?? {};
         this.selectedDetail = this._normalizeDetail(raw, item);
         this.eventsPage = 1;
         this.previewLoading = false;
@@ -115,7 +124,7 @@ export class ReportsApprovalComponent {
     });
   }
 
-  onApprove(item: MatchReportCardVM) {
+  onApprove(item: MatchReportCardVM): void {
     if (!this.isAdmin) return;
     const user = this.authService.getUser();
     const adminId = Number(user?.id);
@@ -125,6 +134,7 @@ export class ReportsApprovalComponent {
 
     this.tournamentService
       .reviewMatchReportDraft(draftId, { adminId, action: 'approve' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.toastr.success('Reporte aprobado correctamente', 'Éxito');
@@ -136,7 +146,7 @@ export class ReportsApprovalComponent {
       });
   }
 
-  onReject(item: MatchReportCardVM) {
+  onReject(item: MatchReportCardVM): void {
     if (!this.isAdmin) return;
     const user = this.authService.getUser();
     const adminId = Number(user?.id);
@@ -146,6 +156,7 @@ export class ReportsApprovalComponent {
 
     this.tournamentService
       .reviewMatchReportDraft(draftId, { adminId, action: 'reject' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.toastr.success('Reporte rechazado correctamente', 'Éxito');
@@ -157,7 +168,7 @@ export class ReportsApprovalComponent {
       });
   }
 
-  onNullMatch(item: MatchReportCardVM) {
+  onNullMatch(item: MatchReportCardVM): void {
     if (!this.isAdmin) return;
     const user = this.authService.getUser();
     const adminId = Number(user?.id);
@@ -167,6 +178,7 @@ export class ReportsApprovalComponent {
 
     this.tournamentService
       .reviewMatchReportDraft(draftId, { adminId, action: 'null_match' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.toastr.success(
@@ -184,18 +196,18 @@ export class ReportsApprovalComponent {
       });
   }
 
-  closePreview() {
+  closePreview(): void {
     this.previewModal?.close();
     this.previewModal = undefined;
     this.selected = undefined;
     this.selectedDetail = undefined;
   }
 
-  private openPreviewModal() {
+  private openPreviewModal(): void {
     const title = this._buildPreviewTitle(this.selected);
     this.previewModal = this.modal.create({
       nzTitle: title,
-      nzContent: this.previewTpl,
+      nzContent: this.previewTpl(),
       nzFooter: null,
       nzWidth: '95vw',
       nzStyle: { maxWidth: '900px' },
@@ -206,7 +218,7 @@ export class ReportsApprovalComponent {
     });
   }
 
-  private loadDrafts() {
+  private loadDrafts(): void {
     this.loading = true;
     const tournamentId = this.tournamentIdFilter?.trim()
       ? Number(this.tournamentIdFilter.trim())
@@ -219,15 +231,21 @@ export class ReportsApprovalComponent {
           ? (tournamentId as number)
           : null,
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (resp) => {
-          const raw = resp?.data ?? resp;
+          const payload = resp as {
+            data?: unknown;
+            reports?: unknown[];
+            items?: unknown[];
+          };
+          const raw = payload.data ?? payload;
           const list = Array.isArray(raw)
             ? raw
-            : Array.isArray(raw?.reports)
-            ? raw.reports
-            : Array.isArray(raw?.items)
-            ? raw.items
+            : Array.isArray((raw as { reports?: unknown[] })?.reports)
+            ? (raw as { reports?: unknown[] }).reports
+            : Array.isArray((raw as { items?: unknown[] })?.items)
+            ? (raw as { items?: unknown[] }).items
             : [];
 
           this.reports = list.map((r: any) => this._normalizeCard(r));
@@ -346,7 +364,7 @@ export class ReportsApprovalComponent {
     return parts.length ? `Reporte · ${parts.join(' · ')}` : 'Reporte';
   }
 
-  private loadPending() {
+  private loadPending(): void {
     // backward compat (evitar romper llamados existentes si quedan)
     this.loadDrafts();
   }

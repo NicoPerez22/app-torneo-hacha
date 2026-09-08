@@ -1,20 +1,28 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+export interface DashboardResume {
+  readonly totalUsers?: number;
+  readonly totalTeams?: number;
+  readonly totalTournaments?: number;
+}
+
+interface DashboardResumeResponse {
+  readonly data?: DashboardResume | null;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DashboardService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = environment.API_URL;
 
-  constructor(
-    private readonly http: HttpClient
-  ) {}
-
-  API_URL = environment.API_URL;
-
-  getResume(): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}dashboard/resume`);
+  getResume(): Observable<DashboardResumeResponse> {
+    return this.http.get<DashboardResumeResponse>(
+      `${this.apiUrl}dashboard/resume`,
+    );
   }
 }

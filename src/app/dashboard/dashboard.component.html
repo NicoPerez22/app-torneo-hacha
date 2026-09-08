@@ -4,12 +4,12 @@
     type="button"
     class="sidebar-overlay d-lg-none"
     [class.show]="isSidebarOpen()"
-    (click)="closeSidebar()"
+    (click)="onCloseSidebar()"
     aria-label="Cerrar menú lateral"
   ></button>
 
   <!-- Sidebar -->
-  <aside class="sidebar" [class.open]="isSidebarOpen()">
+  <aside id="dashboard-sidebar" class="sidebar" [class.open]="isSidebarOpen()">
     <div class="sidebar-header">
       <div class="brand">
         <img
@@ -26,7 +26,7 @@
       <button
         type="button"
         class="btn btn-sm btn-outline-light d-lg-none"
-        (click)="closeSidebar()"
+        (click)="onCloseSidebar()"
         aria-label="Cerrar menú"
       >
         <i class="fa fa-times"></i>
@@ -34,17 +34,18 @@
     </div>
 
     <nav class="sidebar-nav">
+      @for (item of menuItems; track item.path) {
       <a
-        *ngFor="let item of menuItems"
         class="nav-item"
         [routerLink]="[item.path]"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
-        (click)="closeSidebar()"
+        (click)="onCloseSidebar()"
       >
         <i class="nav-icon" [class]="item.iconClass"></i>
         <span class="nav-label">{{ item.label }}</span>
       </a>
+      }
     </nav>
 
     <div class="sidebar-footer">
@@ -61,8 +62,10 @@
       <button
         type="button"
         class="btn btn-outline-light d-lg-none"
-        (click)="toggleSidebar()"
+        (click)="onToggleSidebar()"
         aria-label="Abrir menú"
+        aria-controls="dashboard-sidebar"
+        [attr.aria-expanded]="isSidebarOpen()"
       >
         <i class="fa fa-bars me-2"></i> Menú
       </button>

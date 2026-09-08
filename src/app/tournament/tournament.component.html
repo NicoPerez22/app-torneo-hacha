@@ -8,28 +8,34 @@
       </h1>
       <p class="tournaments-subtitle">Descubre y participa en los mejores torneos</p>
     </div>
-    <div class="header-actions" *ngIf="authService?.getUser()?.idRol == 1">
-      <button class="btn-create-tournament btn-secondary" (click)="onReviewReports()">
+    @if (isAdmin()) {
+    <div class="header-actions">
+      <button type="button" class="btn-create-tournament btn-secondary" (click)="onReviewReports()">
         <i class="bi bi-clipboard-check me-2"></i>
         Reportes
       </button>
-      <button class="btn-create-tournament" *ngIf="authService?.getUser()?.idRol == 1" (click)="onCreate()">
+      <button type="button" class="btn-create-tournament" (click)="onCreate()">
         <i class="bi bi-plus-circle me-2"></i>
         Crear Torneo
       </button>
     </div>
+    }
   </div>
 
   <!-- Empty State -->
-  <div class="empty-state" *ngIf="tournaments().length === 0">
+  @if (tournaments().length === 0) {
+  <div class="empty-state">
     <i class="bi bi-trophy empty-icon"></i>
     <h3>No hay torneos disponibles</h3>
     <p>Crea tu primer torneo para comenzar</p>
   </div>
+  }
 
   <!-- Grid de cards -->
-  <div class="tournaments-grid" *ngIf="tournaments().length > 0">
-    <div class="tournament-card" *ngFor="let tournament of tournaments()">
+  @if (tournaments().length > 0) {
+  <div class="tournaments-grid">
+    @for (tournament of tournaments(); track tournament.id) {
+    <div class="tournament-card">
       <div class="tournament-card-inner">
         <!-- Glow effect -->
         <div class="card-glow"></div>
@@ -49,24 +55,30 @@
         <div class="tournament-content">
           <h3 class="tournament-name">{{ tournament.name }}</h3>
           
-          <div class="tournament-badge" *ngIf="tournament.format">
+          @if (tournament.format) {
+          <div class="tournament-badge">
             <i class="bi bi-trophy-fill"></i>
             <span>{{ tournament.format.description }}</span>
           </div>
+          }
 
           <div class="team-actions">
-            <button class="btn-action btn-view" (click)="onViewTournament(tournament.id)">
-              <i class="fa fa-eye"></i>
+            <button type="button" class="btn-action btn-view" (click)="onViewTournament(tournament.id)" [attr.aria-label]="'Ver torneo ' + tournament.name">
+              <i class="fa fa-eye" aria-hidden="true"></i>
             </button>
             <!-- <button class="btn-action btn-edit" >
               <i class="fa fa-pencil"></i>
             </button> -->
-            <button class="btn-action btn-delete" (click)="onDelete(tournament.id)" *ngIf="authService?.getUser()?.idRol == 1">
-              <i class="fa fa-trash"></i>
+            @if (isAdmin()) {
+            <button type="button" class="btn-action btn-delete" (click)="onDelete(tournament.id)" [attr.aria-label]="'Eliminar torneo ' + tournament.name">
+              <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
+            }
           </div>
         </div>
       </div>
     </div>
+    }
   </div>
+  }
 </div>

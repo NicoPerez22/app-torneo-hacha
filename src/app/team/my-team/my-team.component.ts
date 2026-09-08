@@ -1,6 +1,6 @@
 import { AuthService } from 'src/app/service/auth.service';
 import { TeamService } from './../../service/team.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { PlayersComponent } from './players/players.component';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -8,7 +8,28 @@ import { ManagerComponent } from './manager/manager.component';
 import { ToastrService } from 'ngx-toastr';
 import { ResultsComponent } from './results/results.component';
 import { TradeComponent } from 'src/app/shared/components/trade/trade.component';
+import { SessionUser } from 'src/app/models/user';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TeamPlayer, TeamView } from '../models/team';
+
+interface TeamRound {
+  idRound: number;
+  tournamentId?: number;
+  tournament?: { id: number };
+  tournamentName: string;
+  label?: string | null;
+  round: number;
+  state: number;
+  homeTeamId: number;
+  awayTeamId: number;
+  homeTeamName: string;
+  awayTeamName: string;
+  homeLogoUrl?: string | null;
+  awayLogoUrl?: string | null;
+  homeGoals?: number | null;
+  awayGoals?: number | null;
+}
 
 @Component({
   selector: 'app-my-team',
@@ -17,39 +38,31 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./my-team.component.css'],
 })
 export class MyTeamComponent implements OnInit {
-  @ViewChild('playersComponent') PlayersComponent;
-  params: any;
-
-  spinner: boolean = true;
-  rounds: Array<any> = [];
-
-  teamsList: Array<any> = [];
-  user: any;
-  myTeam: any;
-  myTeamEnable: boolean = false;
-  playersTeamsList: Array<any> = [];
+  protected rounds: TeamRound[] = [];
+  protected user: SessionUser | null = null;
+  protected myTeam: TeamView | null = null;
+  protected playersTeamsList: TeamPlayer[] = [];
 
   // pagination (ngx-pagination) para "Proximas Fechas"
-  p: number = 1;
-  readonly roundsPerPage = 5;
+  protected page = 1;
+  protected readonly roundsPerPage = 5;
 
-  constructor(
-    private teamService: TeamService,
-    private authService: AuthService,
-    private modalService: NzModalService,
-    private activatedRoute: ActivatedRoute,
-    private toastrService: ToastrService,
-  ) {}
+  private readonly teamService = inject(TeamService);
+  private readonly authService = inject(AuthService);
+  private readonly modalService = inject(NzModalService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly toastrService = inject(ToastrService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly teamId = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
 
   ngOnInit(): void {
-    this.params = this.activatedRoute.snapshot.params;
     this.user = this.authService.getUser();
 
-    this._getTeamById(this.params.id);
-    this.getRounds();
+    this._getTeamById(this.teamId);
+    this._getRounds();
   }
 
-  openModalSearchPlayers() {
+  protected onOpenSearchPlayers(): void {
     const modal = this.modalService.create({
       nzTitle: 'Buscar jugador',
       nzContent: PlayersComponent,
@@ -57,14 +70,14 @@ export class MyTeamComponent implements OnInit {
       nzFooter: null,
     });
 
-    modal.afterClose.subscribe((result) => {
+    modal.afterClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (result === true) {
-        this._getTeamById(this.params.id);
+        this._getTeamById(this.teamId);
       }
     });
   }
 
-  openModalAssignManager() {
+  protected onOpenAssignManager(): void {
     const modal = this.modalService.create({
       nzTitle: 'Asignar Manager',
       nzContent: ManagerComponent,
@@ -72,21 +85,21 @@ export class MyTeamComponent implements OnInit {
       nzFooter: null,
     });
 
-    modal.afterClose.subscribe((result) => {
+    modal.afterClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (result === true) {
-        this._getTeamById(this.params.id);
+        this._getTeamById(this.teamId);
       }
     });
   }
 
-  onDelete(id) {
-    this.teamService.deletePlayer(id).subscribe((res) => {
-      if (res) {
-      }
-    });
+  protected onDelete(id: number): void {
+    this.teamService
+      .deletePlayer(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
   }
 
-  onChangePlayer(player) {
+  protected onChangePlayer(player: TeamPlayer): void {
     player.loading = true;
 
     setTimeout(() => {
@@ -101,7 +114,7 @@ export class MyTeamComponent implements OnInit {
     }, 1000);
   }
 
-  onReport(value){
+  protected onReport(value: TeamRound): void {
     const modal = this.modalService.create({
       nzContent: ResultsComponent,
       nzData: {
@@ -116,14 +129,14 @@ export class MyTeamComponent implements OnInit {
       nzClassName: 'match-report-modal',
     });
 
-    modal.afterClose.subscribe((result) => {
+    modal.afterClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (result === true) {
-        this._getTeamById(this.params.id);
+        this._getTeamById(this.teamId);
       }
     });
   }
 
-  onBuyPlayer(player) {
+  protected onBuyPlayer(player: TeamPlayer): void {
     const playerForTrade = {
       ...player,
       // En este screen el jugador viene del equipo "myTeam" (ruta /team/:id),
@@ -144,14 +157,17 @@ export class MyTeamComponent implements OnInit {
     });
   }
 
-  private _getTeamById(id) {
-    this.teamService.getTeamByID(id).subscribe({
+  protected onPageChange(page: number): void {
+    this.page = page;
+  }
+
+  private _getTeamById(id: string): void {
+    this.teamService.getTeamByID(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.myTeam = res.data;
 
         if (this.myTeam) {
-          this.myTeamEnable = true;
-          this.playersTeamsList = this.myTeam.players;
+          this.playersTeamsList = this.myTeam.players ?? [];
         }
       },
 
@@ -160,10 +176,10 @@ export class MyTeamComponent implements OnInit {
     });
   }
 
-  getRounds(){
-    this.teamService.getRoundMyTeam(this.params.id).subscribe({
+  private _getRounds(): void {
+    this.teamService.getRoundMyTeam(this.teamId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
-        this.rounds = res.data;
+        this.rounds = Array.isArray(res.data) ? (res.data as TeamRound[]) : [];
       },
 
       error: () => {
@@ -172,8 +188,8 @@ export class MyTeamComponent implements OnInit {
     }); 
   }
 
-  private _assignTransferPlayer(id, isTransfer) {
-    this.teamService.assignTransferPlayer(id, isTransfer).subscribe({
+  private _assignTransferPlayer(id: number, isTransfer: boolean): void {
+    this.teamService.assignTransferPlayer(id, isTransfer).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.toastrService.success('Jugador listado en transferencias', 'Exito')
       },

@@ -241,8 +241,7 @@
   height: 16px;
   border-radius: 2px;
   flex-shrink: 0;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.45),
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
@@ -441,6 +440,22 @@
   height: 18px;
   background: linear-gradient(180deg, #1926a5 0%, #1d65fd 100%);
   border-radius: 2px;
+}
+
+.group-matchday-label {
+  margin-left: 0.5rem;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.table thead th.th-align-left {
+  text-align: left;
+}
+
+.match-loading {
+  width: 100%;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .matches-list {

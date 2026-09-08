@@ -1,38 +1,40 @@
-import { Observable, map } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { SessionUser } from '../models/user';
+
+export interface UserApiResponse<T = unknown> {
+  data?: T;
+  code?: number;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient) {}
+  private readonly _http = inject(HttpClient);
+  private readonly _apiUrl = environment.API_URL;
 
-  API_URL = environment.API_URL;
-
-  getUserByUserName(userName: string): Observable<any> {
-    const QueryParams = new HttpParams();
-    QueryParams.set('username', userName);
-
-    const url = this.API_URL + `users`;
-    return this.http
-      .get<any>(url, { params: QueryParams })
-      .pipe(map((res) => res));
+  getUserByUserName(userName: string): Observable<UserApiResponse> {
+    const params = new HttpParams().set('username', userName);
+    return this._http.get<UserApiResponse>(`${this._apiUrl}users`, { params });
   }
 
-  getUserByID(id): Observable<any> {
-    const url = this.API_URL + `user/${id}`;
-    return this.http.get<any>(url);
+  getUserByID(
+    id: number | undefined,
+  ): Observable<UserApiResponse<{ user?: SessionUser }>> {
+    return this._http.get<UserApiResponse<{ user?: SessionUser }>>(
+      `${this._apiUrl}user/${id}`,
+    );
   }
 
-  getUsers(): Observable<any> {
-    const url = this.API_URL + `user`;
-    return this.http.get<any>(url);
+  getUsers(): Observable<UserApiResponse<SessionUser[]>> {
+    return this._http.get<UserApiResponse<SessionUser[]>>(`${this._apiUrl}user`);
   }
 
-  update(id, user){
-    const url = this.API_URL + `user/${id}`;
-    return this.http.post<any>(url, user);
+  update(id: number, user: unknown): Observable<UserApiResponse> {
+    return this._http.post<UserApiResponse>(`${this._apiUrl}user/${id}`, user);
   }
 }

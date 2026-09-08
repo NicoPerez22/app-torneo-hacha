@@ -1,31 +1,51 @@
-import { Component, computed, input } from '@angular/core';
-import { ColumnItem } from './interface/columnItem.interface';
-import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import {
+  ColumnItem,
+  TableCellValue,
+  TableRow,
+} from './interface/columnItem.interface';
 
 @Component({
   selector: 'app-table',
-  imports: [...SHARED_UI_IMPORTS],
+  imports: [
+    DatePipe,
+    NzButtonModule,
+    NzDropDownModule,
+    NzMenuModule,
+    NzTableModule,
+  ],
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.css'],
+  styleUrl: './table.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableComponent {
   readonly listOfColumns = input<ColumnItem[]>([]);
-  readonly listOfData = input<any[]>([]);
+  readonly listOfData = input<TableRow[]>([]);
   readonly customButton = input(false);
   readonly dropDown = input(false);
   readonly isCustomButton = input(false);
   readonly labelCustomButton = input('');
 
-  readonly displayData = computed(() => {
-    const columns = this.listOfColumns();
-    return this.listOfData().map((data) => {
-      const styles: { [key: string]: any } = {};
-      columns.forEach((column) => {
-        if (column.key || column.icon) {
-          styles[column.key] = column.style;
-        }
-      });
-      return { ...data, styles };
-    });
-  });
+  protected readonly displayData = computed<TableRow[]>(() =>
+    this.listOfData(),
+  );
+
+  protected _getDateValue(
+    value: TableCellValue,
+  ): string | number | Date | null {
+    if (
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      value instanceof Date
+    ) {
+      return value;
+    }
+
+    return null;
+  }
 }

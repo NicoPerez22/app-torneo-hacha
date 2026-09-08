@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import {
@@ -16,6 +16,7 @@ import { RankingTablesResponse } from '../models/ranking.interface';
   providedIn: 'root',
 })
 export class TournamentService {
+  private readonly http = inject(HttpClient);
   private readonly API_URL = environment.API_URL;
   private readonly TOURNAMENT_ENDPOINT = 'tournament';
   private readonly FORMATS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/formats`;
@@ -33,8 +34,6 @@ export class TournamentService {
   private readonly MATCH_REPORT_DRAFT_DETAIL = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}`;
   private readonly MATCH_REPORT_DRAFT_REVIEW = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}/review`;
   private readonly TOURNAMENT_NULL_MATCH_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/null-match`;
-
-  constructor(private http: HttpClient) {}
 
   getFormats(): Observable<FormatResponse> {
     const url = `${this.API_URL}${this.FORMATS_ENDPOINT}`;
@@ -69,12 +68,12 @@ export class TournamentService {
    * Cruces (eliminación directa) para torneos con formato mixto (format=2).
    * API: GET /tournament/:id/rounds/ko
    */
-  getRoundsKo(id: number): Observable<{ data: any[] }> {
+  getRoundsKo(id: number): Observable<{ data: unknown[] }> {
     const url = `${this.API_URL}${this.ROUNDS_KO_ENDPOINT}`.replace(
       '{id}',
       id.toString(),
     );
-    return this.http.get<{ data: any[] }>(url);
+    return this.http.get<{ data: unknown[] }>(url);
   }
 
   getRankingLeague(id: number): Observable<RankingTablesResponse> {
@@ -93,20 +92,20 @@ export class TournamentService {
     return this.http.get<RankingTablesResponse>(url);
   }
 
-  getTournamentHighlights(id: number): Observable<{ data: any[] }> {
+  getTournamentHighlights(id: number): Observable<{ data: unknown[] }> {
     const url = `${this.API_URL}${this.HIGHLIGHTS_ENDPOINT}`.replace(
       '{id}',
       String(id),
     );
-    return this.http.get<{ data: any[] }>(url);
+    return this.http.get<{ data: unknown[] }>(url);
   }
 
-  getTournamentCards(id: number): Observable<{ data: any[] }> {
+  getTournamentCards(id: number): Observable<{ data: unknown[] }> {
     const url = `${this.API_URL}${this.CARDS_ENDPOINT}`.replace(
       '{id}',
       String(id),
     );
-    return this.http.get<{ data: any[] }>(url);
+    return this.http.get<{ data: unknown[] }>(url);
   }
 
   deleteTournament(id: number): Observable<RankingTablesResponse> {
@@ -117,22 +116,22 @@ export class TournamentService {
     return this.http.delete<RankingTablesResponse>(url);
   }
 
-  setReportMatch(dto): Observable<any> {
+  setReportMatch(dto: unknown): Observable<unknown> {
     const url = `${this.API_URL}${this.REPORT_MATCH}`;
-    return this.http.post<any>(url, dto);
+    return this.http.post<unknown>(url, dto);
   }
 
-  getTeamsByIdRound(id: number): Observable<any> {
+  getTeamsByIdRound(id: number): Observable<unknown> {
     const url = `${this.API_URL}${this.GET_TEAMS_ID_ROUND}`.replace(
       '{roundId}',
       id.toString(),
     );
-    return this.http.get<any>(url);
+    return this.http.get<unknown>(url);
   }
 
-  getRoundReportPreview(report): Observable<any> {
+  getRoundReportPreview(report: unknown): Observable<unknown> {
     const url = `${this.API_URL}${this.ROUND_REPORT_PREVIEW}`;
-    return this.http.post<any>(url, report);
+    return this.http.post<unknown>(url, report);
   }
 
   /**
@@ -142,25 +141,28 @@ export class TournamentService {
   listMatchReportDrafts(params?: {
     status?: string | null;
     tournamentId?: number | null;
-  }): Observable<any> {
+  }): Observable<unknown> {
     const url = `${this.API_URL}${this.MATCH_REPORT_DRAFTS}`;
-    const httpParams: any = {};
-    if (params?.status) httpParams.status = params.status;
-    if (params?.tournamentId != null)
-      httpParams.tournamentId = String(params.tournamentId);
-    return this.http.get<any>(url, { params: httpParams });
+    let httpParams = new HttpParams();
+    if (params?.status) {
+      httpParams = httpParams.set('status', params.status);
+    }
+    if (params?.tournamentId != null) {
+      httpParams = httpParams.set('tournamentId', String(params.tournamentId));
+    }
+    return this.http.get<unknown>(url, { params: httpParams });
   }
 
   /**
    * Detalle del draft (para preview).
    * API: GET /tournament/admin/match-report-drafts/:draftId
    */
-  getMatchReportDraftDetail(draftId: number): Observable<any> {
+  getMatchReportDraftDetail(draftId: number): Observable<unknown> {
     const url = `${this.API_URL}${this.MATCH_REPORT_DRAFT_DETAIL}`.replace(
       '{draftId}',
       String(draftId),
     );
-    return this.http.get<any>(url);
+    return this.http.get<unknown>(url);
   }
 
   /**
@@ -174,16 +176,16 @@ export class TournamentService {
       action: 'approve' | 'reject' | 'null_match';
       reviewNote?: string;
     },
-  ): Observable<any> {
+  ): Observable<unknown> {
     const url = `${this.API_URL}${this.MATCH_REPORT_DRAFT_REVIEW}`.replace(
       '{draftId}',
       String(draftId),
     );
-    return this.http.post<any>(url, dto);
+    return this.http.post<unknown>(url, dto);
   }
 
-  nullMatch(dto): Observable<any> {
+  nullMatch(dto: unknown): Observable<unknown> {
     const url = `${this.API_URL}${this.TOURNAMENT_NULL_MATCH_ENDPOINT}`;
-    return this.http.post<any>(url, dto);
+    return this.http.post<unknown>(url, dto);
   }
 }

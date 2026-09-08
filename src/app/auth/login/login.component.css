@@ -184,15 +184,9 @@
   margin-bottom: 1.5rem;
 }
 
-.forgot-link a {
+.forgot-link__hint {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.85rem;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.forgot-link a:hover {
-  color: #1d65fd;
 }
 
 /* ============================================

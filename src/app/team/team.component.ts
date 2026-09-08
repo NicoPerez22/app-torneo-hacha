@@ -1,12 +1,15 @@
 import { TeamService } from './../service/team.service';
-import { Component, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { TeamCreateComponent } from './team-create/team-create.component';
 import { Router } from '@angular/router';
 import { ManagerComponent } from './my-team/manager/manager.component';
 import { AuthService } from '../service/auth.service';
+import { SessionUser } from '../models/user';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+import { TeamView } from './models/team';
 
 @Component({
   selector: 'app-team',
@@ -15,16 +18,15 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./team.component.css'],
 })
 export class TeamComponent implements OnInit {
-  teams = signal<Array<any>>([]);
-  user: any;
+  protected readonly teams = signal<TeamView[]>([]);
+  protected user: SessionUser | null = null;
 
-  constructor(
-    private teamService: TeamService,
-    private toastrService: ToastrService,
-    private authService: AuthService,
-    private modalService: NzModalService,
-    private router: Router,
-  ) {}
+  private readonly teamService = inject(TeamService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly authService = inject(AuthService);
+  private readonly modalService = inject(NzModalService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -32,10 +34,10 @@ export class TeamComponent implements OnInit {
     this._getTeams();
   }
 
-  onDelete(id) {
+  protected onDelete(id: number): void {
     this.teamService.deleteTeam(id).subscribe({
       next: (resp) => {
-        this.teams.set(resp.data);
+        this.teams.set(resp.data ?? []);
         this.toastrService.success(resp.message);
       },
 
@@ -45,7 +47,7 @@ export class TeamComponent implements OnInit {
     });
   }
 
-  onCreate(): void {
+  protected onCreate(): void {
     const modal = this.modalService.create({
       nzTitle: 'Crear equipo',
       nzContent: TeamCreateComponent,
@@ -53,13 +55,12 @@ export class TeamComponent implements OnInit {
       nzFooter: null,
     });
 
-    modal.afterClose.subscribe((result) => {
+    modal.afterClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this._getTeams();
-
     });
   }
 
-  openModalAssignManager() {
+  protected onOpenAssignManager(): void {
     const modal = this.modalService.create({
       nzTitle: 'Asignar Manager',
       nzContent: ManagerComponent,
@@ -67,18 +68,18 @@ export class TeamComponent implements OnInit {
       nzFooter: null,
     });
 
-    modal.afterClose.subscribe((result) => {
+    modal.afterClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (result === true) {
         this._getTeams();
       }
     });
   }
 
-  onViewTeam(id) {
-    this.router.navigate(['equipos/' + id]);
+  protected onViewTeam(id: number): void {
+    void this.router.navigate(['equipos', id]);
   }
 
-  onEdit(team){
+  protected onEdit(team: TeamView): void {
     const modal = this.modalService.create({
       nzTitle: 'Editar equipo',
       nzContent: TeamCreateComponent,
@@ -89,15 +90,15 @@ export class TeamComponent implements OnInit {
       }
     });
 
-    modal.afterClose.subscribe((result) => {
+    modal.afterClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this._getTeams();
     });
   }
 
-  private _getTeams() {
+  private _getTeams(): void {
     this.teamService.getTeams().subscribe({
       next: (resp) => {
-        this.teams.set(resp.data);
+        this.teams.set(resp.data ?? []);
       },
     });
   }

@@ -10,7 +10,8 @@
   </div>
 </div>
 
-<div class="admin-warning" *ngIf="!isAdmin">
+@if (!isAdmin) {
+<div class="admin-warning">
   <i class="bi bi-shield-exclamation"></i>
   <div>
     <div class="admin-warning-title">Acceso limitado</div>
@@ -20,6 +21,7 @@
     </div>
   </div>
 </div>
+}
 
 <div class="filters-card">
   <div class="filters-row filters-row-4">
@@ -71,37 +73,49 @@
   </div>
 </div>
 
-<div class="match-card" *ngIf="loading">
+@if (loading) {
+<div class="match-card">
   <div class="loading-state">
     <nz-spin nzSimple></nz-spin>
   </div>
 </div>
+}
 
-<div *ngIf="!loading">
+@if (!loading) {
+<div>
+  @if (filteredReports.length > 0) {
   <div
     class="reports-grid"
-    *ngIf="(filteredReports?.length || 0) > 0; else empty"
   >
+    @for (
+      r of (filteredReports
+        | paginate
+          : { id: paginationId, itemsPerPage: perPage, currentPage: page });
+      track r.reportId ?? r.matchId ?? $index
+    ) {
     <div
       class="report-item"
-      *ngFor="
-        let r of filteredReports
-          | paginate
-            : { id: paginationId, itemsPerPage: perPage, currentPage: page }
-      "
     >
       <div class="match-card report-card">
         <div class="preview-meta mb-3">
           <div class="preview-meta-title">
-            <span *ngIf="r?.tournamentName">{{ r?.tournamentName }}</span>
-            <span *ngIf="r?.tournamentName && r?.roundLabel">·</span>
-            <span *ngIf="r?.roundLabel">{{ r?.roundLabel }}</span>
-            <span class="meta-date" *ngIf="r?.createdAt">
-              · {{ r?.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+            @if (r.tournamentName) {
+            <span>{{ r.tournamentName }}</span>
+            }
+            @if (r.tournamentName && r.roundLabel) {
+            <span>·</span>
+            }
+            @if (r.roundLabel) {
+            <span>{{ r.roundLabel }}</span>
+            }
+            @if (r.createdAt) {
+            <span class="meta-date">
+              · {{ r.createdAt | date : 'dd/MM/yyyy HH:mm' }}
             </span>
+            }
           </div>
 
-          <span class="status-badge" [ngClass]="r?.status">
+          <span class="status-badge" [class]="r.status ?? ''">
             {{
               r?.status === 'approved'
                 ? 'Aprobado'
@@ -117,7 +131,7 @@
             <img
               class="team-logo"
               [src]="r?.homeLogoUrl || 'assets/images/player-default.png'"
-              alt="Home"
+              [alt]="'Escudo de ' + r.homeName"
             />
             <span class="team-text">{{ r?.homeName }}</span>
           </div>
@@ -133,7 +147,7 @@
             <img
               class="team-logo"
               [src]="r?.awayLogoUrl || 'assets/images/player-default.png'"
-              alt="Away"
+              [alt]="'Escudo de ' + r.awayName"
             />
           </div>
         </div>
@@ -144,14 +158,13 @@
             Ver detalle
           </button>
 
-          <div
-            class="ms-auto d-flex gap-2"
-            *ngIf="isAdmin && (r?.status === 'pending' || !r?.status)"
-          >
+          @if (isAdmin && (r.status === 'pending' || !r.status)) {
+          <div class="ms-auto d-flex gap-2">
             <button
               type="button"
               class="btn-action btn-approve"
               (click)="onApprove(r)"
+              aria-label="Aprobar reporte"
             >
               <i class="bi bi-check2"></i>
               <span class="d-none d-sm-inline ms-1">Aprobar</span>
@@ -160,6 +173,7 @@
               type="button"
               class="btn-action btn-reject"
               (click)="onReject(r)"
+              aria-label="Rechazar reporte"
             >
               <i class="bi bi-x-lg"></i>
               <span class="d-none d-sm-inline ms-1">Rechazar</span>
@@ -168,11 +182,13 @@
               type="button"
               class="btn-action btn-null-match"
               (click)="onNullMatch(r)"
+              aria-label="Marcar reporte como no jugado"
             >
               <i class="bi bi-x-lg"></i>
               <span class="d-none d-sm-inline ms-1">No jugado</span>
             </button>
           </div>
+          }
         </div>
 
         <div class="report-ids mt-2">
@@ -182,18 +198,16 @@
         </div>
       </div>
     </div>
+    }
   </div>
-
-  <ng-template #empty>
+  } @else {
     <div class="match-card">
       <div class="events-empty">No hay reportes para los filtros actuales.</div>
     </div>
-  </ng-template>
+  }
 
-  <div
-    class="pagination-wrapper"
-    *ngIf="(filteredReports?.length || 0) > perPage"
-  >
+  @if (filteredReports.length > perPage) {
+  <div class="pagination-wrapper">
     <pagination-controls
       [id]="paginationId"
       (pageChange)="onPageChange($event)"
@@ -201,25 +215,32 @@
       nextLabel="Siguiente"
     ></pagination-controls>
   </div>
+  }
 </div>
+}
 
 <ng-template #previewTpl>
   <div class="preview-wrap">
     <div class="match-card match-summary">
       <div class="preview-meta mb-3">
         <div class="preview-meta-title">
-          <span *ngIf="selectedDetail?.tournamentName">{{
+          @if (selectedDetail?.tournamentName) {
+          <span>{{
             selectedDetail?.tournamentName
           }}</span>
+          }
+          @if (selectedDetail?.tournamentName && selectedDetail?.roundLabel) {
           <span
-            *ngIf="selectedDetail?.tournamentName && selectedDetail?.roundLabel"
             >·</span
           >
-          <span *ngIf="selectedDetail?.roundLabel">{{
+          }
+          @if (selectedDetail?.roundLabel) {
+          <span>{{
             selectedDetail?.roundLabel
           }}</span>
+          }
         </div>
-        <span class="status-badge" [ngClass]="selectedDetail?.status">
+        <span class="status-badge" [class]="selectedDetail?.status ?? ''">
           {{
             selectedDetail?.status === 'approved'
               ? 'Aprobado'
@@ -237,7 +258,10 @@
             [src]="
               selectedDetail?.homeLogoUrl || 'assets/images/player-default.png'
             "
-            alt="Home"
+            [alt]="
+              'Escudo de ' +
+              (selectedDetail?.homeName || selected?.homeName || 'equipo local')
+            "
           />
           <span class="team-text">{{
             selectedDetail?.homeName || selected?.homeName
@@ -263,19 +287,25 @@
             [src]="
               selectedDetail?.awayLogoUrl || 'assets/images/player-default.png'
             "
-            alt="Away"
+            [alt]="
+              'Escudo de ' +
+              (selectedDetail?.awayName ||
+                selected?.awayName ||
+                'equipo visitante')
+            "
           />
         </div>
       </div>
     </div>
 
-    <div class="match-card" *ngIf="previewLoading">
+    @if (previewLoading) {
+    <div class="match-card">
       <div class="loading-state">
         <nz-spin nzSimple></nz-spin>
       </div>
     </div>
-
-    <div class="match-card" *ngIf="!previewLoading">
+    } @else {
+    <div class="match-card">
       <div class="events-header">
         <h6 class="section-title mb-0">Eventos</h6>
         <span class="section-meta"
@@ -283,28 +313,26 @@
         >
       </div>
 
-      <div
-        class="events-empty"
-        *ngIf="(selectedDetail?.events?.length || 0) === 0"
-      >
+      @if ((selectedDetail?.events?.length || 0) === 0) {
+      <div class="events-empty">
         No hay eventos para mostrar.
       </div>
+      }
 
-      <div
-        class="events-list"
-        *ngIf="(selectedDetail?.events?.length || 0) > 0"
-      >
+      @if ((selectedDetail?.events?.length || 0) > 0) {
+      <div class="events-list">
+        @for (
+          ev of ((selectedDetail?.events || [])
+            | paginate
+              : {
+                  id: eventsPaginationId,
+                  itemsPerPage: eventsPerPage,
+                  currentPage: eventsPage
+                });
+          track $index
+        ) {
         <div
           class="event-row"
-          *ngFor="
-            let ev of selectedDetail?.events || []
-              | paginate
-                : {
-                    id: eventsPaginationId,
-                    itemsPerPage: eventsPerPage,
-                    currentPage: eventsPage
-                  }
-          "
         >
           <span class="event-minute">{{ ev?.minute ?? ev?.min ?? '—' }}'</span>
           <span class="event-type">{{
@@ -317,12 +345,12 @@
             ev?.teamName ?? ev?.team?.name ?? ev?.teamId ?? '—'
           }}</span>
         </div>
+        }
       </div>
+      }
 
-      <div
-        class="events-pagination pagination-wrapper"
-        *ngIf="(selectedDetail?.events?.length || 0) > eventsPerPage"
-      >
+      @if ((selectedDetail?.events?.length || 0) > eventsPerPage) {
+      <div class="events-pagination pagination-wrapper">
         <pagination-controls
           [id]="eventsPaginationId"
           (pageChange)="onEventsPageChange($event)"
@@ -330,11 +358,13 @@
           nextLabel="Siguiente"
         ></pagination-controls>
       </div>
+      }
     </div>
+    }
   </div>
 
   <div class="modal-footer-custom">
-    <button type="button" class="btn-cancel" (click)="closePreview()">
+    <button type="button" class="btn-cancel" (click)="onClosePreview()">
       <i class="bi bi-x-lg"></i>
       <span>Cerrar</span>
     </button>

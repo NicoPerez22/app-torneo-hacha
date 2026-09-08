@@ -37,48 +37,44 @@
               <nz-tabset nzCentered style="color: white">
                 <nz-tab nzTitle="Jugadores">
                   <div class="players-grid-compact">
+                    @for (player of playersTeamsList; track player.id) {
                     <div
                       class="player-card-compact"
-                      *ngFor="let player of playersTeamsList"
                     >
                       <div class="player-card-compact-inner">
                         <div class="card-glow-compact"></div>
 
-                        <ng-container
-                          *ngIf="
-                            !player.loading && user.id === myTeam?.owner?.id
-                          "
-                        >
+                        @if (!player.loading && user?.id === myTeam?.owner?.id) {
                           <button
                             type="button"
                             class="btn-exchange"
                             (click)="onChangePlayer(player)"
+                            aria-label="Cambiar estado de transferencia"
                           >
                             <i class="fa fa-exchange"></i>
                           </button>
-                        </ng-container>
+                        }
 
-                        <ng-container
-                          *ngIf="
-                            !player.loading && user.id !== myTeam?.owner?.id
-                          "
-                        >
+                        @if (!player.loading && user?.id !== myTeam?.owner?.id) {
                           <button
                             type="button"
                             class="btn-exchange"
                             (click)="onBuyPlayer(player)"
+                            aria-label="Comprar jugador"
                           >
                             <i class="fa fa-dollar"></i>
                           </button>
-                        </ng-container>
+                        }
 
-                        <ng-container *ngIf="player.loading">
+                        @if (player.loading) {
                           <div class="spinner-container">
                             <div
                               class="spinner-border spinner-border-sm text-info"
+                              role="status"
+                              aria-label="Procesando jugador"
                             ></div>
                           </div>
-                        </ng-container>
+                        }
 
                         <div class="player-photo-compact">
                           <img
@@ -95,11 +91,8 @@
                         <div class="player-status">
                           <span
                             class="status-badge-compact"
-                            [ngClass]="
-                              player.isHabilitado
-                                ? 'status-enabled'
-                                : 'status-disabled'
-                            "
+                            [class.status-enabled]="player.isHabilitado"
+                            [class.status-disabled]="!player.isHabilitado"
                           >
                             {{ player.isHabilitado ? 'Activo' : 'Inactivo' }}
                           </span>
@@ -112,47 +105,47 @@
                         <div class="player-stats-compact">
                           <span
                             class="position-badge-compact"
-                            [ngClass]="{
-                              'pos-gk': player?.position == 'POR',
-                              'pos-defence': ['LD', 'DFC', 'LI'].includes(
-                                player?.position
-                              ),
-                              'pos-midfield': [
-                                'MCO',
-                                'MCD',
-                                'MC',
-                                'MI',
-                                'MD'
-                              ].includes(player?.position),
-                              'pos-attack': ['DC', 'ED', 'EI'].includes(
-                                player?.position
-                              )
-                            }"
+                            [class.pos-gk]="player.position === 'POR'"
+                            [class.pos-defence]="
+                              player.position === 'LD' ||
+                              player.position === 'DFC' ||
+                              player.position === 'LI'
+                            "
+                            [class.pos-midfield]="
+                              player.position === 'MCO' ||
+                              player.position === 'MCD' ||
+                              player.position === 'MC' ||
+                              player.position === 'MI' ||
+                              player.position === 'MD'
+                            "
+                            [class.pos-attack]="
+                              player.position === 'DC' ||
+                              player.position === 'ED' ||
+                              player.position === 'EI'
+                            "
                           >
                             {{ player?.position }}
                           </span>
                           <span
                             class="rating-badge-compact"
-                            [ngClass]="{
-                              'rating-low': player?.valoration < 70,
-                              'rating-medium':
-                                player?.valoration >= 70 &&
-                                player?.valoration < 85,
-                              'rating-high': player?.valoration >= 85
-                            }"
+                            [class.rating-low]="player.valoration < 70"
+                            [class.rating-medium]="
+                              player.valoration >= 70 && player.valoration < 85
+                            "
+                            [class.rating-high]="player.valoration >= 85"
                           >
                             {{ player?.valoration }}
                           </span>
                         </div>
 
-                        <div
-                          *ngIf="player?.isTransfer"
-                          class="transfer-badge-compact"
-                        >
+                        @if (player.isTransfer) {
+                        <div class="transfer-badge-compact">
                           <span class="badge-transfer">En transferencias</span>
                         </div>
+                        }
                       </div>
                     </div>
+                    }
                   </div>
                 </nz-tab>
 
@@ -160,18 +153,15 @@
                   <div class="fixtures-container">
                     <div class="group-card">
                       <ul class="matches-list">
-                        <li
-                          class="fixture-match"
-                          *ngFor="
-                            let match of rounds || []
-                              | paginate
-                                : {
-                                    id: 'my-team-rounds',
-                                    itemsPerPage: roundsPerPage,
-                                    currentPage: p
-                                  }
-                          "
-                        >
+                        @for (
+                          match of (rounds | paginate: {
+                            id: 'my-team-rounds',
+                            itemsPerPage: roundsPerPage,
+                            currentPage: page
+                          });
+                          track match.idRound
+                        ) {
+                        <li class="fixture-match">
                           <div class="fixture-header">
                             <span class="fixture-tournament"
                               >{{ match.tournamentName }} -
@@ -181,8 +171,8 @@
                                   : 'Fecha ' + match.round
                               }}</span
                             >
+                            @if (match.state === 0) {
                             <button
-                              *ngIf="match.state == 0"
                               class="btn-action btn-edit fixture-report"
                               (click)="onReport(match)"
                               type="button"
@@ -190,6 +180,7 @@
                             >
                               <i class="fa fa-pencil"></i>
                             </button>
+                            }
                           </div>
 
                           <div class="fixture-content">
@@ -232,20 +223,20 @@
                             </div>
                           </div>
                         </li>
+                        }
                       </ul>
                     </div>
 
-                    <div
-                      class="pagination-wrapper"
-                      *ngIf="(rounds?.length || 0) > roundsPerPage"
-                    >
+                    @if (rounds.length > roundsPerPage) {
+                    <div class="pagination-wrapper">
                       <pagination-controls
                         id="my-team-rounds"
-                        (pageChange)="p = $event"
+                        (pageChange)="onPageChange($event)"
                         previousLabel="Anterior"
                         nextLabel="Siguiente"
                       ></pagination-controls>
                     </div>
+                    }
                   </div>
                 </nz-tab>
               </nz-tabset>

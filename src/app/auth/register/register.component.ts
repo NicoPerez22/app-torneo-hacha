@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/service/auth.service';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
@@ -20,26 +19,21 @@ interface RegisterPayload {
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })
-export class RegisterComponent implements OnInit, OnDestroy {
-  formRegisterUser!: FormGroup;
-  private subscription = new Subscription();
+export class RegisterComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly toastrService = inject(ToastrService);
+  private readonly formBuilder = inject(FormBuilder);
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private toastrService: ToastrService
-  ) {}
+  protected readonly formRegisterUser = this.formBuilder.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    userName: ['', [Validators.required, Validators.minLength(3)]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    lastName: ['', Validators.required],
+    name: ['', Validators.required],
+  });
 
-  ngOnInit(): void {
-    this.initForm();
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.formRegisterUser.invalid) {
       this.formRegisterUser.markAllAsTouched();
       this.toastrService.warning('Por favor, completa todos los campos');
@@ -50,52 +44,39 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const payload: RegisterPayload = {
       email,
       username: userName,
-      lastName: lastName,
-      name: name,
+      lastName,
+      name,
       password,
     };
 
-    const registerSub = this.authService.register(payload).subscribe({
+    this.authService.register(payload).subscribe({
       next: () => {
         this.toastrService.success('Cuenta creada exitosamente');
-        this.router.navigate(['/auth/login']);
+        void this.router.navigate(['/auth/login']);
       },
       error: () => {
         this.toastrService.error('No se pudo crear la cuenta, intenta nuevamente');
       },
     });
-
-    this.subscription.add(registerSub);
   }
 
-  private initForm(): void {
-    this.formRegisterUser = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      userName: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      lastName: ['', [Validators.required]],
-      name: ['', [Validators.required]],
-    });
+  protected get email() {
+    return this.formRegisterUser.controls.email;
   }
 
-  // Getters for form controls
-  get email(): FormControl {
-    return this.formRegisterUser.get('email') as FormControl;
+  protected get userName() {
+    return this.formRegisterUser.controls.userName;
   }
 
-  get userName(): FormControl {
-    return this.formRegisterUser.get('userName') as FormControl;
+  protected get password() {
+    return this.formRegisterUser.controls.password;
   }
 
-  get password(): FormControl {
-    return this.formRegisterUser.get('password') as FormControl;
+  protected get lastName() {
+    return this.formRegisterUser.controls.lastName;
   }
 
-  get lastName(): FormControl {
-    return this.formRegisterUser.get('lastName') as FormControl;
-  }
-
-  get name(): FormControl {
-    return this.formRegisterUser.get('name') as FormControl;
+  protected get name() {
+    return this.formRegisterUser.controls.name;
   }
 }

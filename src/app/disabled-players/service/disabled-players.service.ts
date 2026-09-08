@@ -1,18 +1,29 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+
+export interface DisabledPlayerDto {
+  id?: number;
+  name: string;
+  lastName: string;
+  unavailableUntil?: string;
+  logo?: { secureUrl?: string };
+  team?: {
+    name?: string;
+    logo?: { secureUrl?: string };
+  };
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class DisabledPlayersService {
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = environment.API_URL;
 
-  API_URL = environment.API_URL;
-
-  getInjuryPlayers(): Observable<any> {
-    const url = this.API_URL + `player/injury`;
-    return this.http.get<any>(url);
+  getInjuryPlayers(): Observable<{ data: DisabledPlayerDto[] }> {
+    const url = `${this.apiUrl}player/injury`;
+    return this.http.get<{ data: DisabledPlayerDto[] }>(url);
   }
 }

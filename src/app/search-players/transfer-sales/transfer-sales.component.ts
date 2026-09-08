@@ -8,7 +8,7 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 type OfferPlayerVM = { displayName: string; valoration?: number };
 
 type TransferOfferVM = {
-  id: any;
+  id: number | string | undefined;
   status?: string;
   statusEs?: string;
   fromTeamName?: string;
@@ -19,6 +19,13 @@ type TransferOfferVM = {
   incomingPlayers: OfferPlayerVM[];
 };
 
+type OfferAction = "approve" | "reject" | "cancel";
+
+interface OfferStatusUpdate {
+  action: OfferAction;
+  reviewNote: string;
+}
+
 @Component({
   selector: "app-transfer-sales",
   imports: [...SHARED_UI_IMPORTS],
@@ -26,23 +33,19 @@ type TransferOfferVM = {
   styleUrls: ["./transfer-sales.component.css"],
 })
 export class TransferSalesComponent implements OnInit {
-  title: string = "Mis Ofertas";
-  subTitle: string = "Aqui puedes vizualizar todas tus ofertas";
-  isAdmin: boolean = false;
-
   private readonly teamService = inject(TeamService);
   private readonly activatedRoute = inject(ActivatedRoute);
-  private toastrService = inject(ToastrService);
-  readonly loginService = inject(LoginService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly maxPlayersPerOffer = 3;
 
-  readonly MAX_PLAYERS_PER_OFFER = 3;
-
-  transferOffer: Array<TransferOfferVM> = [];
-
-  // pagination (ngx-pagination)
-  offersPage: number = 1;
-  readonly offersPerPage: number = 8;
-  readonly offersPaginationId = "transfer-sales-offers";
+  protected readonly loginService = inject(LoginService);
+  protected readonly offersPerPage = 8;
+  protected readonly offersPaginationId = "transfer-sales-offers";
+  protected title = "Mis Ofertas";
+  protected subTitle = "Aqui puedes vizualizar todas tus ofertas";
+  protected isAdmin = false;
+  protected transferOffer: TransferOfferVM[] = [];
+  protected offersPage = 1;
 
   ngOnInit(): void {
     const { isAdmin } = this.activatedRoute.snapshot.data;
@@ -59,17 +62,24 @@ export class TransferSalesComponent implements OnInit {
     this._getTransferOffer();
   }
 
-  onActionBird(idBird, action) {
+  protected onActionBird(
+    idBird: number | string | undefined,
+    action: OfferAction,
+  ): void {
     const status = {
-      action: action,
+      action,
       reviewNote: "",
     };
 
     this._setStatusBird(idBird, status);
   }
 
-  private _getTransferOffer() {
-    this.teamService.getTransferOffer(this.loginService.user.idTeam).subscribe({
+  protected onOffersPageChange(page: number): void {
+    this.offersPage = page;
+  }
+
+  private _getTransferOffer(): void {
+    this.teamService.getTransferOffer(this.loginService.user?.idTeam).subscribe({
       next: (resp) => {
         this.transferOffer = this._normalizeOffers(resp?.data);
         this.offersPage = 1;
@@ -77,7 +87,7 @@ export class TransferSalesComponent implements OnInit {
     });
   }
 
-  private _getAllOffers() {
+  private _getAllOffers(): void {
     this.teamService.getAllOferrs().subscribe({
       next: (resp) => {
         this.transferOffer = this._normalizeOffers(resp?.data);
@@ -86,11 +96,14 @@ export class TransferSalesComponent implements OnInit {
     });
   }
 
-  private _setStatusBird(idBird, status) {
+  private _setStatusBird(
+    idBird: number | string | undefined,
+    status: OfferStatusUpdate,
+  ): void {
     this.teamService
-      .setStatusBird(idBird, status, this.loginService.user.id)
+      .setStatusBird(idBird, status, this.loginService.user?.id)
       .subscribe({
-        next: (resp) => {
+        next: () => {
           this._getAllOffers();
           this.toastrService.success("Oferta procesada correctamente", "Exito");
         },
@@ -169,8 +182,8 @@ export class TransferSalesComponent implements OnInit {
       fromTeamLogoUrl: offer?.fromTeamLogoUrl,
       toTeamName: offer?.toTeamName,
       toTeamLogoUrl: offer?.toTeamLogoUrl,
-      outgoingPlayers: outgoingPlayers.slice(0, this.MAX_PLAYERS_PER_OFFER),
-      incomingPlayers: incomingPlayers.slice(0, this.MAX_PLAYERS_PER_OFFER),
+      outgoingPlayers: outgoingPlayers.slice(0, this.maxPlayersPerOffer),
+      incomingPlayers: incomingPlayers.slice(0, this.maxPlayersPerOffer),
     };
   }
 

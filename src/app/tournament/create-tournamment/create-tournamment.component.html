@@ -8,7 +8,8 @@
 
       <div class="steps-content">
         <form nz-form nzLayout="vertical" [formGroup]="form">
-          <div *ngIf="currentStepIndex === 0">
+          @if (currentStepIndex === 0) {
+          <div>
             <div class="row">
               <div class="col-md-4">
                 <nz-form-item>
@@ -40,17 +41,20 @@
                       formControlName="description"
                       nzShowSearch
                     >
-                      <nz-option
-                        *ngFor="let elem of formats"
-                        [nzValue]="elem.id"
-                        [nzLabel]="elem.description"
-                      ></nz-option>
+                      @for (elem of formats; track elem.id) {
+                        <nz-option
+                          [nzValue]="elem.id"
+                          [nzLabel]="elem.description"
+                        ></nz-option>
+                      }
                     </nz-select>
 
                     <ng-template #descriptionErrorTpl let-control>
-                      <span *ngIf="control.hasError('required')">
+                      @if (control.hasError('required')) {
+                      <span>
                         El formato es obligatorio
                       </span>
+                      }
                     </ng-template>
                   </nz-form-control>
                 </nz-form-item>
@@ -71,17 +75,20 @@
                       formControlName="countTeams"
                       nzShowSearch
                     >
-                      <nz-option
-                        *ngFor="let option of teamCountOptions"
-                        [nzValue]="option"
-                        [nzLabel]="option.value"
-                      ></nz-option>
+                      @for (option of teamCountOptions; track option.value) {
+                        <nz-option
+                          [nzValue]="option"
+                          [nzLabel]="option.value"
+                        ></nz-option>
+                      }
                     </nz-select>
 
                     <ng-template #countTeamsErrorTpl let-control>
-                      <span *ngIf="control.hasError('required')">
+                      @if (control.hasError('required')) {
+                      <span>
                         El formato es obligatorio
                       </span>
+                      }
                     </ng-template>
                   </nz-form-control>
                 </nz-form-item>
@@ -89,10 +96,8 @@
             </div>
 
             <div class="row">
-              <div
-                class="d-flex justify-content-center mt-5"
-                *ngIf="!uploadedImages.length"
-              >
+              @if (!uploadedImages.length) {
+              <div class="d-flex justify-content-center mt-5">
                 <input
                   type="file"
                   #fileInput
@@ -108,20 +113,29 @@
                   Seleccione logo
                 </button>
               </div>
+              }
 
-              <div class="d-flex justify-content-center" *ngIf="isUploadingImage">
+              @if (isUploadingImage) {
+              <div class="d-flex justify-content-center">
                 <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
               </div>
+              }
 
-              <div class="d-flex justify-content-center" *ngIf="uploadedImages.length">
-                <div *ngFor="let image of uploadedImages" style="margin-top: 5%">
+              @if (uploadedImages.length) {
+              <div class="d-flex justify-content-center">
+                @for (image of uploadedImages; track image.url || image.secureUrl) {
+                <div style="margin-top: 5%">
                   <img [src]="image.url || image.secureUrl" width="100" alt="Logo del torneo" />
                 </div>
+                }
               </div>
+              }
             </div>
           </div>
+          }
 
-          <div *ngIf="currentStepIndex === 1">
+          @if (currentStepIndex === 1) {
+          <div>
             <div class="row">
               <div class="col-md-4">
                 <nz-form-item>
@@ -132,11 +146,12 @@
                       nzPlaceHolder="Seleccione un equipo"
                       (ngModelChange)="onSelectTeam($event)"
                     >
-                      <nz-option
-                        *ngFor="let team of availableTeams"
-                        [nzValue]="team.id"
-                        [nzLabel]="team.name"
-                      ></nz-option>
+                      @for (team of availableTeams; track team.id) {
+                        <nz-option
+                          [nzValue]="team.id"
+                          [nzLabel]="team.name"
+                        ></nz-option>
+                      }
                     </nz-select>
                   </nz-form-control>
                 </nz-form-item>
@@ -155,7 +170,8 @@
             </div>
 
             <div class="row mt-2">
-              <div class="col-auto mt-5" *ngFor="let team of selectedTeams">
+              @for (team of selectedTeams; track team.id) {
+              <div class="col-auto mt-5">
                 <div
                   style="
                     display: flex;
@@ -172,41 +188,38 @@
                   <span><b>{{ team.name }}</b></span>
                 </div>
               </div>
+              }
             </div>
           </div>
+          }
         </form>
       </div>
 
       <hr style="border-top: 0px" />
 
       <div class="steps-action">
-        <button 
-          class="btn btn-primary" 
-          (click)="onPreviousStep()" 
-          *ngIf="currentStep > 0"
-          type="button"
-        >
+        @if (currentStep > 0) {
+        <button class="btn btn-primary" (click)="onPreviousStep()" type="button">
           <span>Anterior</span>
         </button>
+        }
 
-        <button 
-          class="btn btn-primary" 
-          (click)="onNextStep()" 
-          *ngIf="currentStep < 1"
-          type="button"
-        >
+        @if (currentStep < 1) {
+        <button class="btn btn-primary" (click)="onNextStep()" type="button">
           <span>Siguiente</span>
         </button>
+        }
 
+        @if (currentStep === 1) {
         <button
           class="btn btn-success"
           (click)="onSubmitData()"
-          *ngIf="currentStep === 1"
           type="button"
           [disabled]="form.invalid || selectedTeamIds.length === 0"
         >
           <span>Crear Torneo</span>
         </button>
+        }
       </div>
     </div>
   </div>

@@ -9,7 +9,7 @@
         <div class="photo-wrapper">
           <img
           [src]="user?.logo?.secureUrl || '../../../assets/images/profile.png'"
-          [alt]="user?.name"
+          [alt]="user?.name || 'Foto de perfil'"
           class="profile-photo"
         />
           <span class="online-status"></span>
@@ -22,17 +22,17 @@
 
         <!-- Social Links -->
         <div class="social-links">
-          <a href="#" class="social-link">
-            <i class="fa fa-twitch"></i>
-          </a>
-          <a href="#" class="social-link">
-            <i class="fa fa-youtube"></i>
-          </a>
+          <span class="social-link" aria-label="Twitch" role="img">
+            <i class="fa fa-twitch" aria-hidden="true"></i>
+          </span>
+          <span class="social-link" aria-label="YouTube" role="img">
+            <i class="fa fa-youtube" aria-hidden="true"></i>
+          </span>
         </div>
 
         <!-- Edit Button -->
-        <button class="btn-edit-profile" (click)="onEdit()">
-          <i class="fa fa-pencil me-2"></i>
+        <button type="button" class="btn-edit-profile" (click)="onEdit()">
+          <i class="fa fa-pencil me-2" aria-hidden="true"></i>
           Editar perfil
         </button>
       </div>
@@ -43,7 +43,8 @@
       <div class="card-inner">
         <div class="card-glow"></div>
 
-        <div class="team-content" *ngIf="team?.id != null">
+        @if (team?.id != null) {
+        <div class="team-content">
           <h3 class="team-card-title" >
             <i class="bi bi-people-fill me-2"></i>
             Mi Equipo
@@ -57,26 +58,27 @@
                     team?.logo?.secureUrl ||
                     '../../../assets/images/player-default.png'
                   "
-                  [alt]="team?.name"
+                  [alt]="team?.name || 'Logo del equipo'"
                   class="team-logo-image"
                 />
               </div>
               <h4 class="team-name">{{ team?.name }}</h4>
             </div>
 
-            <button class="btn-edit-team">
-              <i class="fa fa-pencil me-2"></i>
+            <button type="button" class="btn-edit-team">
+              <i class="fa fa-pencil me-2" aria-hidden="true"></i>
               Editar equipo
             </button>
           </div>
         </div>
-
-        <div class="team-content" *ngIf="team?.id == null">
+        } @else {
+        <div class="team-content">
           <h3 class="team-card-title" >
             <i class="bi bi-people-fill me-2"></i>
             No tienes un equipo asignado
           </h3>
         </div>
+        }
       </div>
     </div>
   </div>

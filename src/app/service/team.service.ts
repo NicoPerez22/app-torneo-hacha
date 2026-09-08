@@ -1,146 +1,182 @@
-import { BehaviorSubject, map, Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from './../../environments/environment';
-
-import { HttpClient } from '@angular/common/http';
 import { Notification } from '../models/notification';
+import { TeamPlayer, TeamView } from '../team/models/team';
+
+export interface TeamApiResponse<T = unknown> {
+  data?: T;
+  code?: number;
+  message?: string;
+  msg?: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class TeamService {
-  constructor(private http: HttpClient) {}
+  private readonly _http = inject(HttpClient);
+  private readonly _apiUrl = environment.API_URL;
+  private readonly _myTeam = signal<TeamView | null>(null);
 
-  API_URL = environment.API_URL;
+  readonly myTeam = this._myTeam.asReadonly();
 
-  myTeamObserbale: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-
-  get getMyTeamObserbable() {
-    return this.myTeamObserbale;
+  setMyTeam(team: TeamView | null): void {
+    this._myTeam.set(team);
   }
 
-  set setMyTeamObservable(value) {
-    this.myTeamObserbale = value;
+  createTeam(team: unknown): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(`${this._apiUrl}team`, team);
   }
 
-  createTeam(team: any): Observable<any> {
-    const url = this.API_URL + `team`;
-    return this.http.post<any>(url, team);
+  updateTeam(team: { id: number | null }): Observable<TeamApiResponse> {
+    return this._http.patch<TeamApiResponse>(
+      `${this._apiUrl}team/${team.id}`,
+      team,
+    );
   }
 
-  updateTeam(team: any): Observable<any> {
-    const url = this.API_URL + `team/${team.id}`;
-    return this.http.patch<any>(url, team);
+  getTeams(): Observable<TeamApiResponse<TeamView[]>> {
+    return this._http.get<TeamApiResponse<TeamView[]>>(`${this._apiUrl}team/`);
   }
 
-  getTeams(): Observable<any> {
-    const url = this.API_URL + `team/`;
-    return this.http.get<any>(url);
+  deleteTeam(id: number): Observable<TeamApiResponse<TeamView[]>> {
+    return this._http.delete<TeamApiResponse<TeamView[]>>(`${this._apiUrl}team/${id}`);
   }
 
-  deleteTeam(id): Observable<any> {
-    const url = this.API_URL + `team/${id}`;
-    return this.http.delete<any>(url);
+  deletePlayer(id: number): Observable<TeamApiResponse> {
+    return this._http.delete<TeamApiResponse>(
+      `${this._apiUrl}team/player/${id}`,
+    );
   }
 
-  deletePlayer(id) {
-    const url = this.API_URL + `team/player/${id}`;
-    return this.http.delete<any>(url).pipe(map((res) => res));
+  getPLayers(id: number): Observable<TeamApiResponse> {
+    return this._http.get<TeamApiResponse>(`${this._apiUrl}users/${id}`);
   }
 
-  getPLayers(id: number): Observable<any> {
-    const url = this.API_URL + `users/${id}`;
-    return this.http.get<any>(url).pipe(map((res) => res));
+  addPlayer(player: unknown): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(`${this._apiUrl}team/player`, player);
   }
 
-  addPlayer(player) {
-    const url = this.API_URL + `team/player`;
-    return this.http.post<any[]>(url, player).pipe(map((res) => res));
+  getUser(): Observable<TeamApiResponse> {
+    return this._http.get<TeamApiResponse>(`${this._apiUrl}users`);
   }
 
-  getUser(): Observable<any[]> {
-    const url = this.API_URL + `users`;
-    return this.http.get<any[]>(url).pipe(map((res) => res));
+  getTeamByID(idTeam: number | string): Observable<TeamApiResponse<TeamView>> {
+    return this._http.get<TeamApiResponse<TeamView>>(
+      `${this._apiUrl}team/${idTeam}`,
+    );
   }
 
-  getTeamByID(idTeam): Observable<any> {
-    const url = this.API_URL + `team/${idTeam}`;
-    return this.http.get<any>(url).pipe(map((res) => res));
+  sendInvitacionTeam(player: unknown): Observable<Notification> {
+    return this._http.post<Notification>(
+      `${this._apiUrl}team/sendInvitacion`,
+      player,
+    );
   }
 
-  sendInvitacionTeam(player): Observable<Notification> {
-    const url = this.API_URL + 'team/sendInvitacion';
-    return this.http.post<Notification>(url, player).pipe(map((res) => res));
+  getInvitacionTeam(idUser: number): Observable<TeamApiResponse> {
+    return this._http.get<TeamApiResponse>(
+      `${this._apiUrl}team/invitacion/${idUser}`,
+    );
   }
 
-  getInvitacionTeam(idUser): Observable<any> {
-    const url = this.API_URL + `team/invitacion/${idUser}`;
-    return this.http.get<any>(url).pipe(map((res) => res));
+  aceptarInvitacion(invitacion: unknown): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(
+      `${this._apiUrl}team/acceptInvitacion`,
+      invitacion,
+    );
   }
 
-  aceptarInvitacion(invtacion): Observable<any> {
-    const url = this.API_URL + `team/acceptInvitacion`;
-    return this.http.post<any>(url, invtacion).pipe(map((res) => res));
+  createTorneo(team: unknown): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(`${this._apiUrl}tournament`, team);
   }
 
-  createTorneo(team) {
-    const url = this.API_URL + `tournament`;
-    return this.http.post<any>(url, team).pipe(map((res) => res));
+  getPlayersByIdTeam(id: number | null): Observable<TeamApiResponse<TeamPlayer[]>> {
+    return this._http.get<TeamApiResponse<TeamPlayer[]>>(
+      `${this._apiUrl}player/teamId/${id}`,
+    );
   }
 
-  getPlayersByIdTeam(id) {
-    const url = this.API_URL + `player/teamId/${id}`;
-    return this.http.get<any>(url);
+  transferPalyer(
+    id: number | null,
+    idTeam: number | null,
+  ): Observable<TeamApiResponse> {
+    return this._http.get<TeamApiResponse>(
+      `${this._apiUrl}player/transfer/${id}/${idTeam}`,
+    );
   }
 
-  transferPalyer(id, idTeam) {
-    const url = this.API_URL + `player/transfer/${id}/${idTeam}`;
-    return this.http.get<any>(url);
+  setBirdTransferPlayer(dto: unknown): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(
+      `${this._apiUrl}player/transfer/offers`,
+      dto,
+    );
   }
 
-  setBirdTransferPlayer(dto) {
-    const url = this.API_URL + `player/transfer/offers`;
-    return this.http.post<any>(url, dto);
+  assignTransferPlayer(
+    id: number,
+    isTransfer: boolean,
+  ): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(
+      `${this._apiUrl}player/transfer/${id}`,
+      { isTransfer },
+    );
   }
 
-  assignTransferPlayer(id, isTransfer) {
-    const isTransferParam = { isTransfer: isTransfer };
-    const url = this.API_URL + `player/transfer/${id}`;
-    return this.http.post<any>(url, isTransferParam);
+  getPlayers(): Observable<TeamApiResponse> {
+    return this._http.get<TeamApiResponse>(`${this._apiUrl}player/market`);
   }
 
-  getPlayers() {
-    const url = this.API_URL + `player/market`;
-    return this.http.get<any>(url);
+  transferManager(
+    teamId: number | null,
+    id: number | null,
+  ): Observable<TeamApiResponse> {
+    return this._http.get<TeamApiResponse>(
+      `${this._apiUrl}team/assingUser/${teamId}/${id}`,
+    );
   }
 
-  transferManager(teamId, id) {
-    const url = this.API_URL + `team/assingUser/${teamId}/${id}`;
-    return this.http.get<any>(url);
+  transferOffer(transferOffer: unknown): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(
+      `${this._apiUrl}player/transfer/offers`,
+      transferOffer,
+    );
   }
 
-  transferOffer(transferOffer){
-    const url = this.API_URL + `player/transfer/offers`;
-    return this.http.post<any>(url, transferOffer);
+  getTransferOffer(idTeam: number | undefined): Observable<TeamApiResponse> {
+    const params = new HttpParams()
+      .set('status', '')
+      .set('page', 1)
+      .set('limit', 10);
+    return this._http.get<TeamApiResponse>(
+      `${this._apiUrl}player/transfer/offers/team/${idTeam}`,
+      { params },
+    );
   }
 
-  getTransferOffer(idTeam: number): Observable<any> {
-    const url = this.API_URL + `player/transfer/offers/team/${idTeam}`;
-    return this.http.get<any>(url, { params: { status: '', page: 1, limit: 10 } });
+  getAllOferrs(): Observable<TeamApiResponse> {
+    const params = new HttpParams().set('page', 1).set('limit', 10);
+    return this._http.get<TeamApiResponse>(`${this._apiUrl}player/pending`, {
+      params,
+    });
   }
 
-  getAllOferrs(): Observable<any> {
-    const url = this.API_URL + `player/pending`;
-    return this.http.get<any>(url, { params: { page: 1, limit: 10 } });
+  setStatusBird(
+    id: number | string,
+    reviewOffer: unknown,
+    idAdmin: number | undefined,
+  ): Observable<TeamApiResponse> {
+    return this._http.post<TeamApiResponse>(
+      `${this._apiUrl}player/${id}/${idAdmin}/review`,
+      reviewOffer,
+    );
   }
 
-  setStatusBird(id, rewieOffer, idAdmin){
-    const url = this.API_URL + `player/${id}/${idAdmin}/review`;
-    return this.http.post<any>(url, rewieOffer);
-  }
-
-  getRoundMyTeam(id): Observable<any> {
-    const url = this.API_URL + `tournament/team/${id}/rounds`;
-    return this.http.get<any>(url);
+  getRoundMyTeam(id: number | string): Observable<TeamApiResponse> {
+    return this._http.get<TeamApiResponse>(
+      `${this._apiUrl}tournament/team/${id}/rounds`,
+    );
   }
 }

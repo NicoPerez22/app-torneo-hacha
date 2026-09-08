@@ -25,7 +25,7 @@
             type="button"
             class="btn-icon btn-icon-outline"
             aria-label="Restar gol local"
-            (click)="removeGoal(form.controls['homeGoals'])"
+            (click)="onRemoveGoal(form.controls['homeGoals'])"
           >
             <i class="fa fa-minus"></i>
           </button>
@@ -34,7 +34,7 @@
             type="button"
             class="btn-icon btn-icon-outline"
             aria-label="Sumar gol local"
-            (click)="addGoal(form.controls['homeGoals'])"
+            (click)="onAddGoal(form.controls['homeGoals'])"
           >
             <i class="fa fa-plus"></i>
           </button>
@@ -55,7 +55,7 @@
             type="button"
             class="btn-icon btn-icon-outline"
             aria-label="Sumar gol visitante"
-            (click)="addGoal(form.controls['awayGoals'])"
+            (click)="onAddGoal(form.controls['awayGoals'])"
           >
             <i class="fa fa-plus"></i>
           </button>
@@ -64,7 +64,7 @@
             type="button"
             class="btn-icon btn-icon-outline"
             aria-label="Restar gol visitante"
-            (click)="removeGoal(form.controls['awayGoals'])"
+            (click)="onRemoveGoal(form.controls['awayGoals'])"
           >
             <i class="fa fa-minus"></i>
           </button>
@@ -83,13 +83,16 @@
       </div>
     </div>
 
-    <div class="match-card mb-3" *ngIf="isLoadingPlayers()">
+    @if (isLoadingPlayers()) {
+    <div class="match-card mb-3">
       <div class="text-center" style="color: rgba(255,255,255,0.75);">
         Cargando jugadores...
       </div>
     </div>
+    }
 
-    <div class="match-card mb-3" *ngIf="!isLoadingPlayers()">
+    @if (!isLoadingPlayers()) {
+    <div class="match-card mb-3">
       <nz-tabset nzCentered class="report-player-tabs">
         <nz-tab [nzTitle]="(matchData?.homeTeamName || matchData?.home || 'Local') + ' (' + homePlayersControls.length + ')'">
           <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
@@ -106,7 +109,8 @@
               <div class="c-check">Lesionado</div>
             </div>
 
-            <div class="player-row" *ngFor="let row of homePlayersControls; let i = index" [formGroupName]="i">
+            @for (row of homePlayersControls; track row.get('playerId')?.value; let i = $index) {
+            <div class="player-row" [formGroupName]="i">
               <div class="c-name">
                 <span class="player-name">{{ row.get('name')?.value }} {{ row.get('lastName')?.value }}</span>
               </div>
@@ -117,7 +121,7 @@
                   min="0"
                   class="form-control input-dark input-mini"
                   formControlName="goals"
-                  (blur)="clampNonNegative(i, 'home')"
+                  (blur)="onClampNonNegative(i, 'home')"
                 />
               </div>
 
@@ -128,11 +132,13 @@
                   max="2"
                   class="form-control input-dark input-mini"
                   formControlName="yellow"
-                  (blur)="clampYellow(i, 'home')"
+                  (blur)="onClampYellow(i, 'home')"
                 />
-                <div class="text-danger small mt-1" *ngIf="homePlayersArray.at(i).get('yellow')?.touched && homePlayersArray.at(i).get('yellow')?.invalid">
+                @if (homePlayersArray.at(i).get('yellow')?.touched && homePlayersArray.at(i).get('yellow')?.invalid) {
+                <div class="text-danger small mt-1">
                   Máximo 2
                 </div>
+                }
               </div>
 
               <div class="c-check">
@@ -147,6 +153,7 @@
                 </span>
               </div>
             </div>
+            }
           </div>
         </nz-tab>
 
@@ -165,7 +172,8 @@
               <div class="c-check">Lesionado</div>
             </div>
 
-            <div class="player-row" *ngFor="let row of awayPlayersControls; let i = index" [formGroupName]="i">
+            @for (row of awayPlayersControls; track row.get('playerId')?.value; let i = $index) {
+            <div class="player-row" [formGroupName]="i">
               <div class="c-name">
                 <span class="player-name">{{ row.get('name')?.value }} {{ row.get('lastName')?.value }}</span>
               </div>
@@ -176,7 +184,7 @@
                   min="0"
                   class="form-control input-dark input-mini"
                   formControlName="goals"
-                  (blur)="clampNonNegative(i, 'away')"
+                  (blur)="onClampNonNegative(i, 'away')"
                 />
               </div>
 
@@ -187,11 +195,13 @@
                   max="2"
                   class="form-control input-dark input-mini"
                   formControlName="yellow"
-                  (blur)="clampYellow(i, 'away')"
+                  (blur)="onClampYellow(i, 'away')"
                 />
-                <div class="text-danger small mt-1" *ngIf="awayPlayersArray.at(i).get('yellow')?.touched && awayPlayersArray.at(i).get('yellow')?.invalid">
+                @if (awayPlayersArray.at(i).get('yellow')?.touched && awayPlayersArray.at(i).get('yellow')?.invalid) {
+                <div class="text-danger small mt-1">
                   Máximo 2
                 </div>
+                }
               </div>
 
               <div class="c-check">
@@ -206,15 +216,17 @@
                 </span>
               </div>
             </div>
+            }
           </div>
         </nz-tab>
       </nz-tabset>
     </div>
+    }
   </form>
 </div>
 
 <div class="modal-footer-custom">
-  <button type="button" class="btn-cancel" (click)="handleCancel()">
+  <button type="button" class="btn-cancel" (click)="onCancel()">
     <i class="bi bi-x-lg"></i>
     <span>Cancelar</span>
   </button>

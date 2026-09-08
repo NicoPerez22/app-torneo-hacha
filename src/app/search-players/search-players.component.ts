@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { TeamService } from '../service/team.service';
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
@@ -7,6 +7,24 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { TradeComponent } from '../shared/components/trade/trade.component';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
+interface MarketPlayer {
+  id?: number;
+  fullName: string;
+  position?: string;
+  valoration?: number;
+  photo?: { secureUrl?: string };
+  team?: {
+    id?: number;
+    name?: string;
+    logo?: { secureUrl?: string };
+  };
+}
+
+interface ProfileUser {
+  idRol?: number;
+  teams?: Array<{ id?: number }>;
+}
+
 @Component({
   selector: 'app-search-players',
   imports: [...SHARED_UI_IMPORTS],
@@ -14,30 +32,24 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
   styleUrls: ['./search-players.component.css'],
 })
 export class SearchPlayersComponent implements OnInit {
-  playersList: Array<any> = [];
-  columns: Array<any> = [];
-  players: Array<any> = [];
-  user: any;
+  private readonly teamService = inject(TeamService);
+  private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
+  private readonly modal = inject(NzModalService);
 
-  // pagination (ngx-pagination) para la grilla de jugadores
-  playersPage: number = 1;
-  readonly playersPerPage: number = 12;
-  readonly playersPaginationId: string = 'search-players-grid';
-
-  constructor(
-    private teamService: TeamService,
-    private router: Router,
-    public loginService: LoginService,
-    private userSerivce: UserService,
-    private modal: NzModalService,
-  ) {}
+  protected readonly loginService = inject(LoginService);
+  protected readonly playersPerPage = 12;
+  protected readonly playersPaginationId = 'search-players-grid';
+  protected playersList: MarketPlayer[] = [];
+  protected user?: ProfileUser;
+  protected playersPage = 1;
 
   ngOnInit(): void {
-    this._getPlayers();
-    this._getProfile(this.loginService.user.id)
+    this.getPlayers();
+    this.getProfile(this.loginService.user?.id);
   }
 
-  onBird(player): void {
+  protected onBird(player: MarketPlayer): void {
     this.modal.create({
       nzContent: TradeComponent,
       nzData: { player },
@@ -51,31 +63,36 @@ export class SearchPlayersComponent implements OnInit {
     });
   }
 
-  onListBird() {
-    this.router.navigate(['mercado-transferencias/ofertas']);
+  protected onListBird(): void {
+    void this.router.navigate(['mercado-transferencias/ofertas']);
   }
 
-  onListBirdAdmin() {
-    this.router.navigate(['mercado-transferencias/comprobar-ofertas']);
+  protected onListBirdAdmin(): void {
+    void this.router.navigate(['mercado-transferencias/comprobar-ofertas']);
   }
 
+  protected onPlayersPageChange(page: number): void {
+    this.playersPage = page;
+  }
 
-  private _getPlayers() {
+  private getPlayers(): void {
     this.teamService.getPlayers().subscribe({
       next: (response) => {
-        this.playersList = response.data;
+        this.playersList = Array.isArray(response.data)
+          ? (response.data as MarketPlayer[])
+          : [];
         this.playersPage = 1;
-      },
-      error: (error) => {
       },
     });
   }
 
-  private _getProfile(id) {
-    this.userSerivce.getUserByID(id).subscribe({
+  private getProfile(id: number | undefined): void {
+    if (!id) {
+      return;
+    }
+    this.userService.getUserByID(id).subscribe({
       next: (resp) => {
-        this.user = resp.data.user;
-        console.log(this.user)
+        this.user = resp.data?.user;
       },
     });
   }

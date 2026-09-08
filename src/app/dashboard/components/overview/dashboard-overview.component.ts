@@ -1,5 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { DashboardService } from 'src/app/dashboard/service/dashboard.service';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  DashboardResume,
+  DashboardService,
+} from 'src/app/dashboard/service/dashboard.service';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 
 @Component({
@@ -10,11 +14,16 @@ import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
 })
 export class DashboardOverviewComponent implements OnInit {
   private readonly dashboardService = inject(DashboardService);
-  readonly resume = signal<any>(null);
+  private readonly destroyRef = inject(DestroyRef);
+
+  protected readonly resume = signal<DashboardResume | null>(null);
 
   ngOnInit(): void {
-    this.dashboardService.getResume().subscribe((res) => {
-      this.resume.set(res?.data);
-    });
+    this.dashboardService
+      .getResume()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((response) => {
+        this.resume.set(response.data ?? null);
+      });
   }
 }

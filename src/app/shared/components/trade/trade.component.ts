@@ -1,87 +1,121 @@
-import { Component, HostListener, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
+import { SessionUser } from 'src/app/models/user';
 import { LoginService } from 'src/app/service/login.service';
 import { TeamService } from 'src/app/service/team.service';
 import { UserService } from 'src/app/service/user.service';
+import { TeamPlayer, TeamView } from 'src/app/team/models/team';
 import { SHARED_UI_IMPORTS } from 'src/app/shared/ui';
+
+type TradeControlName = 'playersOut' | 'playersIn';
+
+interface TradeForm {
+  playersOut: FormControl<number[]>;
+  playersIn: FormControl<number[]>;
+}
 
 @Component({
   selector: 'app-trade',
   imports: [...SHARED_UI_IMPORTS],
   templateUrl: './trade.component.html',
   styleUrls: ['./trade.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:click)': 'onDocumentClick()',
+  },
 })
 export class TradeComponent implements OnInit {
-  private readonly modalData = inject<{ player?: any }>(NZ_MODAL_DATA, {
+  private readonly _modalData = inject<{ player?: TeamPlayer }>(NZ_MODAL_DATA, {
     optional: true,
   });
-  player: any;
+  private readonly _modalRef = inject(NzModalRef);
+  private readonly _teamService = inject(TeamService);
+  private readonly _formBuilder = inject(FormBuilder);
+  private readonly _userService = inject(UserService);
+  private readonly _toastrService = inject(ToastrService);
+  private readonly _loginService = inject(LoginService);
 
-  targetTeamPlayers: Array<any> = []; // Jugadores del equipo objetivo (entrantes)
-  myPlayers: Array<any> = []; // Jugadores de mi equipo (salientes)
-  team: any; // Mi equipo
-  user: any;
+  protected player: TeamPlayer | undefined;
+  protected readonly targetTeamPlayers = signal<TeamPlayer[]>([]);
+  protected readonly myPlayers = signal<TeamPlayer[]>([]);
+  protected readonly team = signal<TeamView | null>(null);
+  protected readonly user = signal<SessionUser | null>(null);
 
-  form: FormGroup;
+  protected readonly form: FormGroup<TradeForm> = this._formBuilder.nonNullable.group({
+    playersOut: this._formBuilder.nonNullable.control<number[]>([], {
+      validators: [Validators.required],
+    }),
+    playersIn: this._formBuilder.nonNullable.control<number[]>([], {
+      validators: [Validators.required],
+    }),
+  });
 
-  // Límite máximo de jugadores seleccionables
-  readonly MAX_PLAYERS_SELECTION = 3;
+  protected readonly MAX_PLAYERS_SELECTION = 3;
+  protected readonly playersOutOpen = signal(false);
+  protected readonly playersInOpen = signal(false);
+  protected readonly playersOutSearch = signal('');
+  protected readonly playersInSearch = signal('');
 
-  // "Bootstrap style" multiselect dropdown state
-  playersOutOpen = false;
-  playersInOpen = false;
-  playersOutSearch = '';
-  playersInSearch = '';
+  protected readonly selectedOutIds = signal<number[]>([]);
+  protected readonly selectedInIds = signal<number[]>([]);
 
-  constructor(
-    private readonly modalRef: NzModalRef,
-    private readonly teamService: TeamService,
-    private readonly fb: FormBuilder,
-    private readonly userSerivce: UserService,
-    private readonly toastrService: ToastrService,
-    public readonly loginService: LoginService,
-  ) {}
+  protected readonly filteredOutPlayers = computed(() =>
+    this._filterPlayers(this.targetTeamPlayers(), this.playersOutSearch()),
+  );
+  protected readonly filteredInPlayers = computed(() =>
+    this._filterPlayers(this.myPlayers(), this.playersInSearch()),
+  );
+  protected readonly selectedOutPlayers = computed(() =>
+    this._playersByIds(this.targetTeamPlayers(), this.selectedOutIds()),
+  );
+  protected readonly selectedInPlayers = computed(() =>
+    this._playersByIds(this.myPlayers(), this.selectedInIds()),
+  );
+  protected readonly canConfirm = computed(
+    () => this.selectedOutIds().length > 0 && this.selectedInIds().length > 0,
+  );
 
   ngOnInit(): void {
-    this.player = this.player ?? this.modalData?.player;
-    this._initForm();
+    this.player = this._modalData?.player;
     this._resetMultiSelectUI();
 
-    // Precargar jugador entrante principal (el que se clickeó)
     if (this.player?.id != null) {
-      this.form.get('playersOut')?.patchValue([this.player.id]);
+      this._patchSelection('playersOut', [this.player.id]);
     }
 
-    // Cargar data necesaria para el modal
-    this._getProfile(this.loginService?.user?.id);
+    this._getProfile(this._loginService.user?.id);
 
-    // Target team players (equipo dueño del jugador objetivo)
     const targetTeamId = this.player?.team?.id;
     if (targetTeamId != null) {
       this._getTargetTeamPlayers(targetTeamId);
     }
   }
 
-  @HostListener('document:click')
-  onDocumentClick() {
-    // Close dropdowns when clicking outside
-    this.playersOutOpen = false;
-    this.playersInOpen = false;
+  protected onDocumentClick(): void {
+    this.playersOutOpen.set(false);
+    this.playersInOpen.set(false);
   }
 
-  handleCancel(): void {
+  protected onCancel(): void {
     this._resetMultiSelectUI();
-    this.modalRef.destroy();
+    this._modalRef.destroy();
   }
 
-  onSubmit(): void {
-    const playersOut = this.form.get('playersOut')?.value || [];
-    const playersIn = this.form.get('playersIn')?.value || [];
+  protected onSubmit(): void {
+    const playersOut = this.selectedOutIds();
+    const playersIn = this.selectedInIds();
 
     if (playersOut.length === 0) {
-      this.toastrService.warning(
+      this._toastrService.warning(
         'Debes seleccionar al menos un jugador entrante',
         'Atención',
       );
@@ -89,181 +123,186 @@ export class TradeComponent implements OnInit {
     }
 
     if (playersIn.length === 0) {
-      this.toastrService.warning(
+      this._toastrService.warning(
         'Debes seleccionar al menos un jugador de salida',
         'Atención',
       );
       return;
     }
 
-    const fromTeamId = this.user?.teams?.[0]?.id;
+    const fromTeamId = this.user()?.teams?.[0]?.id;
     if (!fromTeamId) {
-      this.toastrService.error(
+      this._toastrService.error(
         'No se pudo determinar tu equipo para realizar la oferta',
         'Error',
       );
       return;
     }
 
-    const dto = {
-      fromTeamId,
-      targetPlayerIds: playersOut, // Array de IDs de jugadores entrantes
-      offeredPlayerIds: playersIn, // Array de IDs de jugadores ofrecidos
-    };
-
-    this.teamService.setBirdTransferPlayer(dto).subscribe({
-      next: () => {
-        this.toastrService.success('Oferta realizada', 'Éxito');
-        this._resetMultiSelectUI();
-        this.modalRef.close({ ok: true });
-      },
-      error: () => {
-        this.toastrService.error(
-          'Ocurrió un error al realizar la oferta',
-          'Error',
-        );
-      },
-    });
+    this._teamService
+      .setBirdTransferPlayer({
+        fromTeamId,
+        targetPlayerIds: playersOut,
+        offeredPlayerIds: playersIn,
+      })
+      .subscribe({
+        next: () => {
+          this._toastrService.success('Oferta realizada', 'Éxito');
+          this._resetMultiSelectUI();
+          this._modalRef.close({ ok: true });
+        },
+        error: () => {
+          this._toastrService.error(
+            'Ocurrió un error al realizar la oferta',
+            'Error',
+          );
+        },
+      });
   }
 
-  // Validar que no se seleccionen más de 3 jugadores entrantes
-  onPlayersOutChange(selectedIds: number[]): void {
-    if (selectedIds && selectedIds.length > this.MAX_PLAYERS_SELECTION) {
-      // Mantener solo los primeros 3
-      const limited = selectedIds.slice(0, this.MAX_PLAYERS_SELECTION);
-      this.form.get('playersOut')?.patchValue(limited);
-      this.toastrService.warning(
-        `Máximo ${this.MAX_PLAYERS_SELECTION} jugadores entrantes`,
-        'Atención',
-      );
+  protected onTogglePlayersOutOpen(event: Event): void {
+    event.stopPropagation();
+    this.playersOutOpen.update((open) => !open);
+    if (this.playersOutOpen()) {
+      this.playersInOpen.set(false);
     }
   }
 
-  // Validar que no se seleccionen más de 3 jugadores de salida
-  onPlayersInChange(selectedIds: number[]): void {
-    if (selectedIds && selectedIds.length > this.MAX_PLAYERS_SELECTION) {
-      // Mantener solo los primeros 3
-      const limited = selectedIds.slice(0, this.MAX_PLAYERS_SELECTION);
-      this.form.get('playersIn')?.patchValue(limited);
-      this.toastrService.warning(
-        `Máximo ${this.MAX_PLAYERS_SELECTION} jugadores de salida`,
-        'Atención',
-      );
+  protected onTogglePlayersInOpen(event: Event): void {
+    event.stopPropagation();
+    this.playersInOpen.update((open) => !open);
+    if (this.playersInOpen()) {
+      this.playersOutOpen.set(false);
     }
   }
 
-  // ----- Bootstrap-style multiselect helpers -----
-  togglePlayersOutOpen(ev: Event) {
-    ev.stopPropagation();
-    this.playersOutOpen = !this.playersOutOpen;
-    if (this.playersOutOpen) this.playersInOpen = false;
+  protected onStopPropagation(event: Event): void {
+    event.stopPropagation();
   }
 
-  togglePlayersInOpen(ev: Event) {
-    ev.stopPropagation();
-    this.playersInOpen = !this.playersInOpen;
-    if (this.playersInOpen) this.playersOutOpen = false;
+  protected onPlayersOutSearch(event: Event): void {
+    this.playersOutSearch.set((event.target as HTMLInputElement).value);
   }
 
-  stopPropagation(ev: Event) {
-    ev.stopPropagation();
+  protected onPlayersInSearch(event: Event): void {
+    this.playersInSearch.set((event.target as HTMLInputElement).value);
   }
 
-  isSelected(controlName: 'playersOut' | 'playersIn', id: number): boolean {
-    const value = (this.form?.get(controlName)?.value ?? []) as number[];
-    return Array.isArray(value) && value.includes(id);
+  protected isSelected(controlName: TradeControlName, id: number): boolean {
+    const ids =
+      controlName === 'playersOut'
+        ? this.selectedOutIds()
+        : this.selectedInIds();
+    return ids.includes(id);
   }
 
-  toggleSelected(
-    controlName: 'playersOut' | 'playersIn',
+  protected onToggleSelected(
+    controlName: TradeControlName,
     id: number,
-    ev?: Event,
-  ) {
-    ev?.stopPropagation();
-    const control = this.form.get(controlName);
-    const value = (control.value ?? []) as number[];
-    const next = Array.isArray(value) ? [...value] : [];
-    const idx = next.indexOf(id);
-
-    if (idx >= 0) {
-      next.splice(idx, 1);
+    event?: Event,
+  ): void {
+    event?.stopPropagation();
+    const current =
+      controlName === 'playersOut'
+        ? [...this.selectedOutIds()]
+        : [...this.selectedInIds()];
+    const index = current.indexOf(id);
+    if (index >= 0) {
+      current.splice(index, 1);
     } else {
-      next.push(id);
+      current.push(id);
     }
-
-    if (controlName === 'playersOut') this.onPlayersOutChange(next);
-    if (controlName === 'playersIn') this.onPlayersInChange(next);
-    control.patchValue(next);
+    this._limitAndPatch(controlName, current);
   }
 
-  removeSelected(
-    controlName: 'playersOut' | 'playersIn',
+  protected onRemoveSelected(
+    controlName: TradeControlName,
     id: number,
-    ev?: Event,
-  ) {
-    ev?.stopPropagation();
-    const control = this.form.get(controlName);
-    const value = (control.value ?? []) as number[];
-    const next = (Array.isArray(value) ? value : []).filter((x) => x !== id);
-    control.patchValue(next);
+    event?: Event,
+  ): void {
+    event?.stopPropagation();
+    const current =
+      controlName === 'playersOut'
+        ? this.selectedOutIds()
+        : this.selectedInIds();
+    this._patchSelection(
+      controlName,
+      current.filter((value) => value !== id),
+    );
   }
 
-  getFilteredOptions(controlName: 'playersOut' | 'playersIn'): any[] {
-    const list =
-      controlName === 'playersOut' ? this.targetTeamPlayers : this.myPlayers;
-    const q = (
-      controlName === 'playersOut' ? this.playersOutSearch : this.playersInSearch
-    )
-      .trim()
-      .toLowerCase();
-    if (!q) return list ?? [];
-    return (list ?? []).filter((p) => {
+  protected playerLabel(player: TeamPlayer | undefined): string {
+    if (!player) {
+      return '';
+    }
+    return `${player.name ?? ''} ${player.lastName ?? ''} (${player.position ?? ''}) - ${player.valoration ?? ''}`.trim();
+  }
+
+  private _limitAndPatch(controlName: TradeControlName, selectedIds: number[]): void {
+    let next = selectedIds;
+    if (selectedIds.length > this.MAX_PLAYERS_SELECTION) {
+      next = selectedIds.slice(0, this.MAX_PLAYERS_SELECTION);
+      this._toastrService.warning(
+        `Máximo ${this.MAX_PLAYERS_SELECTION} jugadores`,
+        'Atención',
+      );
+    }
+    this._patchSelection(controlName, next);
+  }
+
+  private _patchSelection(controlName: TradeControlName, ids: number[]): void {
+    this.form.controls[controlName].patchValue(ids);
+    if (controlName === 'playersOut') {
+      this.selectedOutIds.set(ids);
+    } else {
+      this.selectedInIds.set(ids);
+    }
+  }
+
+  private _filterPlayers(list: TeamPlayer[], query: string): TeamPlayer[] {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) {
+      return list;
+    }
+    return list.filter((player) => {
       const text =
-        `${p?.name ?? ''} ${p?.lastName ?? ''} ${p?.position ?? ''} ${p?.valoration ?? ''}`.toLowerCase();
-      return text.includes(q);
+        `${player.name ?? ''} ${player.lastName ?? ''} ${player.position ?? ''} ${player.valoration ?? ''}`.toLowerCase();
+      return text.includes(normalized);
     });
   }
 
-  getLabel(p: any): string {
-    if (!p) return '';
-    return `${p?.name ?? ''} ${p?.lastName ?? ''} (${p?.position ?? ''}) - ${p?.valoration ?? ''}`.trim();
+  private _playersByIds(list: TeamPlayer[], ids: number[]): TeamPlayer[] {
+    return ids
+      .map((id) => list.find((player) => player.id === id))
+      .filter((player): player is TeamPlayer => !!player);
   }
 
-  findById(
-    controlName: 'playersOut' | 'playersIn',
-    id: number,
-  ): any | undefined {
-    const list =
-      controlName === 'playersOut' ? this.targetTeamPlayers : this.myPlayers;
-    return (list ?? []).find((x) => x?.id === id);
-  }
-
-  private _getPlayerMyTeam(id: any) {
-    if (!id) return;
-    this.teamService.getTeamByID(id).subscribe({
-      next: (resp: any) => {
-        this.myPlayers = resp?.data?.players ?? [];
-        this.team = resp?.data;
-      },
-    });
-  }
-
-  // Obtener jugadores del equipo objetivo para seleccionar múltiples jugadores entrantes
-  private _getTargetTeamPlayers(teamId: any) {
-    if (!teamId) return;
-    this.teamService.getTeamByID(teamId).subscribe({
-      next: (resp: any) => {
-        this.targetTeamPlayers = resp?.data?.players ?? [];
-      },
-    });
-  }
-
-  private _getProfile(id: any) {
-    if (!id) return;
-    this.userSerivce.getUserByID(id).subscribe({
+  private _getPlayerMyTeam(id: number): void {
+    this._teamService.getTeamByID(id).subscribe({
       next: (resp) => {
-        this.user = resp?.data?.user;
-        const myTeamId = this.user?.teams?.[0]?.id;
+        this.myPlayers.set(resp?.data?.players ?? []);
+        this.team.set(resp?.data ?? null);
+      },
+    });
+  }
+
+  private _getTargetTeamPlayers(teamId: number): void {
+    this._teamService.getTeamByID(teamId).subscribe({
+      next: (resp) => {
+        this.targetTeamPlayers.set(resp?.data?.players ?? []);
+      },
+    });
+  }
+
+  private _getProfile(id: number | undefined): void {
+    if (!id) {
+      return;
+    }
+    this._userService.getUserByID(id).subscribe({
+      next: (resp) => {
+        const profile = resp?.data?.user ?? null;
+        this.user.set(profile);
+        const myTeamId = profile?.teams?.[0]?.id;
         if (myTeamId) {
           this._getPlayerMyTeam(myTeamId);
         }
@@ -271,17 +310,10 @@ export class TradeComponent implements OnInit {
     });
   }
 
-  private _initForm() {
-    this.form = this.fb.group({
-      playersOut: [[], Validators.required], // Array de jugadores entrantes
-      playersIn: [[], Validators.required], // Array de jugadores de salida
-    });
-  }
-
-  private _resetMultiSelectUI() {
-    this.playersOutOpen = false;
-    this.playersInOpen = false;
-    this.playersOutSearch = '';
-    this.playersInSearch = '';
+  private _resetMultiSelectUI(): void {
+    this.playersOutOpen.set(false);
+    this.playersInOpen.set(false);
+    this.playersOutSearch.set('');
+    this.playersInSearch.set('');
   }
 }

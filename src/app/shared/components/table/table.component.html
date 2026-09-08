@@ -3,80 +3,104 @@
     <nz-table #filterTable [nzData]="displayData()" nzTableLayout="fixed">
       <thead>
         <tr>
-          <th
-            *ngFor="let column of listOfColumns()"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"
-            [nzWidth]="column.columnWidth"
-            style="font-weight: bold; text-align: center"
-          >
-            {{ column.name }}
-          </th>
+          @for (column of listOfColumns(); track column.key ?? $index) {
+            <th
+              [nzSortOrder]="column.sortOrder"
+              [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections"
+              [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter"
+              [nzFilterFn]="column.filterFn"
+              [nzWidth]="column.columnWidth"
+              class="table__header"
+            >
+              {{ column.name }}
+            </th>
+          }
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of filterTable.data">
-            <td *ngFor="let column of listOfColumns()" class="text-center">
-            <!-- Contenido de texto normal -->
-            <span
-              *ngIf="!column.dropdownActions && !column.action"
-              (click)="column?.rowAction?.(data)"
-              [ngStyle]="column?.style"
-              [ngClass]="column?.className ? column.className(data) : ''"
-            >
-              {{
-                column.isDate
-                  ? (data[column.key] | date : 'dd/MM/yyyy')
-                  : data[column.key]
-              }}
-            </span>
+        @for (data of filterTable.data; track data) {
+          <tr>
+            @for (column of listOfColumns(); track column.key ?? $index) {
+              <td class="text-center">
+                <!-- Contenido de texto normal -->
+                @if (!column.dropdownActions && !column.action) {
+                  <span
+                    (click)="column.rowAction?.(data)"
+                    (keydown.enter)="column.rowAction?.(data)"
+                    (keydown.space)="column.rowAction?.(data)"
+                    [style]="column.style"
+                    [class]="column.className ? column.className(data) : ''"
+                    [attr.role]="column.rowAction ? 'button' : null"
+                    [attr.tabindex]="column.rowAction ? 0 : null"
+                  >
+                    @if (column.key; as key) {
+                      {{
+                        column.isDate
+                          ? (_getDateValue(data[key]) | date: 'dd/MM/yyyy')
+                          : data[key]
+                      }}
+                    }
+                  </span>
+                }
 
-            <!-- Botón unitario(?) -->
-            <button
-              *ngIf="column.action"
-              (click)="column.action(data)"
-              class="btn btn-primary btn-sm pull-right"
-            >
-              {{ column.buttonText || 'Editar' }}
-            </button>
+                <!-- Botón unitario -->
+                @if (column.action; as action) {
+                  <button
+                    type="button"
+                    (click)="action(data)"
+                    class="btn btn-primary btn-sm pull-right"
+                  >
+                    {{ column.buttonText || 'Editar' }}
+                  </button>
+                }
 
-            <!-- Dropdown de acciones -->
-            <ng-container *ngIf="column.dropdownActions">
-              <div
-                nz-dropdown
-                nzTrigger="click"
-                [nzDropdownMenu]="menu"
-                class="manito"
-                style="display: inline-block"
-              >
-                <button class="ellipsis-button" nz-button nzType="text">
-                  <i class="fa fa-ellipsis-v icon-ellipsis-v"></i>
-                </button>
-
-                <nz-dropdown-menu #menu="nzDropdownMenu">
-                  <ul nz-menu>
-                    <li
-                      nz-menu-item
-                      *ngFor="let action of column.dropdownActions"
-                      (click)="action.action(data)"
+                <!-- Dropdown de acciones -->
+                @if (column.dropdownActions; as actions) {
+                  <div
+                    nz-dropdown
+                    nzTrigger="click"
+                    [nzDropdownMenu]="menu"
+                    class="manito table__dropdown"
+                  >
+                    <button
+                      type="button"
+                      class="ellipsis-button"
+                      nz-button
+                      nzType="text"
+                      aria-label="Ver acciones"
                     >
                       <i
-                        *ngIf="action.icon"
-                        [class]="action.icon"
-                        style="margin-right: 5px"
+                        class="fa fa-ellipsis-v icon-ellipsis-v"
+                        aria-hidden="true"
                       ></i>
-                      {{ action.label }}
-                    </li>
-                  </ul>
-                </nz-dropdown-menu>
-              </div>
-            </ng-container>
-          </td>
-        </tr>
+                    </button>
+
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                      <ul nz-menu>
+                        @for (action of actions; track action) {
+                          <li
+                            nz-menu-item
+                            (click)="action.action(data)"
+                          >
+                            @if (action.icon) {
+                              <i
+                                [class]="action.icon + ' table__action-icon'"
+                                aria-hidden="true"
+                              ></i>
+                            }
+                            {{ action.label }}
+                          </li>
+                        }
+                      </ul>
+                    </nz-dropdown-menu>
+                  </div>
+                }
+              </td>
+            }
+          </tr>
+        }
       </tbody>
     </nz-table>
   </div>
