@@ -30,6 +30,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [],
+  exports: [RouterModule],
   imports: [
     RouterModule.forChild(routes),
     CommonModule

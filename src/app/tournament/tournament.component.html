@@ -1,72 +1,51 @@
-<div class="container">
-  <!-- Header Section -->
-  <div class="tournaments-header">
-    <div class="header-content">
-      <h1 class="tournaments-title text-info">
-        <i class="bi bi-trophy-fill me-2"></i>
-        Torneos
-      </h1>
-      <p class="tournaments-subtitle">Descubre y participa en los mejores torneos</p>
-    </div>
-    <div class="header-actions" *ngIf="authService?.getUser()?.idRol == 1">
-      <button class="btn-create-tournament btn-secondary" (click)="onReviewReports()">
-        <i class="bi bi-clipboard-check me-2"></i>
-        Reportes
-      </button>
-      <button class="btn-create-tournament" *ngIf="authService?.getUser()?.idRol == 1" (click)="onCreate()">
-        <i class="bi bi-plus-circle me-2"></i>
-        Crear Torneo
-      </button>
-    </div>
-  </div>
-
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="tournaments.length === 0">
-    <i class="bi bi-trophy empty-icon"></i>
-    <h3>No hay torneos disponibles</h3>
-    <p>Crea tu primer torneo para comenzar</p>
-  </div>
-
-  <!-- Grid de cards -->
-  <div class="tournaments-grid" *ngIf="tournaments.length > 0">
-    <div class="tournament-card" *ngFor="let tournament of tournaments">
-      <div class="tournament-card-inner">
-        <!-- Glow effect -->
-        <div class="card-glow"></div>
-        
-        <!-- Logo Container -->
-        <div class="tournament-logo-container">
-          <div class="logo-wrapper">
-            <img
-              [src]="tournament.logo"
-              [alt]="'Logo ' + tournament.name"
-              class="tournament-logo"
-            />
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="tournament-content">
-          <h3 class="tournament-name">{{ tournament.name }}</h3>
-          
-          <div class="tournament-badge" *ngIf="tournament.format">
-            <i class="bi bi-trophy-fill"></i>
-            <span>{{ tournament.format.description }}</span>
-          </div>
-
-          <div class="team-actions">
-            <button class="btn-action btn-view" (click)="onViewTournament(tournament.id)">
-              <i class="fa fa-eye"></i>
-            </button>
-            <!-- <button class="btn-action btn-edit" >
-              <i class="fa fa-pencil"></i>
-            </button> -->
-            <button class="btn-action btn-delete" (click)="onDelete(tournament.id)" *ngIf="authService?.getUser()?.idRol == 1">
-              <i class="fa fa-trash"></i>
-            </button>
-          </div>
-        </div>
+<section class="container tournament-page" aria-labelledby="tournaments-title">
+  <header class="tournament-hero">
+    <div class="hero-copy">
+      <span class="eyebrow"><i class="fa fa-trophy" aria-hidden="true"></i>COMPETENCIAS</span>
+      <h1 id="tournaments-title">Cada torneo,<br /><span>una nueva historia.</span></h1>
+      <p>Explorá las competencias y seguí las tablas y los cruces de tus equipos.</p>
+      <div class="header-actions" *ngIf="authService?.getUser()?.idRol == 1">
+        <button type="button" class="create-button" (click)="onCreate()"><i class="fa fa-plus" aria-hidden="true"></i> Crear torneo</button>
+        <button type="button" class="reports-button" (click)="onReviewReports()"><i class="fa fa-clipboard" aria-hidden="true"></i> Revisar reportes</button>
       </div>
     </div>
+    <div class="hero-emblem" aria-hidden="true"><i class="fa fa-trophy"></i></div>
+  </header>
+
+  <div class="catalog-heading">
+    <div><span class="eyebrow">EXPLORÁ LA LIGA</span><h2>Torneos disponibles</h2></div>
+    <span class="catalog-count" *ngIf="!isLoading">{{ tournaments.length }} {{ tournaments.length === 1 ? 'torneo' : 'torneos' }}</span>
   </div>
-</div>
+
+  <div class="tournament-list" *ngIf="!isLoading; else loadingTpl">
+    <article class="tournament-entry" *ngFor="let tournament of tournaments; let index = index; trackBy: trackByTournamentId">
+      <span class="entry-number" aria-hidden="true">{{ index + 1 < 10 ? '0' : '' }}{{ index + 1 }}</span>
+      <a class="entry-details" [routerLink]="['/tournament/view', tournament.id]" [attr.aria-label]="'Ver torneo ' + tournament.name">
+        <div class="logo-frame"><img [src]="getTournamentLogo(tournament)" [alt]="'Logo ' + tournament.name" /></div>
+        <div class="entry-copy">
+          <span class="entry-label">COMPETENCIA</span>
+          <h3>{{ tournament.name }}</h3>
+          <span class="format-label"><i class="fa fa-sitemap" aria-hidden="true"></i> {{ tournament.format?.description || 'Sin formato definido' }}</span>
+        </div>
+      </a>
+      <div class="entry-actions">
+        <button type="button" class="view-button" (click)="onViewTournament(tournament.id)" [attr.aria-label]="'Ver torneo ' + tournament.name">Ver torneo <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="delete-button" (click)="onDelete(tournament.id)" *ngIf="authService?.getUser()?.idRol == 1" title="Eliminar torneo" [attr.aria-label]="'Eliminar torneo ' + tournament.name"><i class="fa fa-trash" aria-hidden="true"></i></button>
+      </div>
+    </article>
+    <div class="empty-state" *ngIf="tournaments.length === 0">
+      <i class="fa fa-trophy" aria-hidden="true"></i>
+      <h3>No hay torneos disponibles</h3>
+      <p>{{ authService?.getUser()?.idRol == 1 ? 'Creá tu primer torneo para comenzar.' : 'Las próximas competencias aparecerán acá.' }}</p>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="tournament-list" role="status" aria-label="Cargando torneos">
+      <div class="tournament-entry skeleton-entry" *ngFor="let _ of [1,2,3]" aria-hidden="true">
+        <div class="skeleton-logo"></div>
+        <div class="skeleton-copy"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+      </div>
+    </div>
+  </ng-template>
+</section>

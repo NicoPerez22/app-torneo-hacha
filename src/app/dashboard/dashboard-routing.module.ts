@@ -1,5 +1,7 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { DashboardPlayersComponent } from './components/players/dashboard-players.component';
+import { inject, NgModule } from '@angular/core';
+import { Router, RouterModule, Routes } from '@angular/router';
+import { LoginService } from '../service/login.service';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardMarketComponent } from './components/market/dashboard-market.component';
 import { DashboardOverviewComponent } from './components/overview/dashboard-overview.component';
@@ -18,6 +20,11 @@ const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: DashboardOverviewComponent },
       { path: 'teams', component: DashboardTeamsComponent },
+      {
+        path: 'players',
+        component: DashboardPlayersComponent,
+        canActivate: [() => Number(inject(LoginService).user?.idRol) === 1 || inject(Router).createUrlTree(['/home'])],
+      },
       { path: 'tournaments/schedule', component: TournamentScheduleComponent },
       {
         path: 'tournaments/:tournamentId/rounds',

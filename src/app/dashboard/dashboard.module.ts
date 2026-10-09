@@ -1,3 +1,4 @@
+import { DashboardPlayersComponent } from './components/players/dashboard-players.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
@@ -20,6 +21,7 @@ import { TeamModule } from '../team/team.module';
     DashboardComponent,
     DashboardOverviewComponent,
     DashboardTeamsComponent,
+    DashboardPlayersComponent,
     DashboardTournamentsComponent,
     TournamentRoundsComponent,
     TournamentScheduleComponent,

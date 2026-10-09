@@ -1,74 +1,74 @@
-<div class="card-custom p-3">
-  <div class="section-title">Gestión de torneos</div>
-  <div class="section-sub">
-    Administración de fixtures, estados, grupos y configuraciones.
-  </div>
-
-  <div class="row g-2 mt-2">
-    <div class="col-12 col-md-6">
-      <button type="button" class="quick-action" disabled>
-        <i class="fa fa-plus me-2"></i> Crear torneo
+<section class="tournaments-panel" aria-labelledby="tournaments-title">
+  <header class="tournaments-header">
+    <div>
+      <span class="tournaments-eyebrow"><i class="fa fa-trophy" aria-hidden="true"></i> COMPETENCIAS</span>
+      <h1 id="tournaments-title">Gestión de torneos</h1>
+      <p>Administrá tus competencias, consultá los cruces y organizá las próximas fechas.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="toolbar-button" disabled title="Creación de torneos próximamente">
+        <i class="fa fa-plus" aria-hidden="true"></i> Crear torneo
+      </button>
+      <button type="button" class="toolbar-button primary" (click)="onSchedule()">
+        <i class="fa fa-calendar" aria-hidden="true"></i> Programación
       </button>
     </div>
-    <div class="col-12 col-md-6">
-      <button type="button" class="quick-action" (click)="onSchedule()">
-        <i class="fa fa-calendar me-2"></i> Programación
-      </button>
+  </header>
+
+  <div class="collection-heading">
+    <div>
+      <h2>Mis torneos <span class="tournament-count" *ngIf="!isLoading">{{ tournaments.length }}</span></h2>
+      <p>Tabla, rondas y gestión en un solo lugar.</p>
     </div>
+    <span class="collection-note"><i class="fa fa-sort-alpha-asc" aria-hidden="true"></i> Por nombre</span>
   </div>
 
-  <div class="section-title mt-3">Listado de torneos</div>
-  <div class="section-sub">Entrá a un torneo para ver tabla y cruces.</div>
-
-  <div class="tournament-list mt-2" *ngIf="!isLoading; else loadingTpl">
+  <div class="tournament-grid" *ngIf="!isLoading; else loadingTpl">
     <div class="tournament-empty" *ngIf="tournaments.length === 0">
-      No hay torneos para mostrar.
+      <i class="fa fa-trophy" aria-hidden="true"></i>
+      <h3>No hay torneos para mostrar</h3>
+      <p>Los torneos disponibles aparecerán en este espacio.</p>
     </div>
 
-    <div
-      *ngFor="let t of tournaments; trackBy: trackByTournamentId"
-      class="quick-action tournament-row"
-    >
-      <a
-        class="tournament-row-link"
-        [routerLink]="['/tournament/view', t.id]"
-        [attr.aria-label]="'Ver torneo ' + t.name"
-      ></a>
-
-      <img class="tournament-logo" [src]="getTournamentLogo(t)" [alt]="'Logo ' + t.name" />
-
-      <div class="tournament-meta">
-        <div class="tournament-name">{{ t.name }}</div>
-        <div class="tournament-format">{{ t.format?.description || '—' }}</div>
-      </div>
-
-      <div class="ms-auto tournament-actions">
-        <button type="button" class="action-icon view" (click)="onView(t.id)" title="Ver" aria-label="Ver">
-          <i class="fa fa-eye"></i>
+    <article class="tournament-card" *ngFor="let t of tournaments; trackBy: trackByTournamentId">
+      <a class="tournament-main" [routerLink]="['/tournament/view', t.id]" [attr.aria-label]="'Ver tabla y cruces de ' + t.name">
+        <div class="tournament-card-top">
+          <div class="tournament-logo-frame">
+            <img class="tournament-logo" [src]="getTournamentLogo(t)" [alt]="'Logo ' + t.name" />
+          </div>
+          <span class="tournament-open"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="tournament-meta">
+          <span class="tournament-label">TORNEO</span>
+          <h3 class="tournament-name">{{ t.name }}</h3>
+          <span class="tournament-format"><i class="fa fa-sitemap" aria-hidden="true"></i> {{ t.format?.description || 'Sin formato definido' }}</span>
+        </div>
+      </a>
+      <footer class="tournament-actions">
+        <button type="button" class="card-action view" (click)="onView(t.id)" [attr.aria-label]="'Ver ' + t.name">
+          <i class="fa fa-eye" aria-hidden="true"></i> Ver tabla
         </button>
-        <button type="button" class="action-icon rounds" (click)="onViewRounds(t.id)" title="Ver rondas" aria-label="Ver rondas">
-          <i class="fa fa-calendar"></i>
+        <button type="button" class="card-action rounds" (click)="onViewRounds(t.id)" [attr.aria-label]="'Ver rondas de ' + t.name">
+          <i class="fa fa-calendar" aria-hidden="true"></i> Rondas
         </button>
-        <button type="button" class="action-icon edit" (click)="onEdit(t)" title="Editar" aria-label="Editar">
-          <i class="fa fa-pencil"></i>
-        </button>
-        <button type="button" class="action-icon delete" (click)="onDelete(t.id)" title="Eliminar" aria-label="Eliminar">
-          <i class="fa fa-trash"></i>
-        </button>
-      </div>
-    </div>
+        <div class="management-actions">
+          <button type="button" class="action-icon edit" (click)="onEdit(t)" title="Editar" [attr.aria-label]="'Editar ' + t.name"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+          <button type="button" class="action-icon delete" (click)="onDelete(t.id)" title="Eliminar" [attr.aria-label]="'Eliminar ' + t.name"><i class="fa fa-trash" aria-hidden="true"></i></button>
+        </div>
+      </footer>
+    </article>
   </div>
 
   <ng-template #loadingTpl>
-    <div class="tournament-list mt-2">
-      <div class="quick-action tournament-row is-loading" *ngFor="let _ of [1,2,3]">
-        <div class="tournament-skel-logo"></div>
-        <div class="tournament-meta">
-          <div class="tournament-skel-line w-60"></div>
-          <div class="tournament-skel-line w-40"></div>
+    <div class="tournament-grid" role="status" aria-label="Cargando torneos">
+      <article class="tournament-card is-loading" *ngFor="let _ of [1,2,3]" aria-hidden="true">
+        <div class="skeleton-body">
+          <div class="tournament-skel-logo"></div>
+          <div class="tournament-skel-line"></div>
+          <div class="tournament-skel-line short"></div>
         </div>
-      </div>
+        <div class="skeleton-footer"><div class="tournament-skel-line short"></div></div>
+      </article>
     </div>
   </ng-template>
-</div>
-
+</section>

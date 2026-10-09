@@ -1,0 +1,63 @@
+<section class="players-panel" aria-labelledby="players-title">
+  <header class="players-header">
+    <div><span class="players-eyebrow">ADMINISTRACIÓN · PLANTELES</span><h1 id="players-title">Jugadores</h1><p>Gestioná los jugadores de la liga y asigná cada uno a su equipo.</p></div>
+    <button type="button" class="players-button primary" (click)="openCreate()" [disabled]="loading || !!loadError || deletingId !== null"><i class="fa fa-plus" aria-hidden="true"></i> Agregar jugador</button>
+  </header>
+
+  <div class="players-toolbar">
+    <label class="search-field"><i class="fa fa-search" aria-hidden="true"></i><input type="search" aria-label="Buscar jugador por nombre o apellido" placeholder="Buscar por nombre o apellido" [(ngModel)]="search" (ngModelChange)="page = 1" /></label>
+    <select aria-label="Filtrar jugadores por equipo" [(ngModel)]="teamFilter" (ngModelChange)="page = 1">
+      <option value="">Todos los equipos</option><option value="unassigned">Sin equipo</option>
+      <option *ngFor="let team of teams" [value]="team.id">{{ team.name }}</option>
+    </select>
+    <span class="players-count" *ngIf="!loading && !loadError">{{ filteredPlayers.length }} {{ filteredPlayers.length === 1 ? 'jugador' : 'jugadores' }}</span>
+    <button type="button" class="players-button secondary" (click)="reload()" [disabled]="loading || saving || deletingId !== null" aria-label="Actualizar listado"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+  </div>
+
+  <div class="players-state" *ngIf="loading" role="status"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Cargando jugadores y equipos…</div>
+  <div class="players-state" *ngIf="!loading && loadError" role="alert"><p>{{ loadError }}</p><button type="button" class="players-button secondary" (click)="reload()">Reintentar</button></div>
+  <ng-container *ngIf="!loading && !loadError">
+    <div class="players-state" *ngIf="filteredPlayers.length === 0"><i class="fa fa-users" aria-hidden="true"></i><h2>{{ players.length ? 'No hay coincidencias' : 'Todavía no hay jugadores' }}</h2><p>{{ players.length ? 'Probá otro nombre o equipo.' : 'Agregá un jugador para comenzar a armar los planteles.' }}</p></div>
+    <div class="players-table-wrap" *ngIf="filteredPlayers.length > 0">
+      <table class="players-table">
+        <caption class="visually-hidden">Jugadores registrados y equipos asignados</caption>
+        <thead><tr><th scope="col">Jugador</th><th scope="col">Equipo</th><th scope="col">Posición</th><th scope="col">Valoración</th><th scope="col">Estado</th><th scope="col" class="actions-heading">Acciones</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let player of filteredPlayers | paginate: { id: paginationId, itemsPerPage: pageSize, currentPage: page }; trackBy: trackByPlayerId">
+            <td><div class="player-identity"><img [src]="photoUrl(player)" alt="" /><div><strong>{{ player.name }} {{ player.lastName }}</strong><span>#{{ player.id }}</span></div></div></td>
+            <td>{{ player.team?.name || 'Sin equipo' }}</td>
+            <td><span class="position-badge">{{ player.position || '—' }}</span></td>
+            <td><span class="rating-badge">{{ player.valoration }}</span></td>
+            <td><span class="player-status" [class.inactive]="!player.isHabilitado">{{ player.isHabilitado ? 'Habilitado' : 'Inhabilitado' }}</span></td>
+            <td><div class="player-actions">
+              <button type="button" class="players-button secondary" (click)="openEdit(player)" [disabled]="deletingId !== null" [attr.aria-label]="'Editar ' + player.name + ' ' + player.lastName"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</button>
+              <button type="button" class="players-button danger" (click)="confirmDelete(player)" [disabled]="deletingId !== null" [attr.aria-label]="'Eliminar ' + player.name + ' ' + player.lastName"><i class="fa" [class.fa-trash]="deletingId !== player.id" [class.fa-spinner]="deletingId === player.id" [class.fa-spin]="deletingId === player.id" aria-hidden="true"></i></button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <pagination-controls *ngIf="filteredPlayers.length > pageSize" [id]="paginationId" (pageChange)="page = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+  </ng-container>
+
+  <nz-modal [(nzVisible)]="editorOpen" [nzTitle]="editingId === null ? 'Agregar jugador' : 'Editar jugador'" [nzFooter]="null" [nzWidth]="640" [nzClosable]="!saving" [nzMaskClosable]="false" (nzOnCancel)="closeEditor()">
+    <ng-container *nzModalContent>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <fieldset [disabled]="saving" class="player-form">
+          <div class="form-grid">
+            <div><label for="player-name">Nombre *</label><input id="player-name" formControlName="name" maxlength="100" autocomplete="given-name" /><small *ngIf="form.controls.name.touched && form.controls.name.invalid">Ingresá un nombre válido.</small></div>
+            <div><label for="player-lastname">Apellido *</label><input id="player-lastname" formControlName="lastName" maxlength="100" autocomplete="family-name" /><small *ngIf="form.controls.lastName.touched && form.controls.lastName.invalid">Ingresá un apellido válido.</small></div>
+            <div><label for="player-position">Posición *</label><select id="player-position" formControlName="position"><option value="">Seleccionar posición</option><option *ngFor="let position of positions" [value]="position">{{ position }}</option></select><small *ngIf="form.controls.position.touched && form.controls.position.invalid">Seleccioná una posición.</small></div>
+            <div><label for="player-rating">Valoración *</label><input id="player-rating" type="number" formControlName="valoration" min="1" max="99" step="1" /><small *ngIf="form.controls.valoration.touched && form.controls.valoration.invalid">Ingresá un número entero entre 1 y 99.</small></div>
+            <div class="full-width"><label for="player-team">Equipo *</label><select id="player-team" formControlName="teamId"><option [ngValue]="null">Seleccionar equipo</option><option *ngFor="let team of teams" [ngValue]="team.id">{{ team.name }}</option></select><small *ngIf="form.controls.teamId.touched && form.controls.teamId.invalid">Seleccioná el equipo del jugador.</small><p class="form-hint" *ngIf="teams.length === 0">Primero necesitás crear un equipo.</p></div>
+            <div class="full-width"><label for="player-photo">URL de la foto</label><input id="player-photo" type="url" formControlName="photo" placeholder="https://…" /><small *ngIf="form.controls.photo.touched && form.controls.photo.invalid">Ingresá una URL que comience con http:// o https://.</small></div>
+          </div>
+          <label class="checkbox-label"><input type="checkbox" formControlName="isHabilitado" /> Jugador habilitado para competir</label>
+          <p class="form-hint">Los campos con * son obligatorios.</p>
+        </fieldset>
+        <p class="save-error" role="alert" *ngIf="saveError">{{ saveError }}</p>
+        <div class="form-actions"><button type="button" class="btn btn-outline-secondary" (click)="closeEditor()" [disabled]="saving">Cancelar</button><button type="submit" class="btn btn-primary" [disabled]="saving || teams.length === 0"><i *ngIf="saving" class="fa fa-spinner fa-spin me-2" aria-hidden="true"></i>{{ saving ? 'Guardando…' : 'Guardar jugador' }}</button></div>
+      </form>
+    </ng-container>
+  </nz-modal>
+</section>

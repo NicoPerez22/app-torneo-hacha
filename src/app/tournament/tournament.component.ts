@@ -16,6 +16,7 @@ import { AuthService } from '../service/auth.service';
 })
 export class TournamentComponent implements OnInit, OnDestroy {
   tournaments: Tournament[] = [];
+  isLoading = false;
   modalRef?: NzModalRef;
   private subscriptions: Subscription = new Subscription();
 
@@ -33,6 +34,16 @@ export class TournamentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  trackByTournamentId(_: number, tournament: Tournament): number {
+    return tournament.id;
+  }
+
+  getTournamentLogo(tournament: Tournament): string {
+    const logo = tournament.logo;
+    if (typeof logo === 'string' && logo) return logo;
+    return logo?.secureUrl || logo?.url || 'assets/images/HYT-IESA.png';
   }
 
   onViewTournament(id: number): void {
@@ -67,13 +78,16 @@ export class TournamentComponent implements OnInit, OnDestroy {
   }
 
   private loadTournaments(): void {
+    this.isLoading = true;
     const tournamentSub = this.tournamentService
       .getTournament()
       .subscribe({
         next: (response) => {
           this.tournaments = response.data || [];
+          this.isLoading = false;
         },
         error: () => {
+          this.isLoading = false;
           this.toastrService.error(
             TOURNAMENT_CONSTANTS.TOURNAMENTS_LOAD_ERROR,
             TOURNAMENT_CONSTANTS.ERROR_OCCURRED,
