@@ -1,0 +1,184 @@
+<div class="knockout-empty" *ngIf="isLoadingKnockoutStages">
+  Cargando cruces...
+</div>
+
+<div
+  class="knockout-empty"
+  *ngIf="!isLoadingKnockoutStages && !knockoutStages?.length"
+>
+  No hay cruces disponibles todavía.
+</div>
+
+<div
+  class="knockout-bracket"
+  *ngIf="!isLoadingKnockoutStages && knockoutStages?.length"
+>
+  <div class="knockout-stage" *ngFor="let stage of knockoutStages">
+    <div class="knockout-stage-header">
+      <h6 class="knockout-stage-title">{{ stage.title }}</h6>
+      <span class="knockout-stage-meta"
+        >{{ stage.matches.length }} partido(s)</span
+      >
+    </div>
+
+    <div class="knockout-matches">
+      <div class="knockout-match" *ngFor="let match of stage.matches">
+        <ng-container
+          *ngIf="
+            match.isTwoLegged && match.legs?.length;
+            else singleKoMatchTpl
+          "
+        >
+          <div
+            style="
+              margin-bottom: 0.5rem;
+              font-size: 0.8rem;
+              color: rgba(255, 255, 255, 0.92);
+              opacity: 0.8;
+              font-weight: 600;
+              letter-spacing: 0.2px;
+            "
+          >
+            Llave ida y vuelta
+          </div>
+
+          <div
+            *ngFor="let leg of match.legs; let idx = index"
+            style="
+              border: 1px solid rgba(255, 255, 255, 0.08);
+              border-radius: 10px;
+              padding: 0.6rem 0.6rem;
+              margin-bottom: 0.6rem;
+              background: rgba(255, 255, 255, 0.02);
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.35rem;
+              "
+            >
+              <span
+                style="
+                  font-size: 0.78rem;
+                  color: rgba(255, 255, 255, 0.92);
+                  opacity: 0.9;
+                  font-weight: 600;
+                "
+              >
+                {{
+                  idx === 0
+                    ? 'Ida'
+                    : idx === 1
+                    ? 'Vuelta'
+                    : 'Partido ' + (idx + 1)
+                }}
+              </span>
+              <span
+                style="
+                  font-size: 0.78rem;
+                  color: rgba(255, 255, 255, 0.75);
+                  opacity: 0.9;
+                "
+              >
+                {{ leg.status || leg.date || '' }}
+              </span>
+            </div>
+
+            <div class="knockout-team-row">
+              <div class="knockout-team">
+                <img
+                  [src]="
+                    leg?.homeLogoUrl ||
+                    '../../../assets/images/player-default.png'
+                  "
+                  alt="Home Team"
+                />
+                <span class="knockout-team-name">{{
+                  leg.homeTeamName || 'TBD'
+                }}</span>
+              </div>
+              <span class="knockout-score">{{
+                leg.homeGoals ?? '-'
+              }}</span>
+            </div>
+
+            <div class="knockout-divider"></div>
+
+            <div class="knockout-team-row">
+              <div class="knockout-team">
+                <img
+                  [src]="
+                    leg?.awayLogoUrl ||
+                    '../../../assets/images/player-default.png'
+                  "
+                  alt="Away Team"
+                />
+                <span class="knockout-team-name">{{
+                  leg.awayTeamName || 'TBD'
+                }}</span>
+              </div>
+              <span class="knockout-score">{{
+                leg.awayGoals ?? '-'
+              }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #singleKoMatchTpl>
+          <div class="knockout-team-row">
+            <div class="knockout-team">
+              <img
+                [src]="
+                  match?.homeLogoUrl ||
+                  '../../../assets/images/player-default.png'
+                "
+                alt="Home Team"
+              />
+              <span class="knockout-team-name">{{
+                match.homeTeamName || 'TBD'
+              }}</span>
+            </div>
+            <span class="knockout-score">{{
+              match.homeGoals ?? '-'
+            }}</span>
+          </div>
+
+          <div class="knockout-divider"></div>
+
+          <div class="knockout-team-row">
+            <div class="knockout-team">
+              <img
+                [src]="
+                  match?.awayLogoUrl ||
+                  '../../../assets/images/player-default.png'
+                "
+                alt="Away Team"
+              />
+              <span class="knockout-team-name">{{
+                match.awayTeamName || 'TBD'
+              }}</span>
+            </div>
+            <span class="knockout-score">{{
+              match.awayGoals ?? '-'
+            }}</span>
+          </div>
+        </ng-template>
+
+        <div
+          class="knockout-match-footer"
+          *ngIf="match.status || match.date"
+        >
+          <span class="knockout-status" *ngIf="match.status">{{
+            match.status
+          }}</span>
+          <span class="knockout-date" *ngIf="match.date">{{
+            match.date
+          }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

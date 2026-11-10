@@ -1,3 +1,7 @@
+import { TournamentCardsComponent } from './view-tournament/components/tournament-cards/tournament-cards.component';
+import { TournamentHighlightsComponent } from './view-tournament/components/tournament-highlights/tournament-highlights.component';
+import { TournamentKnockoutComponent } from './view-tournament/components/tournament-knockout/tournament-knockout.component';
+import { TournamentHeaderComponent } from './view-tournament/components/tournament-header/tournament-header.component';
 import { TournamentRoutingModule } from './tournament-routing.module';
 import { TournamentComponent } from './tournament.component';
 import { NgModule } from '@angular/core';
@@ -15,6 +19,10 @@ import { ReportsApprovalComponent } from './reports-approval/reports-approval.co
   declarations: [
     TournamentComponent,
     ViewTournamentComponent,
+    TournamentCardsComponent,
+    TournamentHighlightsComponent,
+    TournamentKnockoutComponent,
+    TournamentHeaderComponent,
     CreateTournammentComponent,
     FiltersComponent,
     InputComponent,

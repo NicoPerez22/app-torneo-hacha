@@ -21,8 +21,8 @@
 
   <div class="section-title mt-3">Listado de rondas</div>
   <div class="section-sub">
-    Todas las fechas del torneo con sus partidos. Gestioná reportes, edición
-    (próximamente) y partido nulo desde cada jornada.
+    Todas las fechas del torneo con sus partidos. Reportá partidos pendientes,
+    marcalos como nulos o editá el resultado de los ya jugados.
   </div>
 
   <div class="rounds-list mt-2" *ngIf="!isLoading; else loadingTpl">
@@ -152,6 +152,19 @@
                 >
                   <i class="fa fa-ban"></i>
                   <span class="action-label">Nulo</span>
+                </button>
+              </div>
+
+              <div class="round-match-actions" *ngIf="canEditMatch(match)">
+                <button
+                  type="button"
+                  class="action-btn edit"
+                  (click)="onEditMatch(match)"
+                  title="Editar resultado"
+                  aria-label="Editar resultado"
+                >
+                  <i class="fa fa-pencil"></i>
+                  <span class="action-label">Editar</span>
                 </button>
               </div>
             </li>

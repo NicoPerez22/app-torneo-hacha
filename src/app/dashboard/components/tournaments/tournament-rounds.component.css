@@ -21,13 +21,27 @@
 
 .rounds-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
   gap: 14px;
+}
+
+/* Dos fechas por fila en pantallas anchas; en tablet/mobile queda una columna. */
+@media (min-width: 992px) {
+  .rounds-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rounds-empty {
+  grid-column: 1 / -1;
 }
 
 .round-section {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
 }
 
 .round-section-header {

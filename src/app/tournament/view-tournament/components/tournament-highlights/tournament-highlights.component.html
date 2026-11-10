@@ -1,0 +1,92 @@
+<div class="row">
+  <div class="col-12">
+    <div class="table-card">
+      <div class="table-wrapper">
+        <div
+          *ngIf="isLoadingHighlights"
+          style="
+            padding: 1rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+          "
+        >
+          Cargando...
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>POS</th>
+              <th style="text-align: left">Jugador</th>
+              <th>PJ</th>
+              <th>Goles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let player of highlights; let i = index">
+              <td>
+                <span
+                  class="position-badge"
+                  [ngClass]="{
+                    top: i < 1,
+                    mid: i >= 1
+                  }"
+                >
+                  {{ i + 1 }}
+                </span>
+              </td>
+              <td>
+                <div class="team-cell">
+                  <img
+                    [src]="
+                      player?.teamLogo ||
+                      '../../../assets/images/player-default.png'
+                    "
+                    alt="Player"
+                    class="team-logo"
+                  />
+                  <span class="team-name-text">
+                    {{
+                      player?.name ||
+                        player?.playerName ||
+                        player?.player?.name ||
+                        '-'
+                    }}
+                    {{
+                      player?.lastName || player?.player?.lastName || ''
+                    }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                {{
+                  player?.played ??
+                    player?.matchesPlayed ??
+                    player?.pj ??
+                    '-'
+                }}
+              </td>
+              <td>
+                <span class="points-badge">{{
+                  player?.goals ?? player?.goles ?? player?.goal ?? '-'
+                }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div
+          *ngIf="
+            !isLoadingHighlights &&
+            (!highlights || highlights.length === 0)
+          "
+          style="
+            padding: 1rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+          "
+        >
+          Sin datos para mostrar.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

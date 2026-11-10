@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import {
   TournamentResponse,
@@ -10,6 +11,8 @@ import {
   CreateTournamentResponse,
 } from '../models/tournament.interface';
 import {
+  MatchResultDto,
+  MatchResultResponse,
   RoundsResponse,
   TournamentRoundsSummaryResponse,
 } from '../models/round.interface';
@@ -44,6 +47,7 @@ export class TournamentService {
   private readonly MATCH_REPORT_DRAFT_DETAIL = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}`;
   private readonly MATCH_REPORT_DRAFT_REVIEW = `${this.TOURNAMENT_ENDPOINT}/admin/match-report-drafts/{draftId}/review`;
   private readonly TOURNAMENT_NULL_MATCH_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/null-match`;
+  private readonly MATCH_RESULT_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/rounds/{roundId}/result`;
   private readonly SEASON_WEEKS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/seasons/{seasonId}/weeks`;
   private readonly CREATE_SEASON_WEEK_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/weeks`;
   private readonly ADD_WEEK_MATCHDAYS_ENDPOINT = `${this.TOURNAMENT_ENDPOINT}/season-weeks/{weekId}/assignments`;
@@ -253,5 +257,43 @@ export class TournamentService {
   nullMatch(dto): Observable<any> {
     const url = `${this.API_URL}${this.TOURNAMENT_NULL_MATCH_ENDPOINT}`;
     return this.http.post<any>(url, dto);
+  }
+
+  /**
+   * Resultado ya cargado de un partido (marcador + eventos), para editarlo.
+   * API: GET /tournament/rounds/:roundId/result
+   */
+  getMatchResult(roundId: number): Observable<MatchResultDto> {
+    const url = `${this.API_URL}${this.MATCH_RESULT_ENDPOINT}`.replace(
+      '{roundId}',
+      String(roundId),
+    );
+    return this.http.get<MatchResultResponse>(url).pipe(
+      map((response) => {
+        if (response?.code === -1 || (response?.httpCode ?? 0) >= 400 || !response?.data) {
+          throw new Error('No se pudo obtener el resultado del partido.');
+        }
+        return response.data;
+      }),
+    );
+  }
+
+  /**
+   * Edición (admin) del resultado de un partido ya jugado. Reemplaza marcador y eventos.
+   * API: PUT /tournament/rounds/:roundId/result
+   */
+  updateMatchResult(roundId: number, dto: MatchResultDto): Observable<any> {
+    const url = `${this.API_URL}${this.MATCH_RESULT_ENDPOINT}`.replace(
+      '{roundId}',
+      String(roundId),
+    );
+    return this.http.put<any>(url, dto).pipe(
+      map((response) => {
+        if (response?.code === -1 || (response?.httpCode ?? 0) >= 400) {
+          throw new Error('No se pudo actualizar el resultado.');
+        }
+        return response;
+      }),
+    );
   }
 }

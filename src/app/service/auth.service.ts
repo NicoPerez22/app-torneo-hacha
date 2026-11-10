@@ -25,6 +25,21 @@ export class AuthService {
     return this.http.post<any>(url, userLogin);
   }
 
+  generatePasswordReset(userId: number): Observable<string> {
+    return this.http.post<any>(this.API_URL + 'auth/password-reset/' + userId, {}).pipe(map(response => {
+      const token = response?.data?.token ?? response?.token;
+      if (response?.code === -1 || response?.httpCode >= 400 || typeof token !== 'string' || !token) throw new Error('No se pudo generar el token.');
+      return token;
+    }));
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(this.API_URL + 'auth/password-reset', { token, newPassword }).pipe(map(response => {
+      if (response?.code === -1 || response?.httpCode >= 400) throw new Error('No se pudo actualizar la contraseña.');
+      return response;
+    }));
+  }
+
   clean(): void {
     // Evitar limpiar toda la sesión: solo lo que maneja auth.
     sessionStorage.removeItem(this.USER_KEY);

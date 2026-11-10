@@ -920,7 +920,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
         top: { from: 1, to: 1 },
         promoUp: { from: 2, to: 4 },
         mid: { from: 5, to: 8 },
-        promo: { from: 8, to: 9 },
+        promo: { from: 7, to: 9 },
         bottom: { last: 1 },
       } as const;
 
@@ -930,7 +930,7 @@ export class ViewTournamentComponent implements OnInit, OnDestroy {
     if (id == 3) {
       this.positionBadgeConfig = {
         top: { from: 1, to: 1 },
-        promoUp: { from: 2, to: 3 },
+        promoUp: { from: 2, to: 4 },
         mid: { from: 4, to: 10 },
         promo: { from: 0, to: 0 },
         bottom: { last: 0 },

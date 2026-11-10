@@ -6,8 +6,14 @@ import { TeamService } from 'src/app/service/team.service';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import {
+  MatchEventType,
+  MatchResultDto,
+  MatchResultEvent,
+} from 'src/app/tournament/models/round.interface';
 
-type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE' | 'INJURY';
+/** Eventos que el formulario representa; el resto (SUB, NOTE) se conserva tal cual al editar. */
+const FORM_EVENT_TYPES: MatchEventType[] = ['GOAL', 'YELLOW', 'RED', 'INJURY'];
 
 @Component({
   selector: 'app-results',
@@ -16,10 +22,19 @@ type MatchEventType = 'GOAL' | 'YELLOW' | 'RED' | 'SUB' | 'NOTE' | 'INJURY';
 })
 export class ResultsComponent implements OnInit {
   @Input() match: any;
+  /** 'report': carga inicial del resultado. 'edit': un admin corrige un resultado ya cargado. */
+  @Input() mode: 'report' | 'edit' = 'report';
 
   form: FormGroup;
   isLoadingPlayers = false;
   isSubmitting = false;
+
+  /** Eventos existentes que el formulario no edita (SUB, NOTE): se reenvían sin cambios. */
+  private preservedEvents: MatchResultEvent[] = [];
+
+  get isEditMode(): boolean {
+    return this.mode === 'edit';
+  }
 
   private readonly fb = inject(FormBuilder);
   private readonly tournamentService = inject(TournamentService);
@@ -46,6 +61,26 @@ export class ResultsComponent implements OnInit {
     this.isSubmitting = true;
 
     const report = this._setValues();
+
+    if (this.isEditMode) {
+      this.tournamentService
+        .updateMatchResult(report.roundId, report)
+        .subscribe({
+          next: () => {
+            this.toastrService.success('Resultado actualizado', 'Éxito');
+            this.modalRef?.close(true);
+            this.isSubmitting = false;
+          },
+          error: () => {
+            this.toastrService.error(
+              'No se pudo actualizar el resultado',
+              'Error',
+            );
+            this.isSubmitting = false;
+          },
+        });
+      return;
+    }
 
     this.tournamentService.getRoundReportPreview(report).subscribe({
       next: () => {
@@ -135,23 +170,110 @@ export class ResultsComponent implements OnInit {
       away: this.teamService
         .getPlayersByIdTeam(awayTeamId)
         .pipe(catchError(() => of({ data: [] }))),
+      // Sin catchError: si no se puede leer el resultado actual, no se edita
+      // (guardar un formulario vacío borraría los eventos ya cargados).
+      existing: this.isEditMode
+        ? this.tournamentService.getMatchResult(Number(this.match?.idRound))
+        : of(null as MatchResultDto | null),
     })
       .pipe(finalize(() => (this.isLoadingPlayers = false)))
       .subscribe({
-        next: ({ home, away }) => {
+        next: ({ home, away, existing }) => {
           const homePlayers = Array.isArray(home?.data) ? home.data : [];
           const awayPlayers = Array.isArray(away?.data) ? away.data : [];
 
           this._setPlayers(this.homePlayersArray, homePlayers, homeTeamId);
           this._setPlayers(this.awayPlayersArray, awayPlayers, awayTeamId);
+
+          if (existing) {
+            this._applyExistingResult(existing, homeTeamId, awayTeamId);
+          }
         },
         error: () => {
           this.toastrService.error(
-            'Error al obtener los jugadores del partido',
+            this.isEditMode
+              ? 'No se pudo cargar el resultado actual del partido'
+              : 'Error al obtener los jugadores del partido',
             'Error',
           );
+          if (this.isEditMode) this.modalRef?.destroy();
         },
       });
+  }
+
+  private _applyExistingResult(
+    result: MatchResultDto,
+    homeTeamId: number,
+    awayTeamId: number,
+  ): void {
+    this.form.patchValue({
+      homeGoals: Number(result?.homeGoals ?? 0),
+      awayGoals: Number(result?.awayGoals ?? 0),
+    });
+
+    const events = Array.isArray(result?.events) ? result.events : [];
+    this.preservedEvents = events.filter(
+      (e) => !FORM_EVENT_TYPES.includes(e?.eventType),
+    );
+
+    for (const event of events) {
+      if (!FORM_EVENT_TYPES.includes(event?.eventType)) continue;
+
+      const teamId = Number(event.teamId);
+      const playerId = Number(event.playerId);
+      const target =
+        teamId === homeTeamId
+          ? this.homePlayersArray
+          : teamId === awayTeamId
+            ? this.awayPlayersArray
+            : null;
+      if (!target || !Number.isFinite(playerId)) continue;
+
+      let row = target.controls.find(
+        (c) => Number(c.get('playerId')?.value) === playerId,
+      ) as FormGroup | undefined;
+
+      // El jugador ya no está en el plantel (p. ej. fue transferido): se agrega
+      // igual para no perder sus eventos al guardar.
+      if (!row) {
+        row = this._buildPlayerRow(teamId, {
+          id: playerId,
+          name: event.playerName ?? `Jugador #${playerId}`,
+          lastName: event.playerLastName ?? '',
+        });
+        target.push(row);
+      }
+
+      switch (event.eventType) {
+        case 'GOAL':
+          row.get('goals')?.setValue(Number(row.get('goals')?.value ?? 0) + 1);
+          break;
+        case 'YELLOW':
+          row
+            .get('yellow')
+            ?.setValue(Math.min(2, Number(row.get('yellow')?.value ?? 0) + 1));
+          break;
+        case 'RED':
+          row.get('red')?.setValue(true);
+          break;
+        case 'INJURY':
+          row.get('injured')?.setValue(true);
+          break;
+      }
+    }
+  }
+
+  private _buildPlayerRow(teamId: number, p: any): FormGroup {
+    return this.fb.group({
+      teamId: [teamId, Validators.required],
+      playerId: [p?.id ?? null, Validators.required],
+      name: [p?.name ?? ''],
+      lastName: [p?.lastName ?? ''],
+      goals: [0, [Validators.min(0)]],
+      yellow: [0, [Validators.min(0), Validators.max(2)]],
+      red: [false],
+      injured: [false],
+    });
   }
 
   private _setPlayers(target: FormArray, players: any[], teamId: number): void {
@@ -167,22 +289,11 @@ export class ResultsComponent implements OnInit {
     });
 
     for (const p of sorted) {
-      target.push(
-        this.fb.group({
-          teamId: [teamId, Validators.required],
-          playerId: [p?.id ?? null, Validators.required],
-          name: [p?.name ?? ''],
-          lastName: [p?.lastName ?? ''],
-          goals: [0, [Validators.min(0)]],
-          yellow: [0, [Validators.min(0), Validators.max(2)]],
-          red: [false],
-          injured: [false],
-        }),
-      );
+      target.push(this._buildPlayerRow(teamId, p));
     }
   }
 
-  private _setValues() {
+  private _setValues(): MatchResultDto {
     const buildEvents = (rows: any[]): any[] => {
       const events: any[] = [];
 
@@ -234,9 +345,15 @@ export class ResultsComponent implements OnInit {
     const events = [
       ...buildEvents(this.homePlayersArray?.value ?? []),
       ...buildEvents(this.awayPlayersArray?.value ?? []),
+      ...this.preservedEvents.map(({ teamId, playerId, eventType, minute }) => ({
+        teamId,
+        playerId,
+        eventType,
+        minute,
+      })),
     ];
 
-    const dto = {
+    const dto: MatchResultDto = {
       roundId: this.match?.idRound,
       tournamentId: this.match?.tournamentId ?? this.match?.tournament?.id,
       homeGoals: Number(this.form.get('homeGoals')?.value ?? 0),

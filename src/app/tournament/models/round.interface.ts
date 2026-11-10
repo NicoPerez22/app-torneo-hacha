@@ -53,6 +53,39 @@ export interface Pagination {
   unitValue?: number;
 }
 
+export type MatchEventType =
+  | 'GOAL'
+  | 'YELLOW'
+  | 'RED'
+  | 'SUB'
+  | 'NOTE'
+  | 'INJURY';
+
+export interface MatchResultEvent {
+  teamId: number;
+  playerId: number;
+  eventType: MatchEventType;
+  minute: number | null;
+  /** Opcionales en la respuesta del GET: permiten mostrar jugadores que ya no están en el plantel. */
+  playerName?: string;
+  playerLastName?: string;
+}
+
+export interface MatchResultDto {
+  roundId: number;
+  tournamentId: number;
+  homeGoals: number;
+  awayGoals: number;
+  events: MatchResultEvent[];
+}
+
+export interface MatchResultResponse {
+  data: MatchResultDto;
+  message?: string;
+  httpCode?: number;
+  code?: number;
+}
+
 export interface TournamentRoundSummary {
   tournamentId: number;
   tournamentName: string;

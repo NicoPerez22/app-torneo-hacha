@@ -1,0 +1,11 @@
+<div class="tournament-header">
+  <div class="header-content">
+    <img
+      [src]="tournament?.logo || '../../../assets/images/HYT-IESA.png'"
+      alt="Tournament Logo"
+      class="tournament-logo"
+    />
+    <h1 class="tournament-title">{{ tournament?.name }}</h1>
+    <p class="tournament-subtitle">{{ tournament?.format?.description }}</p>
+  </div>
+</div>

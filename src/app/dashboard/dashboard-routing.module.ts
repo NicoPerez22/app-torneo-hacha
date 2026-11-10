@@ -1,3 +1,4 @@
+import { DashboardUsersComponent } from './components/users/dashboard-users.component';
 import { DashboardPlayersComponent } from './components/players/dashboard-players.component';
 import { inject, NgModule } from '@angular/core';
 import { Router, RouterModule, Routes } from '@angular/router';
@@ -20,6 +21,10 @@ const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: DashboardOverviewComponent },
       { path: 'teams', component: DashboardTeamsComponent },
+      {
+        path: 'users', component: DashboardUsersComponent,
+        canActivate: [() => (inject(LoginService).isLogged() && Number(inject(LoginService).user?.idRol) === 1) || inject(Router).createUrlTree(['/home'])],
+      },
       {
         path: 'players',
         component: DashboardPlayersComponent,

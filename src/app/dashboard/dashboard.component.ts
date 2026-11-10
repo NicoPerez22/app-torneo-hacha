@@ -12,11 +12,12 @@ export class DashboardComponent {
   isSidebarOpen = false;
 
   readonly menuItems: Array<{
-    path: 'overview' | 'teams' | 'players' | 'tournaments' | 'market' | 'reports' | 'settings';
+    path: 'users' | 'overview' | 'teams' | 'players' | 'tournaments' | 'market' | 'reports' | 'settings';
     label: string;
     iconClass: string;
   }> = [
     { path: 'overview', label: 'Resumen', iconClass: 'fa fa-home' },
+    { path: 'users', label: 'Usuarios', iconClass: 'fa fa-users' },
     { path: 'teams', label: 'Equipos', iconClass: 'fa fa-shield' },
     { path: 'players', label: 'Jugadores', iconClass: 'fa fa-user' },
     { path: 'tournaments', label: 'Torneos', iconClass: 'fa fa-trophy' },

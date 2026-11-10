@@ -1,6 +1,6 @@
 <div class="modal-title-custom">
   <i class="bi bi-clipboard-check"></i>
-  <span>Reporte de partido</span>
+  <span>{{ isEditMode ? 'Editar resultado' : 'Reporte de partido' }}</span>
 </div>
 
 <div class="match-report-scroll" cdkScrollable>
@@ -225,6 +225,6 @@
     [disabled]="isSubmitting"
   >
     <i class="bi bi-check-lg"></i>
-    <span>Confirmar</span>
+    <span>{{ isEditMode ? 'Guardar cambios' : 'Confirmar' }}</span>
   </button>
 </div>

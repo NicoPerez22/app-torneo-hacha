@@ -1,0 +1,20 @@
+<section class="players-panel" aria-labelledby="users-title">
+  <header class="players-header"><div><span class="players-eyebrow">ADMINISTRACIÓN · CUENTAS</span><h1 id="users-title">Usuarios</h1><p>Generá un token para que el usuario pueda crear una nueva contraseña.</p></div></header>
+  <div class="players-toolbar"><label class="search-field"><i class="fa fa-search" aria-hidden="true"></i><input type="search" aria-label="Buscar usuario" placeholder="Buscar por nombre, email o ID" [(ngModel)]="search" /></label><button type="button" class="players-button secondary" (click)="reload()" [disabled]="loading">Actualizar</button></div>
+  <p *ngIf="loading" class="players-state" role="status">Cargando usuarios…</p>
+  <div *ngIf="error" class="players-state" role="alert">{{ error }} <button type="button" class="players-button secondary" (click)="reload()">Reintentar</button></div>
+  <ng-container *ngIf="!loading && !error">
+    <p *ngIf="!filteredUsers.length" class="players-state">No hay usuarios que coincidan con la búsqueda.</p>
+    <div class="players-table-wrap" *ngIf="filteredUsers.length"><table class="players-table"><thead><tr><th scope="col">Usuario</th><th scope="col">Email</th><th scope="col">Acciones</th></tr></thead><tbody><tr *ngFor="let user of filteredUsers"><td><strong>{{ user.name }} {{ user.lastName }}</strong><div>{{ user.userName }} · #{{ user.id }}</div></td><td>{{ user.email || 'Sin email' }}</td><td><button type="button" class="players-button secondary" (click)="openReset(user)">Restablecer contraseña</button></td></tr></tbody></table></div>
+  </ng-container>
+  <nz-modal [nzVisible]="resetUser !== null" nzTitle="Restablecer contraseña" [nzFooter]="null" [nzMaskClosable]="false" [nzClosable]="!generating" (nzOnCancel)="closeReset()">
+    <ng-container *nzModalContent>
+      <p>Cuenta: <strong>{{ resetUser?.email || resetUser?.userName || resetUser?.name }}</strong> (#{{ resetUser?.id }})</p>
+      <p>El token vence en 15 minutos y se puede usar una sola vez. Generar uno nuevo invalida el anterior.</p>
+      <p *ngIf="!token">Entregale el token al usuario para que lo ingrese en «¿Olvidaste tu contraseña?» del login. Su contraseña cambiará cuando complete ese formulario.</p>
+      <div *ngIf="token"><label for="reset-token">Token para entregar al usuario</label><textarea id="reset-token" class="form-control" rows="4" readonly [value]="token" #tokenField (focus)="tokenField.select()"></textarea><button type="button" class="btn btn-outline-primary mt-2" (click)="copyToken()">Copiar token</button><p role="status" aria-live="polite">{{ copyStatus }}</p></div>
+      <p *ngIf="resetError" role="alert" class="text-danger">{{ resetError }}</p>
+      <div class="form-actions"><button type="button" class="btn btn-outline-secondary" [disabled]="generating" (click)="closeReset()">Cerrar</button><button *ngIf="!token" type="button" class="btn btn-primary" [disabled]="generating" (click)="generate()">{{ generating ? 'Generando…' : 'Generar token' }}</button></div>
+    </ng-container>
+  </nz-modal>
+</section>

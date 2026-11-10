@@ -67,7 +67,7 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
     }
     this.tournamentId = id;
     const user = this.authService.getUser();
-    this.isAdmin = user?.idRol === 1;
+    this.isAdmin = Number(user?.idRol) === 1;
     this.load();
   }
 
@@ -111,9 +111,24 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
   }
 
   onReportMatch(match: Match): void {
+    this.openResultsModal(match, 'report');
+  }
+
+  onEditMatch(match: Match): void {
+    if (!this.canEditMatch(match)) {
+      this.toastr.warning(
+        'Solo un administrador puede editar resultados ya cargados',
+        'Atención',
+      );
+      return;
+    }
+    this.openResultsModal(match, 'edit');
+  }
+
+  private openResultsModal(match: Match, mode: 'report' | 'edit'): void {
     const modal = this.modalService.create({
       nzContent: ResultsComponent,
-      nzComponentParams: { match },
+      nzComponentParams: { match, mode },
       nzFooter: null,
       nzWidth: '95vw',
       nzStyle: { maxWidth: '1100px' },
@@ -174,6 +189,17 @@ export class TournamentRoundsComponent implements OnInit, OnDestroy {
 
   canNullMatchMatch(match: Match): boolean {
     return this.isAdmin && this.isMatchPending(match);
+  }
+
+  /** Partido ya jugado con marcador cargado (los partidos nulos no tienen goles). */
+  canEditMatch(match: Match): boolean {
+    return (
+      this.isAdmin &&
+      !this.isMatchPending(match) &&
+      match?.homeGoals != null &&
+      match?.awayGoals != null &&
+      match?.idRound != null
+    );
   }
 
   private load(): void {
